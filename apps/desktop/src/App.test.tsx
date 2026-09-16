@@ -528,21 +528,21 @@ describe('CC Switch compatible configuration', () => {
       target: { value: 'https://relay.example/custom/inference?version=2' },
     });
     fireEvent.click(screen.getByRole('switch', { name: 'kimi-k2.6 完整 URL' }));
-    fireEvent.keyDown(screen.getByRole('combobox', { name: 'kimi-k2.6 接口格式' }), {
-      key: 'ArrowDown',
+    await act(async () => {
+      fireEvent.keyDown(screen.getByRole('combobox', { name: 'kimi-k2.6 接口格式' }), {
+        key: 'ArrowDown',
+      });
     });
-    fireEvent.keyDown(
-      within(screen.getByRole('listbox', { hidden: true })).getByRole('option', {
-        name: 'Chat Completions',
-        hidden: true,
-      }),
-      { key: 'Enter' },
-    );
+    await act(async () => {
+      fireEvent.keyDown(
+        within(screen.getByRole('listbox')).getByRole('option', { name: 'Chat Completions' }),
+        { key: 'Enter' },
+      );
+    });
     fireEvent.click(screen.getByRole('button', { name: '确认修改' }));
     expect(screen.getByRole('combobox', { name: '接口格式' })).toHaveTextContent('Responses');
     fireEvent.change(screen.getByLabelText('API Key'), { target: { value: 'synthetic-key' } });
     fireEvent.click(screen.getByRole('button', { name: '保存配置' }));
-    await act(async () => {});
     await screen.findByRole('heading', { name: '我的配置' });
     expect(state.profiles[0].protocol).toBe('responses');
     expect(state.profiles[0].options?.modelOverrides?.['kimi-k2.6']).toMatchObject({
@@ -565,7 +565,7 @@ describe('CC Switch compatible configuration', () => {
       '继承（Responses）',
     );
     expect(screen.getByRole('switch', { name: 'kimi-k2.6 完整 URL' })).not.toBeChecked();
-  }, 30000);
+  });
   it('persists the exact outer full URL and requires a key when a model changes its saved address', async () => {
     const state = setup();
     render(<App />);

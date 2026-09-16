@@ -4,3 +4,8 @@ packages:
 onlyBuiltDependencies:
   - esbuild
   - sharp
+
+# nwsapi 2.2.27 recursively delegates :fullscreen/:modal back to jsdom's matches().
+# Keep Radix/Floating UI tests on the pre-regression selector engine.
+overrides:
+  jsdom>nwsapi: 2.2.24

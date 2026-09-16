@@ -4,6 +4,8 @@
 
 Tauri 2 + React + Rust 桌面应用，配套独立的 Astro + Starlight 官网文档。第一版为开发预览：实现与隔离测试可以运行，尚未进行真实 Codex App 端到端测试。
 
+支持平台仅限 macOS 和 Windows；CI 在这两个平台上校验与构建，不提供其他系统的安装包。
+
 ## 功能
 
 - 千问、MiniMax、智谱、Kimi、DeepSeek 五家原生 Responses 预设，包含 Kimi Coding、千问 Token Plan 的独立套餐选项。
