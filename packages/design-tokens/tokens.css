@@ -1,0 +1,33 @@
+:root {
+  color-scheme: light dark;
+  --font:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --bg: light-dark(#fafaff, #151824);
+  --panel: light-dark(#ffffff, #1e2333);
+  --ink: light-dark(#252c46, #eef1ff);
+  --muted: light-dark(#626d88, #aab4cf);
+  --line: light-dark(#e0e5f2, #343d56);
+  --soft: light-dark(#f0f3fc, #272f46);
+  --brand: light-dark(#315ce4, #9ab8ff);
+  --brand-end: light-dark(#6946d9, #b3a0ff);
+  --brand-ink: light-dark(#ffffff, #172348);
+  --brand-gradient: linear-gradient(115deg, var(--brand), var(--brand-end));
+  --brand-hover: light-dark(#294bc7, #bed0ff);
+  --brand-end-hover: light-dark(#5837bf, #cbbdff);
+  --brand-gradient-hover: linear-gradient(115deg, var(--brand-hover), var(--brand-end-hover));
+  --accent: light-dark(#3959ce, #acc1ff);
+  --accent-bg: light-dark(#edf1ff, #293353);
+  --accent-secondary: light-dark(#7048c8, #c3adff);
+  --on-line: light-dark(#b7c7f4, #607bbd);
+  --switch-off: light-dark(#9aa5bf, #64718e);
+  --success: light-dark(#26704b, #91d5b1);
+  --success-bg: light-dark(#edf7f1, #213b32);
+  --error: light-dark(#a43d49, #ffadb6);
+  --error-bg: light-dark(#fff0f2, #452a35);
+  --focus: light-dark(#5273e8, #a2bbff);
+  --selection: light-dark(#dae3ff, #394875);
+  --glow-blue: light-dark(#5c91ff0c, #537bf20d);
+  --glow-violet: light-dark(#8970ee0d, #8b6def0d);
+  --grid: light-dark(#6989d318, #9db4f518);
+  --shadow: light-dark(#314c9814, #080d2340);
+}

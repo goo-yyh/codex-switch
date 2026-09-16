@@ -1,0 +1,61 @@
+name: Validate
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: pnpm install --frozen-lockfile
+      - run: cargo fmt -p codex-switch-core -p codex-switch-desktop --check
+      - run: pnpm check:upstream
+      - run: pnpm check
+      - run: pnpm test
+      - run: cargo clippy -p codex-switch-core --all-targets --no-deps -- -D warnings
+      - run: pnpm build
+      - run: pnpm check:links
+      - run: python3 scripts/check_secrets.py --artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: website
+          path: apps/website/dist
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            args: ''
+          - os: windows-latest
+            args: '--config src-tauri/tauri.windows.conf.json'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @codex-switch/desktop tauri build ${{ matrix.args }}
+      - run: cargo test -p codex-switch-desktop
+      - run: python scripts/check_secrets.py --artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.os }}-unsigned
+          path: |
+            target/release/bundle/dmg/*.dmg
+            target/release/bundle/nsis/*.exe

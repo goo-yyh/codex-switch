@@ -1,0 +1,964 @@
+{
+  "scope": "Direct default-provider normal Responses SSE summary chain. No Codex App or local gateway. History replacement simulated with summary only.",
+  "start": "2026-09-16T16:04:47+08:00",
+  "end": "2026-09-16T16:09:02+08:00",
+  "requests": 13,
+  "requestsWithUsage": 12,
+  "reportedInputTokens": 194672,
+  "reportedOutputTokens": 4732,
+  "reportedTotalTokens": 199404,
+  "receipts": [
+    {
+      "timestamp": 1789545887,
+      "provider": "qianwen",
+      "model": "qwen3.8-max",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "protocol": "responses",
+      "test": "summary_fixture",
+      "details": {
+        "historyBytes": 129841,
+        "historyItems": 97,
+        "historySha256": "99264d966779241ba5ab128a52e797f1b79073d5e9e92c79ba664fcc194ae80b",
+        "checkpoints": 6,
+        "promptSource": "openai/codex rust-v0.149.0",
+        "promptSha256": "ab0c334d4faca17e3afbb9b16967c1b2fdcc7242a9a0880af57949fa236d6d07",
+        "remoteCompaction": false,
+        "maxRequests": 3,
+        "stream": true
+      }
+    },
+    {
+      "timestamp": 1789545902,
+      "provider": "qianwen",
+      "model": "qwen3.8-max",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "protocol": "responses",
+      "test": "summary_baseline",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 14775,
+        "requestBytes": 130369,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "total_tokens": 26180,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 383,
+          "input_tokens": 25797,
+          "output_tokens_details": {
+            "reasoning_tokens": 286
+          },
+          "x_details": [
+            {
+              "total_tokens": 26180,
+              "x_billing_type": "response_api",
+              "output_tokens": 383,
+              "input_tokens": 25797,
+              "output_tokens_details": {
+                "reasoning_tokens": 286
+              },
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            }
+          ]
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["reasoning", "message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 1320,
+        "outputSha256": "3032f732f6eb2a704c6fda8dad58e97afc32df9c670b8b0c796b70d007d931c8",
+        "streamCheck": {
+          "events": 116,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545902,
+      "provider": "qianwen",
+      "model": "qwen3.8-max",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "protocol": "responses",
+      "test": "summary_baseline_recall",
+      "details": {
+        "ok": true,
+        "check": {
+          "passed": 6,
+          "total": 6,
+          "fields": {
+            "launch_code": true,
+            "rollback_code": true,
+            "owner_code": true,
+            "region_code": true,
+            "audit_code": true,
+            "release_code": true
+          },
+          "nullFields": [],
+          "missingFields": [],
+          "validJson": true,
+          "complete": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545917,
+      "provider": "qianwen",
+      "model": "qwen3.8-max",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "protocol": "responses",
+      "test": "summary_generate",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 14403,
+        "requestBytes": 130604,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "total_tokens": 26323,
+          "input_tokens_details": {
+            "cached_tokens": 25600
+          },
+          "output_tokens": 477,
+          "input_tokens": 25846,
+          "output_tokens_details": {
+            "reasoning_tokens": 204
+          },
+          "x_details": [
+            {
+              "total_tokens": 26323,
+              "x_billing_type": "response_api",
+              "output_tokens": 477,
+              "input_tokens": 25846,
+              "output_tokens_details": {
+                "reasoning_tokens": 204
+              },
+              "prompt_tokens_details": {
+                "cached_tokens": 25600
+              }
+            }
+          ]
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["reasoning", "message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 1872,
+        "outputSha256": "b1032583386e10dabf21f050645b58c3bab17850b7a46ff58373136afb83098e",
+        "streamCheck": {
+          "events": 145,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545917,
+      "provider": "qianwen",
+      "model": "qwen3.8-max",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "protocol": "responses",
+      "test": "summary_text_valid",
+      "details": {
+        "ok": true,
+        "check": {
+          "nonempty": true,
+          "completed": true,
+          "textBytes": 974,
+          "textSha256": "72fdc60c0066d044d0451754a7d2b85bd19359771f3c363897320985467d9484"
+        }
+      }
+    },
+    {
+      "timestamp": 1789545923,
+      "provider": "qianwen",
+      "model": "qwen3.8-max",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "protocol": "responses",
+      "test": "summary_resume",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 6495,
+        "requestBytes": 1955,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "total_tokens": 769,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 263,
+          "input_tokens": 506,
+          "output_tokens_details": {
+            "reasoning_tokens": 140
+          },
+          "x_details": [
+            {
+              "total_tokens": 769,
+              "x_billing_type": "response_api",
+              "output_tokens": 263,
+              "input_tokens": 506,
+              "output_tokens_details": {
+                "reasoning_tokens": 140
+              },
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            }
+          ]
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["reasoning", "message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 929,
+        "outputSha256": "ed5d541c0d50aa0fcf83b427bd3df4474129b36228b268977b680403a342177c",
+        "streamCheck": {
+          "events": 83,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545923,
+      "provider": "qianwen",
+      "model": "qwen3.8-max",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "protocol": "responses",
+      "test": "summary_chain_result",
+      "details": {
+        "ok": true,
+        "check": {
+          "baselinePassed": true,
+          "recall": {
+            "passed": 6,
+            "total": 6,
+            "fields": {
+              "launch_code": true,
+              "rollback_code": true,
+              "owner_code": true,
+              "region_code": true,
+              "audit_code": true,
+              "release_code": true
+            },
+            "nullFields": [],
+            "missingFields": [],
+            "validJson": true,
+            "complete": true
+          },
+          "inputTokensBefore": 25797,
+          "inputTokensAfter": 506,
+          "inputTokenReduction": 0.9803853161220297,
+          "replayedOriginalHistory": false,
+          "usedPreviousResponseId": false,
+          "usedRemoteEndpoint": false,
+          "usedCompactionTrigger": false,
+          "clientHistoryReplacementSimulated": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545923,
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimaxi.com/v1",
+      "protocol": "responses",
+      "test": "summary_fixture",
+      "details": {
+        "historyBytes": 129841,
+        "historyItems": 97,
+        "historySha256": "48af72ac2c3b4c518242f4eec4e4c1019f6550ff6c76a1566181bad34e18de98",
+        "checkpoints": 6,
+        "promptSource": "openai/codex rust-v0.149.0",
+        "promptSha256": "ab0c334d4faca17e3afbb9b16967c1b2fdcc7242a9a0880af57949fa236d6d07",
+        "remoteCompaction": false,
+        "maxRequests": 3,
+        "stream": true
+      }
+    },
+    {
+      "timestamp": 1789545927,
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimaxi.com/v1",
+      "protocol": "responses",
+      "test": "summary_baseline",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 4070,
+        "requestBytes": 130368,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "input_tokens": 23114,
+          "output_tokens": 69,
+          "total_tokens": 23183,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          }
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 374,
+        "outputSha256": "612ec9d845222588de9104ab742cd8e54ce762da411ae531b1ef248597de09a2",
+        "streamCheck": {
+          "events": 26,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545927,
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimaxi.com/v1",
+      "protocol": "responses",
+      "test": "summary_baseline_recall",
+      "details": {
+        "ok": true,
+        "check": {
+          "passed": 6,
+          "total": 6,
+          "fields": {
+            "launch_code": true,
+            "rollback_code": true,
+            "owner_code": true,
+            "region_code": true,
+            "audit_code": true,
+            "release_code": true
+          },
+          "nullFields": [],
+          "missingFields": [],
+          "validJson": true,
+          "complete": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545932,
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimaxi.com/v1",
+      "protocol": "responses",
+      "test": "summary_generate",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 4390,
+        "requestBytes": 130603,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "input_tokens": 23160,
+          "output_tokens": 501,
+          "total_tokens": 23661,
+          "input_tokens_details": {
+            "cached_tokens": 23066
+          }
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 2321,
+        "outputSha256": "afd3be15f6af0f02646856af8002950431a7991277e35fc64b9de3ed2caadbbb",
+        "streamCheck": {
+          "events": 209,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545932,
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimaxi.com/v1",
+      "protocol": "responses",
+      "test": "summary_text_valid",
+      "details": {
+        "ok": true,
+        "check": {
+          "nonempty": true,
+          "completed": true,
+          "textBytes": 2119,
+          "textSha256": "94a7db3004b0c937f319339cb4c76b8de3d246d11af368c630927669bac455ff"
+        }
+      }
+    },
+    {
+      "timestamp": 1789545934,
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimaxi.com/v1",
+      "protocol": "responses",
+      "test": "summary_resume",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 2297,
+        "requestBytes": 3111,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "input_tokens": 812,
+          "output_tokens": 69,
+          "total_tokens": 881,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          }
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 374,
+        "outputSha256": "2ecdabc331c1822ea06d787ee7c91456b37e332afd8d90f958c8efbd424a567e",
+        "streamCheck": {
+          "events": 26,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545934,
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimaxi.com/v1",
+      "protocol": "responses",
+      "test": "summary_chain_result",
+      "details": {
+        "ok": true,
+        "check": {
+          "baselinePassed": true,
+          "recall": {
+            "passed": 6,
+            "total": 6,
+            "fields": {
+              "launch_code": true,
+              "rollback_code": true,
+              "owner_code": true,
+              "region_code": true,
+              "audit_code": true,
+              "release_code": true
+            },
+            "nullFields": [],
+            "missingFields": [],
+            "validJson": true,
+            "complete": true
+          },
+          "inputTokensBefore": 23114,
+          "inputTokensAfter": 812,
+          "inputTokenReduction": 0.964869775893398,
+          "replayedOriginalHistory": false,
+          "usedPreviousResponseId": false,
+          "usedRemoteEndpoint": false,
+          "usedCompactionTrigger": false,
+          "clientHistoryReplacementSimulated": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789545934,
+      "provider": "zhipu",
+      "model": "glm-5.3",
+      "endpoint": "https://open.bigmodel.cn/api/v1",
+      "protocol": "responses",
+      "test": "summary_fixture",
+      "details": {
+        "historyBytes": 129841,
+        "historyItems": 97,
+        "historySha256": "3042a3352a195a55f1bc2952cb5756bade7d292b8b8f193def077d9236245e25",
+        "checkpoints": 6,
+        "promptSource": "openai/codex rust-v0.149.0",
+        "promptSha256": "ab0c334d4faca17e3afbb9b16967c1b2fdcc7242a9a0880af57949fa236d6d07",
+        "remoteCompaction": false,
+        "maxRequests": 3,
+        "stream": true
+      }
+    },
+    {
+      "timestamp": 1789546054,
+      "provider": "zhipu",
+      "model": "glm-5.3",
+      "endpoint": "https://open.bigmodel.cn/api/v1",
+      "protocol": "responses",
+      "test": "summary_baseline",
+      "details": {
+        "ok": false,
+        "elapsedMs": 120004,
+        "error": "timeout"
+      }
+    },
+    {
+      "timestamp": 1789546054,
+      "provider": "kimi",
+      "model": "kimi-k3",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "protocol": "responses",
+      "test": "summary_fixture",
+      "details": {
+        "historyBytes": 129841,
+        "historyItems": 97,
+        "historySha256": "1f6b90d8734dba48d30d754399b9be01de4a231fdeec4241f0263363454ab303",
+        "checkpoints": 6,
+        "promptSource": "openai/codex rust-v0.149.0",
+        "promptSha256": "ab0c334d4faca17e3afbb9b16967c1b2fdcc7242a9a0880af57949fa236d6d07",
+        "remoteCompaction": false,
+        "maxRequests": 3,
+        "stream": true
+      }
+    },
+    {
+      "timestamp": 1789546078,
+      "provider": "kimi",
+      "model": "kimi-k3",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "protocol": "responses",
+      "test": "summary_baseline",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 24129,
+        "requestBytes": 130365,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "input_tokens": 24168,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 267,
+          "output_tokens_details": {
+            "reasoning_tokens": 180
+          },
+          "total_tokens": 24435
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["reasoning", "message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 1065,
+        "outputSha256": "953bac6f6bffd765f929733a1884317651ad9fa82addaa734207b3b725b19d2d",
+        "streamCheck": {
+          "events": 264,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789546078,
+      "provider": "kimi",
+      "model": "kimi-k3",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "protocol": "responses",
+      "test": "summary_baseline_recall",
+      "details": {
+        "ok": true,
+        "check": {
+          "passed": 6,
+          "total": 6,
+          "fields": {
+            "launch_code": true,
+            "rollback_code": true,
+            "owner_code": true,
+            "region_code": true,
+            "audit_code": true,
+            "release_code": true
+          },
+          "nullFields": [],
+          "missingFields": [],
+          "validJson": true,
+          "complete": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789546123,
+      "provider": "kimi",
+      "model": "kimi-k3",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "protocol": "responses",
+      "test": "summary_generate",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 44558,
+        "requestBytes": 130600,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "input_tokens": 24213,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 24064
+          },
+          "output_tokens": 1307,
+          "output_tokens_details": {
+            "reasoning_tokens": 746
+          },
+          "total_tokens": 25520
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["reasoning", "message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 5270,
+        "outputSha256": "f278df72529a809383f78aefa3526bf9fc2d9b2d786e4b11de34820199857411",
+        "streamCheck": {
+          "events": 1304,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789546123,
+      "provider": "kimi",
+      "model": "kimi-k3",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "protocol": "responses",
+      "test": "summary_text_valid",
+      "details": {
+        "ok": true,
+        "check": {
+          "nonempty": true,
+          "completed": true,
+          "textBytes": 2154,
+          "textSha256": "d31e358819f0976f66768d1783d6a47f2a627f1a90b355c850eeb5f5fb9017a9"
+        }
+      }
+    },
+    {
+      "timestamp": 1789546132,
+      "provider": "kimi",
+      "model": "kimi-k3",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "protocol": "responses",
+      "test": "summary_resume",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 9439,
+        "requestBytes": 3148,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "input_tokens": 803,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 189,
+          "output_tokens_details": {
+            "reasoning_tokens": 102
+          },
+          "total_tokens": 992
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["reasoning", "message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 790,
+        "outputSha256": "ad8487314144f5cc84be8710c543a74d20ccc2802f8a65e009d6297e769bfbf8",
+        "streamCheck": {
+          "events": 186,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789546132,
+      "provider": "kimi",
+      "model": "kimi-k3",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "protocol": "responses",
+      "test": "summary_chain_result",
+      "details": {
+        "ok": true,
+        "check": {
+          "baselinePassed": true,
+          "recall": {
+            "passed": 6,
+            "total": 6,
+            "fields": {
+              "launch_code": true,
+              "rollback_code": true,
+              "owner_code": true,
+              "region_code": true,
+              "audit_code": true,
+              "release_code": true
+            },
+            "nullFields": [],
+            "missingFields": [],
+            "validJson": true,
+            "complete": true
+          },
+          "inputTokensBefore": 24168,
+          "inputTokensAfter": 803,
+          "inputTokenReduction": 0.9667742469381,
+          "replayedOriginalHistory": false,
+          "usedPreviousResponseId": false,
+          "usedRemoteEndpoint": false,
+          "usedCompactionTrigger": false,
+          "clientHistoryReplacementSimulated": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789546132,
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "endpoint": "https://api.deepseek.com",
+      "protocol": "responses",
+      "test": "summary_fixture",
+      "details": {
+        "historyBytes": 129841,
+        "historyItems": 97,
+        "historySha256": "6e4436b396a23f7550a443b162d36ca41b420049f732bbe1739211854e6e2a14",
+        "checkpoints": 6,
+        "promptSource": "openai/codex rust-v0.149.0",
+        "promptSha256": "ab0c334d4faca17e3afbb9b16967c1b2fdcc7242a9a0880af57949fa236d6d07",
+        "remoteCompaction": false,
+        "maxRequests": 3,
+        "stream": true
+      }
+    },
+    {
+      "timestamp": 1789546135,
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "endpoint": "https://api.deepseek.com",
+      "protocol": "responses",
+      "test": "summary_baseline",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 3131,
+        "requestBytes": 130375,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "input_tokens": 22762,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 264,
+          "output_tokens_details": {
+            "reasoning_tokens": 187
+          },
+          "total_tokens": 23026
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["reasoning", "message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 1228,
+        "outputSha256": "cd0caced7047b2c84be5675064a10bcddada3fdeb8e2992ba3b620f372441526",
+        "streamCheck": {
+          "events": 276,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789546135,
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "endpoint": "https://api.deepseek.com",
+      "protocol": "responses",
+      "test": "summary_baseline_recall",
+      "details": {
+        "ok": true,
+        "check": {
+          "passed": 6,
+          "total": 6,
+          "fields": {
+            "launch_code": true,
+            "rollback_code": true,
+            "owner_code": true,
+            "region_code": true,
+            "audit_code": true,
+            "release_code": true
+          },
+          "nullFields": [],
+          "missingFields": [],
+          "validJson": true,
+          "complete": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789546140,
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "endpoint": "https://api.deepseek.com",
+      "protocol": "responses",
+      "test": "summary_generate",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 5168,
+        "requestBytes": 130610,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "input_tokens": 22807,
+          "input_tokens_details": {
+            "cached_tokens": 22656
+          },
+          "output_tokens": 760,
+          "output_tokens_details": {
+            "reasoning_tokens": 259
+          },
+          "total_tokens": 23567
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["reasoning", "message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 3436,
+        "outputSha256": "4c16606041f0b018af14e3885bbf081c29804e2b73aa0294df37ca93c4cdb96f",
+        "streamCheck": {
+          "events": 772,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789546140,
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "endpoint": "https://api.deepseek.com",
+      "protocol": "responses",
+      "test": "summary_text_valid",
+      "details": {
+        "ok": true,
+        "check": {
+          "nonempty": true,
+          "completed": true,
+          "textBytes": 1991,
+          "textSha256": "13aaac4ae79109da94542833288399ce3cfef9d28d0d7175971bb00608b6d54b"
+        }
+      }
+    },
+    {
+      "timestamp": 1789546142,
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "endpoint": "https://api.deepseek.com",
+      "protocol": "responses",
+      "test": "summary_resume",
+      "details": {
+        "ok": true,
+        "httpStatus": 200,
+        "path": "responses",
+        "elapsedMs": 1762,
+        "requestBytes": 2992,
+        "maxOutputTokens": 2048,
+        "usage": {
+          "input_tokens": 684,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 183,
+          "output_tokens_details": {
+            "reasoning_tokens": 106
+          },
+          "total_tokens": 867
+        },
+        "object": "response",
+        "responseStatus": "completed",
+        "incompleteDetails": null,
+        "errorCode": null,
+        "errorMessage": "",
+        "outputTypes": ["reasoning", "message"],
+        "encryptedCompactionItems": 0,
+        "outputBytes": 939,
+        "outputSha256": "1ca137572ef1d59ee8a8daa5b72cc992b89a8095aa253a9950e6a7c70c8eb004",
+        "streamCheck": {
+          "events": 195,
+          "deltaMatchesFinal": true
+        }
+      }
+    },
+    {
+      "timestamp": 1789546142,
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "endpoint": "https://api.deepseek.com",
+      "protocol": "responses",
+      "test": "summary_chain_result",
+      "details": {
+        "ok": true,
+        "check": {
+          "baselinePassed": true,
+          "recall": {
+            "passed": 6,
+            "total": 6,
+            "fields": {
+              "launch_code": true,
+              "rollback_code": true,
+              "owner_code": true,
+              "region_code": true,
+              "audit_code": true,
+              "release_code": true
+            },
+            "nullFields": [],
+            "missingFields": [],
+            "validJson": true,
+            "complete": true
+          },
+          "inputTokensBefore": 22762,
+          "inputTokensAfter": 684,
+          "inputTokenReduction": 0.9699499165275459,
+          "replayedOriginalHistory": false,
+          "usedPreviousResponseId": false,
+          "usedRemoteEndpoint": false,
+          "usedCompactionTrigger": false,
+          "clientHistoryReplacementSimulated": true
+        }
+      }
+    }
+  ]
+}

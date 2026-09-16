@@ -1,0 +1,52 @@
+---
+import '../styles/site.css';
+import product from '../../../../packages/product-info/product.json';
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Codex Switch — 让 Codex，连接你的模型。',
+  description = '为 Codex App 连接国内模型与coding plan。选服务、填密钥，一键打开。开启前备份，关闭后恢复。',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head
+    ><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><title>
+      {title}
+    </title><meta name="description" content={description} /><meta
+      name="theme-color"
+      content="#fafaff"
+    /><meta property="og:title" content={title} /><meta
+      property="og:description"
+      content={description}
+    /><meta property="og:type" content="website" /><link
+      rel="icon"
+      type="image/png"
+      href="/mark.png"
+    /></head
+  ><body
+    ><header class="site-header">
+      <a class="brand" href="/" aria-label="Codex Switch 首页"
+        ><img src="/mark.png" alt="" width="30" height="30" />Codex Switch</a
+      ><nav aria-label="主导航">
+        <a href="/docs/overview/">文档</a><a href="/docs/providers/">支持的服务</a><a
+          class="nav-github"
+          href={product.repository}>GitHub ↗</a
+        ><a class="button small" href="/download/">获取应用 <span>↗</span></a>
+      </nav>
+    </header><slot /><footer class="site-footer">
+      <div>
+        <a class="brand" href="/"
+          ><img src="/mark.png" alt="" width="25" height="25" />Codex Switch</a
+        ><p>为你的 Codex，多一个选择。</p><small>社区独立开源项目，与 OpenAI 无隶属关系。</small>
+      </div><div class="footer-links">
+        <a href="/docs/quickstart/">快速开始</a><a href="/docs/changelog/">更新日志</a><a
+          href="/docs/privacy/">隐私说明</a
+        ><a href={`${product.repository}/issues`}>反馈问题 ↗</a>
+      </div><span class="footer-copy">© 2026 Codex Switch · MIT</span>
+    </footer></body
+  >
+</html>

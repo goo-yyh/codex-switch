@@ -1,0 +1,20 @@
+{
+  "package": "@lobehub/icons-static-svg",
+  "version": "1.95.0",
+  "tarball": "https://registry.npmjs.org/@lobehub/icons-static-svg/-/icons-static-svg-1.95.0.tgz",
+  "integrity": "sha512-VSObF66DUVQe0EK3xbIoFcw+Fcia1+bLVFkMsQbmz0zCceMxPmoLImS5VM5SM7zL+/NarZ11/ySNfkekcomIkQ==",
+  "mapping": {
+    "qianwen": "qwen",
+    "minimax": "minimax",
+    "zhipu": "zhipu",
+    "kimi": "kimi",
+    "deepseek": "deepseek"
+  },
+  "files": {
+    "kimi.svg": "74a7292aeb0220445d14c5d397d75760e2e8c6ed6a9e5fe4f3023471bf62a9ff",
+    "deepseek.svg": "deba5f98a5c1796e20fcac3149bcd7eb8a32f0bdd04d048819400b1f28bd1439",
+    "minimax.svg": "7f7187fa6d9b341ac5f22f6c5a970523afb439dc45566d64eb4f4b9b604d6b01",
+    "qwen.svg": "77f5768c66d08ce1d3d14e73373975c1bc0454be88c81523ddd0ffd7e2974029",
+    "zhipu.svg": "8174e65ff71647d5c705c920c953a82bd723d9e3e42887bdd4ffc9dfe51207a0"
+  }
+}

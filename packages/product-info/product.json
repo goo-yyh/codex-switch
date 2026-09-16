@@ -1,0 +1,26 @@
+{
+  "version": "0.1.0",
+  "channel": "开发预览版",
+  "repository": "https://github.com/goo-yyh/codex-switch",
+  "sourceDocs": "https://github.com/goo-yyh/codex-switch/blob/main/apps/website/src/content/docs/docs/quickstart.md",
+  "downloads": [
+    {
+      "platform": "macOS",
+      "symbol": "⌘",
+      "architecture": "Apple Silicon / Intel",
+      "note": "需要分别构建对应架构。",
+      "guide": "/docs/install/#从源码构建",
+      "url": "",
+      "sha256": ""
+    },
+    {
+      "platform": "Windows",
+      "symbol": "⊞",
+      "architecture": "Windows 10 / 11",
+      "note": "原生构建与实机验证待完成。",
+      "guide": "/docs/install/#windows",
+      "url": "",
+      "sha256": ""
+    }
+  ]
+}

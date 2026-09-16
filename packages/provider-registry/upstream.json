@@ -1,0 +1,17 @@
+{
+  "repository": "https://github.com/farion1231/cc-switch",
+  "commit": "06082e189d65e6d6dbadc35dacdac1ce6c79d89a",
+  "source": "src/config/codexProviderPresets.ts",
+  "sourceSha256": "aa5b8a6892f20aeded2e568128f78370487d89c7a26daecc1c8d062359dfd5b6",
+  "selectedPresets": [
+    "千问AI平台",
+    "千问AI平台 Token Plan",
+    "MiniMax",
+    "Zhipu GLM",
+    "Kimi",
+    "Kimi For Coding",
+    "DeepSeek"
+  ],
+  "note": "Selected upstream endpoint, protocol, model and capability fields. Local provider IDs, key/docs links and legacy candidate model IDs retained. Input modalities are omitted where upstream did not declare them. No provider verification is inherited.",
+  "registrySha256": "1f271d7ea307e041adfe40b48c8069ace2326a385af3a9568f3c66fd5fbcd083"
+}

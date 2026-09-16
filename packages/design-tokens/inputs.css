@@ -1,0 +1,20 @@
+/* Keep focus feedback on the control's own border, without an outer ring. */
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline: none;
+  outline-offset: 0;
+  box-shadow: none;
+  border-color: var(--primary-line, var(--accent));
+}

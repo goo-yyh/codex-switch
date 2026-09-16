@@ -1,0 +1,127 @@
+{
+  "repository": "https://github.com/farion1231/cc-switch",
+  "commit": "06082e189d65e6d6dbadc35dacdac1ce6c79d89a",
+  "files": [
+    {
+      "path": "proxy/providers/transform_codex_chat.rs",
+      "sha256": "b6f26645059887fda09d4190546117f4908b06cfb630447aa065e67ebf9b5f16",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/providers/streaming_codex_chat.rs",
+      "sha256": "b32a4e41811db3df5f99e02de5569bcb1676fdd3ef857754deb53c3e456ddfb9",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/providers/codex_chat_history.rs",
+      "sha256": "535bf8654e96b25fa4d16756636ad43aa1186a7e414763b1de3006314b13c06f",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/providers/codex_chat_common.rs",
+      "sha256": "41412157670fedab83a01461a9fc43acfb9a89fbfd1f9ef786929fa3343da0c8",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/providers/codex_responses_sse.rs",
+      "sha256": "2e4f27b66b51c60244e7a95270bae1ef884433d04bab5684f98fc505302d1057",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/providers/transform_codex_chat_moonshot_schema.rs",
+      "sha256": "b59f5ca1a6ffcdad0dc4567628eab6d336752480ed14a3a8809e0e4fda043bec",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/json_canonical.rs",
+      "sha256": "23715ee65bd5a5bedb55c330247a3b1811f612083e0bd6deaa89bd41109c5772",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/sse.rs",
+      "sha256": "d74fa5e207fa4de5f47f076b1df9a78e96522e095a2cd8c087d6eebd82217634",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/tool_media.rs",
+      "sha256": "496ce69210d50a689baff3b88daeb45cd015bd35b8a4e24e97a324c4a0389706",
+      "kind": "verbatim"
+    },
+    {
+      "path": "model_capabilities.rs",
+      "sha256": "3ed8a510b66a9714419247e1b226a41a061fab101d756d13783faacba4e95e3f",
+      "kind": "verbatim"
+    },
+    {
+      "path": "resources/gpt5_5_template.json",
+      "sha256": "711db8a980e873152498cd601e31166348c685e37c305d0855dbb2e9f6867a52",
+      "kind": "verbatim"
+    },
+    {
+      "path": "resources/codex_native_responses_template.json",
+      "sha256": "b32f75609319745c339f1acd6e63c44b3abf9801256cea57abdb9b2c60c4d586",
+      "kind": "verbatim"
+    },
+    {
+      "path": "resources/codex_deepseek_catalog_template.json",
+      "sha256": "c512b71355095a440aa13f2f61887f4d6e2cbadf46c9969ffa769b6145e3298f",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/circuit_breaker.rs",
+      "sha256": "523b28e58012c677be614153c7b2c57c97e3c936d72761ed8ec1edb89ef3b0f0",
+      "kind": "verbatim"
+    },
+    {
+      "path": "proxy/log_codes.rs",
+      "sha256": "7c328e7fd84c5338ee641629dd4e83bb42a7a24a9a3af53bba5fed300def1284",
+      "kind": "verbatim"
+    },
+    {
+      "path": "provider.rs",
+      "kind": "excerpt-with-imports",
+      "sha256": "7e580f9b47b324c2f1d66ae69e4d07f639fe108eb755354ea3199f6da61abfe0"
+    },
+    {
+      "path": "proxy/providers/transform.rs",
+      "kind": "excerpt-with-imports",
+      "sha256": "05c5b5d48089229f818504b562abee94f4b601efca7db67af0660c8e0a2178db"
+    }
+  ],
+  "excerpts": [
+    "provider.rs:CodexChatReasoningConfig",
+    "proxy/providers/transform.rs:is_openai_o_series,supports_reasoning_effort,inject_openai_stream_include_usage"
+  ],
+  "extractedCatalog": {
+    "source": "src-tauri/src/codex_config.rs",
+    "symbols": [
+      "CodexCatalogToolProfile",
+      "codex_catalog_input_modalities",
+      "CODEX_REASONING_LEVEL_DESCRIPTIONS",
+      "codex_reasoning_level_description",
+      "codex_canonical_efforts",
+      "codex_supported_reasoning_levels",
+      "apply_codex_reasoning_level_override",
+      "codex_catalog_model_entry",
+      "CodexCatalogModelSpec",
+      "codex_vendor_catalog_model_entry",
+      "fill_template_fields_from_static",
+      "CODEX_CATALOG_PARSER_REQUIRED_FIELDS"
+    ],
+    "sourceSha256": "87f27c8ae2ea30faef0729e090446c5439d7ee60050431529a8a6dd526d79de2"
+  },
+  "fragments": [
+    {
+      "path": "catalog.rs",
+      "start": "#[derive(Debug, Clone, Copy, PartialEq, Eq)]",
+      "end": "/// Thin adapter",
+      "sha256": "db83720b113c0b4212722b6ad4fa7087ad22ce2c0eeaae88784f8b20d2b93b49"
+    },
+    {
+      "path": "catalog.rs",
+      "start": "fn codex_vendor_catalog_model_entry(",
+      "end": "fn load_codex_model_template_static()",
+      "sha256": "35ff729ec665de41e8fbbf50fd1bbf8e5436becb45d456c37db10d2cd1f3c10c"
+    }
+  ]
+}

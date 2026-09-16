@@ -1,0 +1,31 @@
+[package]
+name = "codex-switch-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+cc-switch-codex = { path = "../cc-switch-codex" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml_edit = "0.22"
+thiserror = "2"
+uuid = { version = "1", features = ["v4", "serde"] }
+sha2 = "0.10"
+tempfile = "3"
+fs2 = "0.4"
+url = "2"
+rusqlite = { version = "0.32", features = ["bundled"] }
+tokio = { version = "1", features = ["full"] }
+tokio-util = "0.7"
+axum = "0.8"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream"] }
+futures-util = "0.3"
+async-stream = "0.3"
+bytes = "1"
+dotenvy = "0.15"
+subtle = "2"
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"

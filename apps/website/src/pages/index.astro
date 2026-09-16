@@ -1,0 +1,170 @@
+---
+import { providerLogos } from '../../../../packages/provider-registry/logos';
+import Site from '../layouts/Site.astro';
+import presets from '../../../../packages/provider-registry/providers.json';
+import product from '../../../../packages/product-info/product.json';
+---
+
+<Site>
+  <main>
+    <section class="hero section-wrap">
+      <div class="hero-copy">
+        <a class="release-tag" href="/docs/changelog/"
+          ><span class="dot"></span>{product.version} {product.channel} <span>↗</span></a
+        ><h1>让 Codex，<br />连接<span class="accent">你的模型。</span></h1><p
+          class="hero-description"
+        >
+          喜欢的模型，熟悉的工作方式。<br />为 Codex App 连接国内模型与中转站，<br
+            class="desktop-break"
+          />从此少折腾配置，多专注创作。
+        </p><div class="hero-actions">
+          <a class="button" href="/download/">获取 Codex Switch <span>↗</span></a><a
+            class="text-link"
+            href="/docs/quickstart/">看看如何使用 <span>→</span></a
+          >
+        </div><p class="hero-note">macOS · Windows <span> / </span>本地运行 · 开源免费</p>
+      </div>
+      <div class="hero-visual" aria-label="Codex Switch 界面示意">
+        <div class="visual-grid"></div><div class="demo-window">
+          <div class="window-bar">
+            <span class="traffic"><i></i><i></i><i></i></span><span>Codex Switch</span><span
+              class="window-settings">☷</span
+            >
+          </div><div class="demo-title"><h2>我的配置</h2><span>＋ 新增配置</span></div>
+          <div class="demo-quick-list">
+            {
+              [
+                {
+                  id: 'deepseek',
+                  name: '工作账号',
+                  model: '2 个模型 · deepseek-flash、deepseek-v4-pro',
+                },
+                { id: 'kimi', name: 'Kimi', model: '2 个模型 · kimi-k2.7-code、kimi-k3' },
+                { id: 'qianwen', name: '千问', model: '1 个模型 · qwen-plus' },
+              ].map((p, i) => (
+                <div class:list={['demo-quick-row', { selected: i < 2 }]}>
+                  <>
+                    <span class="demo-choice">{i < 2 ? '✓' : ''}</span>
+                    <img
+                      src={providerLogos[p.id]}
+                      data-provider={p.id}
+                      alt=""
+                      width="24"
+                      height="24"
+                    />
+                    <div>
+                      <>
+                        <b>{p.name}</b>
+                        <small>{p.model}</small>
+                      </>
+                    </div>
+                    <span class="demo-edit">✎</span>
+                  </>
+                </div>
+              ))
+            }
+          </div><div class="demo-quick-control">
+            <span id="demo-status">已开启</span><button
+              id="demo-toggle"
+              class="demo-toggle"
+              role="switch"
+              aria-checked="true"
+              aria-label="体验开关效果"><span></span></button
+            >
+          </div>
+          <div class="demo-profile-actions">
+            <div class="demo-open"><span id="demo-action">配置已开启</span></div><div
+              class="demo-open secondary-demo"
+            >
+              ↗ 打开 Codex
+            </div>
+          </div><div class="demo-secure">
+            <span id="demo-note">开启前自动备份，关闭后恢复原配置。</span>
+          </div>
+        </div><div class="floating-note">
+          <span>↶</span><div><b>随时回到原来的配置</b><small>试试上面的开关</small></div>
+        </div>
+      </div>
+    </section>
+    <section class="providers-strip section-wrap" aria-label="支持的模型服务">
+      <p>内置五家<br />国内服务预设。</p><div>
+        {
+          presets.map((p) => (
+            <a href="/docs/providers/">
+              <img src={providerLogos[p.id]} data-provider={p.id} alt="" width="22" height="22" />
+              {p.name}
+            </a>
+          ))
+        }<a href="/docs/relay/" class="custom-provider">＋ coding plan</a>
+      </div>
+    </section>
+    <section class="steps-section section-wrap" id="how">
+      <div class="section-kicker">FROM SETUP TO FLOW</div><div class="section-title">
+        <h2>三步，回到创作。</h2><p>
+          你只需要服务商的 API Key。<br />配置、备份和连接，交给 Codex Switch。
+        </p>
+      </div><div class="steps-grid">
+        <article>
+          <span class="step-number">01</span><div class="step-art chips">
+            <span>DeepSeek <b>✓</b></span><span>Kimi</span><span>千问</span>
+          </div><h3>新增配置</h3><p>内置五家国内模型服务。已有中转站？填入 API 地址即可。</p>
+        </article><article>
+          <span class="step-number">02</span><div class="step-art key-art">
+            <span>API Key</span><strong>••••••••••••••••</strong><i>⌁</i>
+          </div><h3>粘贴密钥</h3><p>
+            为配置命名，填写一个 Key，勾选多个模型。验证后保存，密钥留在系统凭据库。
+          </p>
+        </article><article>
+          <span class="step-number">03</span><div class="step-art launch-art">
+            ↗ <b>配置到 Codex</b>
+          </div><h3>打开 Codex</h3><p>
+            首页可同时勾选多个配置。应用后打开 Codex，以「配置名称-模型」选择模型。
+          </p>
+        </article>
+      </div>
+    </section>
+    <section class="principles section-wrap">
+      <div class="principle-main">
+        <p class="section-kicker">A LITTLE UTILITY. A LOT LESS FRICTION.</p><h2>
+          一枚开关，<br />进退自如。
+        </h2><p>
+          开启，使用你选择的连接。<br />关闭，恢复开启前的配置。<br
+          />原先没有配置文件，也会回到原先的状态。
+        </p><a class="text-link" href="/docs/switch/">了解备份与恢复 <span>→</span></a>
+      </div><div class="principle-cards">
+        <article>
+          <span>01 / LOCAL FIRST</span><h3>你的密钥，你的设备。</h3><p>
+            密钥存入系统凭据库，请求从本机发往所选服务。没有 Codex Switch 云端中转。
+          </p>
+        </article><article>
+          <span>02 / FOCUSED BY DESIGN</span><h3>只为 Codex App。</h3><p>
+            一个简明的配置页面。多选启用、编辑模型、打开 Codex，都在这里。
+          </p>
+        </article><article>
+          <span>03 / OPEN BY DEFAULT</span><h3>开源，也说明边界。</h3><p>
+            支持原生 Responses 和 Chat 接口转换。图片、远程压缩等能力，请先查看兼容说明。
+          </p><a href="/docs/compatibility/">查看兼容范围 ↗</a>
+        </article>
+      </div>
+    </section>
+    <section class="final-cta section-wrap">
+      <div>
+        <p class="section-kicker">READY WHEN YOU ARE</p><h2>把时间，留给想做的事。</h2><p>
+          从一个连接开始。
+        </p>
+      </div><a class="button" href="/download/">获取 Codex Switch <span>↗</span></a>
+    </section>
+  </main>
+  <script>
+    const toggle = document.querySelector<HTMLButtonElement>('#demo-toggle');
+    toggle?.addEventListener('click', () => {
+      const on = toggle.getAttribute('aria-checked') !== 'true';
+      toggle.setAttribute('aria-checked', String(on));
+      document.querySelector('#demo-status')!.textContent = on ? '已开启' : '已关闭';
+      document.querySelector('#demo-action')!.textContent = on ? '配置已开启' : '配置到 Codex';
+      document.querySelector('#demo-note')!.textContent = on
+        ? '开启前保存原配置，关闭后恢复。'
+        : '已恢复开启前的配置。';
+    });
+  </script>
+</Site>

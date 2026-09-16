@@ -1,0 +1,435 @@
+[
+  {
+    "id": "qianwen",
+    "name": "千问",
+    "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3.8-max",
+    "protocol": "responses",
+    "keyUrl": "https://bailian.console.aliyun.com/",
+    "docsUrl": "https://help.aliyun.com/zh/model-studio/compatibility-of-openai-with-dashscope",
+    "envKey": "qianwen_key",
+    "contextWindow": 983616,
+    "options": {
+      "fullUrl": false,
+      "endpointCandidates": [
+        "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      ],
+      "modelOverrides": {
+        "qwen3.8-max": {
+          "contextWindow": 983616,
+          "reasoningLevels": [
+            "low",
+            "medium",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "xhigh",
+          "parallelToolCalls": false
+        }
+      }
+    },
+    "variants": [
+      {
+        "name": "千问",
+        "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "model": "qwen3.8-max",
+        "protocol": "responses",
+        "contextWindow": 983616,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://dashscope.aliyuncs.com/compatible-mode/v1"
+          ],
+          "modelOverrides": {
+            "qwen3.8-max": {
+              "contextWindow": 983616,
+              "reasoningLevels": [
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "parallelToolCalls": false
+            }
+          }
+        }
+      },
+      {
+        "name": "千问 Token Plan",
+        "endpoint": "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+        "model": "qwen3.8-max",
+        "protocol": "responses",
+        "contextWindow": 983616,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
+          ],
+          "modelOverrides": {
+            "qwen3.8-max": {
+              "contextWindow": 983616,
+              "reasoningLevels": [
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "parallelToolCalls": false
+            },
+            "qwen3.8-flash": {
+              "contextWindow": 983616,
+              "reasoningLevels": [
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "parallelToolCalls": false
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "minimax",
+    "name": "MiniMax",
+    "endpoint": "https://api.minimaxi.com/v1",
+    "model": "MiniMax-M3",
+    "protocol": "responses",
+    "keyUrl": "https://platform.minimaxi.com/",
+    "docsUrl": "https://platform.minimaxi.com/docs/api-reference/text-chat-openai",
+    "envKey": "minimax_key",
+    "contextWindow": 1000000,
+    "options": {
+      "fullUrl": false,
+      "endpointCandidates": [
+        "https://api.minimaxi.com/v1"
+      ],
+      "modelOverrides": {
+        "MiniMax-M3": {
+          "contextWindow": 1000000,
+          "reasoningLevels": [
+            "none",
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "parallelToolCalls": true,
+          "inputModalities": [
+            "text",
+            "image"
+          ],
+          "baseInstructions": "You are Codex, a coding agent based on MiniMax-M3. You and the user share the same workspace and collaborate to achieve the user's goals."
+        }
+      }
+    },
+    "variants": [
+      {
+        "name": "MiniMax",
+        "endpoint": "https://api.minimaxi.com/v1",
+        "model": "MiniMax-M3",
+        "protocol": "responses",
+        "contextWindow": 1000000,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://api.minimaxi.com/v1"
+          ],
+          "modelOverrides": {
+            "MiniMax-M3": {
+              "contextWindow": 1000000,
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true,
+              "inputModalities": [
+                "text",
+                "image"
+              ],
+              "baseInstructions": "You are Codex, a coding agent based on MiniMax-M3. You and the user share the same workspace and collaborate to achieve the user's goals."
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "zhipu",
+    "name": "智谱 GLM",
+    "endpoint": "https://open.bigmodel.cn/api/v1",
+    "model": "glm-5.3",
+    "protocol": "responses",
+    "keyUrl": "https://open.bigmodel.cn/",
+    "docsUrl": "https://docs.bigmodel.cn/cn/guide/start/latest-glm-4.7",
+    "envKey": "zhipu_key",
+    "contextWindow": 1048576,
+    "options": {
+      "fullUrl": false,
+      "endpointCandidates": [
+        "https://open.bigmodel.cn/api/v1"
+      ],
+      "modelOverrides": {
+        "glm-5.3": {
+          "contextWindow": 1048576,
+          "reasoningLevels": [
+            "low",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "max",
+          "parallelToolCalls": true,
+          "inputModalities": [
+            "text"
+          ]
+        },
+        "glm-5-turbo": {
+          "contextWindow": 204800,
+          "reasoningLevels": [
+            "max"
+          ],
+          "defaultReasoningLevel": "max",
+          "parallelToolCalls": true,
+          "inputModalities": [
+            "text"
+          ]
+        }
+      }
+    },
+    "variants": [
+      {
+        "name": "智谱 GLM",
+        "endpoint": "https://open.bigmodel.cn/api/v1",
+        "model": "glm-5.3",
+        "protocol": "responses",
+        "contextWindow": 1048576,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://open.bigmodel.cn/api/v1"
+          ],
+          "modelOverrides": {
+            "glm-5.3": {
+              "contextWindow": 1048576,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "max",
+              "parallelToolCalls": true,
+              "inputModalities": [
+                "text"
+              ]
+            },
+            "glm-5-turbo": {
+              "contextWindow": 204800,
+              "reasoningLevels": [
+                "max"
+              ],
+              "defaultReasoningLevel": "max",
+              "parallelToolCalls": true,
+              "inputModalities": [
+                "text"
+              ]
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "kimi",
+    "name": "Kimi",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3",
+    "protocol": "responses",
+    "keyUrl": "https://platform.moonshot.cn/console/api-keys",
+    "docsUrl": "https://platform.kimi.com/docs/models",
+    "envKey": "kimi_key",
+    "contextWindow": 1048576,
+    "options": {
+      "fullUrl": false,
+      "endpointCandidates": [
+        "https://api.moonshot.cn/v1"
+      ],
+      "modelOverrides": {
+        "kimi-k3": {
+          "contextWindow": 1048576,
+          "reasoningLevels": [
+            "low",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "high",
+          "parallelToolCalls": true
+        },
+        "kimi-k2.7-code": {
+          "contextWindow": 262144,
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "parallelToolCalls": true
+        }
+      }
+    },
+    "variants": [
+      {
+        "name": "Kimi",
+        "endpoint": "https://api.moonshot.cn/v1",
+        "model": "kimi-k3",
+        "protocol": "responses",
+        "contextWindow": 1048576,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://api.moonshot.cn/v1"
+          ],
+          "modelOverrides": {
+            "kimi-k3": {
+              "contextWindow": 1048576,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true
+            },
+            "kimi-k2.7-code": {
+              "contextWindow": 262144,
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true
+            }
+          }
+        }
+      },
+      {
+        "name": "Kimi Coding 套餐",
+        "endpoint": "https://api.kimi.com/coding/v1",
+        "model": "kimi-for-coding",
+        "protocol": "responses",
+        "contextWindow": 262144,
+        "options": {
+          "endpointCandidates": [
+            "https://api.kimi.com/coding/v1"
+          ],
+          "modelOverrides": {
+            "kimi-for-coding": {
+              "contextWindow": 262144,
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true
+            },
+            "kimi-for-coding-highspeed": {
+              "contextWindow": 262144,
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true
+            },
+            "k3": {
+              "contextWindow": 1048576,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true
+            },
+            "k3-256k": {
+              "contextWindow": 262144,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "deepseek",
+    "name": "DeepSeek",
+    "endpoint": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "protocol": "responses",
+    "keyUrl": "https://platform.deepseek.com/api_keys",
+    "docsUrl": "https://api-docs.deepseek.com/",
+    "envKey": "deepseek_key",
+    "contextWindow": 1048576,
+    "options": {
+      "fullUrl": false,
+      "endpointCandidates": [
+        "https://api.deepseek.com"
+      ],
+      "modelOverrides": {
+        "deepseek-v4-flash": {
+          "contextWindow": 1048576,
+          "reasoningLevels": [
+            "low",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "high"
+        },
+        "deepseek-v4-pro": {
+          "contextWindow": 1048576,
+          "reasoningLevels": [
+            "low",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "high"
+        }
+      }
+    },
+    "variants": [
+      {
+        "name": "DeepSeek",
+        "endpoint": "https://api.deepseek.com",
+        "model": "deepseek-v4-flash",
+        "protocol": "responses",
+        "contextWindow": 1048576,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://api.deepseek.com"
+          ],
+          "modelOverrides": {
+            "deepseek-v4-flash": {
+              "contextWindow": 1048576,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "high"
+            },
+            "deepseek-v4-pro": {
+              "contextWindow": 1048576,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "high"
+            }
+          }
+        }
+      }
+    ]
+  }
+]

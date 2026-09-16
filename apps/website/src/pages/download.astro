@@ -1,0 +1,64 @@
+---
+import Site from '../layouts/Site.astro';
+import product from '../../../../packages/product-info/product.json';
+const hasDownloads = product.downloads.some((p) => p.url && p.sha256);
+---
+
+<Site title="下载与构建 — Codex Switch"
+  ><main class="download-page section-wrap">
+    <a class="text-link" href="/">← 回到首页</a><p class="section-kicker">GET CODEX SWITCH</p><h1>
+      你的下一次连接，<br />从这里开始。
+    </h1><p class="download-intro">
+      {product.version}
+      {product.channel} · {
+        hasDownloads ? '提供安装包与源代码构建。' : '当前提供源代码构建，公开安装包尚未发布。'
+      }<br />首次使用前请阅读兼容范围。
+    </p><div class="download-grid">
+      {
+        product.downloads.map((platform) => (
+          <article>
+            <>
+              <span class="platform-symbol">{platform.symbol}</span>
+              <h2>{platform.platform}</h2>
+            </>
+            <p>
+              {platform.architecture}
+              <br />
+              {platform.note}
+            </p>
+            {platform.url && platform.sha256 ? (
+              <>
+                <span class="availability">
+                  {product.version} {product.channel}
+                </span>
+                <a class="button" href={platform.url}>
+                  下载安装包 ↗
+                </a>
+                <details>
+                  <summary>SHA-256 校验值</summary>
+                  <code style="overflow-wrap:anywhere">{platform.sha256}</code>
+                </details>
+              </>
+            ) : (
+              <>
+                <span class="availability">安装包待发布</span>
+                <a class="button" href={platform.guide}>
+                  查看构建步骤 ↗
+                </a>
+              </>
+            )}
+          </article>
+        ))
+      }
+    </div><aside class="download-note">
+      <h2>运行之前</h2><p>
+        请先安装官方 Codex App，并准备模型服务商的 API Key。Codex Switch 不提供额度或代充，API
+        请求费用由所选服务商收取。
+      </p><a href="/docs/compatibility/">查看兼容范围 →</a>
+    </aside><div class="download-bottom">
+      <a href={product.repository}>获取源代码 ↗</a><a href="/docs/changelog/">更新日志 →</a><a
+        href="/docs/development/">开发与测试 →</a
+      >
+    </div>
+  </main></Site
+>

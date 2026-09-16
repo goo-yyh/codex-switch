@@ -1,0 +1,6 @@
+{
+  "identifier": "default",
+  "description": "Only the local main window can use the desktop bridge.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

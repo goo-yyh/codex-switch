@@ -1,0 +1,10 @@
+node_modules
+target
+dist
+.astro
+pnpm-lock.yaml
+apps/desktop/src-tauri/gen
+
+# Preserve upstream bytes and registry source hashes.
+crates/cc-switch-codex
+packages/provider-registry/providers.json

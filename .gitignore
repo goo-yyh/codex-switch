@@ -1,0 +1,21 @@
+# Local credentials; only the empty example may be committed.
+.env
+.env.*
+!.env.example
+node_modules/
+target/
+dist/
+.astro/
+.DS_Store
+coverage/
+test-results/
+playwright-report/
+*.log
+reports/local/
+
+*.tsbuildinfo
+apps/desktop/src-tauri/gen/
+
+# Local browser verification artifacts
+.playwright-cli/
+output/playwright/

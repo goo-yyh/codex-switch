@@ -1,0 +1,56 @@
+@import '../../../../packages/design-tokens/tokens.css';
+@import '../../../../packages/design-tokens/inputs.css';
+:root {
+  --sl-color-accent-low: var(--accent-bg);
+  --sl-color-accent: var(--accent);
+  --sl-color-accent-high: var(--accent);
+  --sl-color-text-accent: var(--accent);
+  --sl-color-text-invert: var(--brand-ink);
+  --sl-color-bg: var(--panel);
+  --sl-color-bg-nav: var(--bg);
+  --sl-color-bg-sidebar: var(--bg);
+  --sl-color-bg-inline-code: var(--soft);
+  --sl-color-hairline-light: var(--line);
+  --sl-color-hairline: var(--line);
+  --sl-color-hairline-shade: var(--soft);
+  --sl-color-text: var(--ink);
+  --sl-font-system:
+    Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei',
+    sans-serif;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+::selection {
+  background: var(--selection);
+}
+:focus-visible:not(input):not(textarea) {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+.site-title {
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+.sidebar-content a[aria-current='page'] {
+  background: var(--brand-gradient);
+  color: var(--brand-ink);
+  border-radius: 6px;
+}
+.sl-link-button.primary {
+  background: var(--brand-gradient);
+  border-color: var(--brand);
+  color: var(--brand-ink);
+}
+.sl-link-button.primary:hover {
+  background: var(--brand-gradient-hover);
+}
+.sl-markdown-content {
+  line-height: 1.9;
+}
+.sl-markdown-content h2 {
+  letter-spacing: -0.025em;
+}
