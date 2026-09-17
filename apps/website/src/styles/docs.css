@@ -429,3 +429,30 @@ h1#_top {
     border-radius: 8px;
   }
 }
+
+@media (min-width: 50rem) and (max-width: 68rem) {
+  .docs-header {
+    gap: 1rem;
+    grid-template-columns: auto 1fr auto;
+  }
+  .docs-header-nav {
+    justify-content: center;
+    gap: 1rem;
+  }
+  .docs-header-desktop .social-icons {
+    display: none;
+  }
+}
+@media (max-width: 49.999rem) {
+  .docs-header-actions {
+    gap: 0.25rem;
+  }
+  .docs-header-actions .language-switch {
+    font-size: 0.75rem;
+  }
+}
+@media (max-width: 22.5rem) {
+  .docs-header-brand .site-title img {
+    display: none;
+  }
+}

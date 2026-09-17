@@ -1,6 +1,6 @@
 ---
-title: 常见问题
-description: Codex Switch 常见问题与使用说明。
+title: 连接失败与配置恢复常见问题
+description: 排查 Codex Switch 的 API 错误、模型列表未刷新、配置冲突、会话缓存失效和上下文压缩失败，找到对应处理步骤。
 ---
 
 ## 连接测试失败

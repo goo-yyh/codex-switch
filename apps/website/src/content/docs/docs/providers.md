@@ -1,6 +1,6 @@
 ---
-title: 国内模型
-description: Codex Switch 国内模型与使用说明。
+title: 千问、MiniMax、GLM、Kimi 与 DeepSeek
+description: 查看 Codex Switch 内置五家模型服务的默认模型和 API 地址，了解多模型配置、Coding Plan 套餐与密钥的区别。
 ---
 
 预设参考了 CC Switch 固定版本，候选模型由本项目维护，只作为新建配置的初始值；不覆盖已保存的用户地址、协议或模型，也不代表账号拥有对应权限。

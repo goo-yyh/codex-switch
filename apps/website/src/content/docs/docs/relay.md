@@ -1,6 +1,6 @@
 ---
-title: 套餐与自定义接口
-description: 说明 Coding Plan、Responses 与 Chat 选择、基础地址和完整 URL 的区别。
+title: Coding Plan 套餐与自定义 API
+description: 为 Codex App 连接 Coding Plan 或自定义 HTTPS 服务，正确选择 Responses 与 Chat Completions，填写基础地址或完整请求端点。
 ---
 
 内置厂商可在「服务套餐」中选择专用套餐。没有对应预设的服务，在新增配置时选择「coding plan」，手动填写名称、地址、接口格式、Key 与模型 ID。

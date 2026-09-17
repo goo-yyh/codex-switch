@@ -14,12 +14,19 @@
     "test:providers:compact": "cargo run -p codex-switch-core --bin provider-compact-check --",
     "test:providers:summary": "cargo run -p codex-switch-core --bin provider-compact-check -- --summary",
     "check:secrets": "python3 scripts/check_secrets.py",
+    "check:seo": "python3 scripts/check_site_seo.py",
     "check:links": "python3 scripts/check_site_links.py",
     "icons": "node scripts/generate-icons.mjs",
-    "check:upstream": "python3 scripts/check_cc_switch_upstream.py"
+    "check:upstream": "python3 scripts/check_cc_switch_upstream.py",
+    "build:website": "pnpm --filter @codex-switch/website build",
+    "preview:website": "node scripts/preview_website.mjs",
+    "check:deployment": "node --test scripts/test_website_deployment.mjs"
   },
   "devDependencies": {
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }

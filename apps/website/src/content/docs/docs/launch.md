@@ -1,6 +1,6 @@
 ---
-title: 打开与重启 Codex
-description: Codex Switch 打开与重启 Codex与使用说明。
+title: 打开与重启 Codex App
+description: 通过 Codex Switch 打开 Codex App，了解配置变更后如何刷新模型列表，以及托盘运行、正常重启与完全退出的区别。
 ---
 
 ## 一键打开

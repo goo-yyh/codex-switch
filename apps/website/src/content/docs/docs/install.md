@@ -1,6 +1,6 @@
 ---
-title: 安装与下载
-description: Codex Switch 安装与下载与使用说明。
+title: 安装与源码构建
+description: 了解 Codex Switch 的 macOS 与 Windows 构建依赖、安装步骤、更新和卸载方式，以及当前公开安装包的发布状态。
 ---
 
 当前版本提供源代码构建，公开安装包尚未发布。下载入口以[下载页](/download/)为准。

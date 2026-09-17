@@ -40,9 +40,17 @@ jobs:
       - name: Lint Rust
         run: cargo clippy --locked -p codex-switch-core --all-targets --no-deps -- -D warnings
       - name: Build desktop frontend and website
+        env:
+          # An isolated SEO fixture, not the production domain.
+          PUBLIC_SITE_URL: https://codex-switch.test
+          PUBLIC_SITE_INDEXABLE: 'false'
         run: pnpm build
       - name: Check website links
         run: pnpm check:links
+      - name: Check deployment routes and bilingual 404s
+        run: pnpm check:deployment
+      - name: Check bilingual website SEO
+        run: pnpm check:seo -- --require-site --expect-noindex
       - name: Scan source and artifacts for credentials
         run: python3 scripts/check_secrets.py --artifacts
       - uses: actions/upload-artifact@v4

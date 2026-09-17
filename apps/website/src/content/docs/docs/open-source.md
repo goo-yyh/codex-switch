@@ -1,6 +1,6 @@
 ---
-title: 开源致谢
-description: CC Switch 代码来源、复用范围、固定提交和许可证。
+title: CC Switch 开源致谢与代码来源
+description: 了解 Codex Switch 参考和复用的 CC Switch 协议转换、流处理与模型目录代码，查看固定上游版本、MIT 许可与维护范围。
 ---
 
 Codex Switch 参考并直接复用了 [CC Switch](https://github.com/farion1231/cc-switch) 的部分开源代码和测试。感谢 CC Switch 作者 Jason Young 及社区贡献者。

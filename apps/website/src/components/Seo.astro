@@ -1,0 +1,130 @@
+---
+import { basePath, localeFromPath, localizedPath } from '../lib/i18n';
+import { siteConfig } from '../../site-config.mjs';
+import product from '../../../../packages/product-info/product.json';
+interface Props {
+  title: string;
+  description: string;
+  is404?: boolean;
+}
+const { title, description, is404 = false } = Astro.props;
+const path = Astro.url.pathname;
+const locale = localeFromPath(path);
+const en = locale === 'en';
+const indexable = siteConfig.indexable && !is404;
+const absolute = (value: string) => (Astro.site ? new URL(value, Astro.site).href : undefined);
+const canonical = is404 ? undefined : absolute(path);
+const image = absolute('/screenshots/enabled.png');
+const isDoc = basePath(path).startsWith('/docs/');
+const home = localizedPath('/', locale);
+const page = {
+  '@context': 'https://schema.org',
+  '@type': isDoc ? 'TechArticle' : 'WebPage',
+  name: title,
+  ...(isDoc ? { headline: title } : {}),
+  description,
+  url: canonical,
+  inLanguage: locale,
+  image,
+  isPartOf: { '@type': 'WebSite', name: 'Codex Switch', url: absolute(home) },
+};
+const software = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Codex Switch',
+  description,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'macOS, Windows',
+  softwareVersion: product.version,
+  license: `${product.repository}/blob/main/LICENSE`,
+  url: absolute(home),
+  downloadUrl: absolute(localizedPath('/download/', locale)),
+  featureList: en
+    ? [
+        'Connect multiple model providers to Codex App',
+        'Responses and Chat Completions routing',
+        'Per-model configuration',
+        'Back up and restore configuration',
+        'Store API keys in the system credential store',
+      ]
+    : [
+        '为 Codex App 接入多个模型服务',
+        'Responses 与 Chat Completions 协议适配',
+        '逐模型配置',
+        '开启前备份与关闭后恢复',
+        '系统凭据库保存 API Key',
+      ],
+};
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Codex Switch', item: absolute(home) },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: title.replace(/ — Codex Switch$/, ''),
+      item: canonical,
+    },
+  ],
+};
+const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta
+  name="robots"
+  content={indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'}
+/>
+{canonical && <link rel="canonical" href={canonical} />}
+{
+  Astro.site && !is404 && (
+    <>
+      <link rel="alternate" hreflang="zh-CN" href={absolute(localizedPath(path, 'zh-CN'))} />
+      <link rel="alternate" hreflang="en" href={absolute(localizedPath(path, 'en'))} />
+      <link rel="alternate" hreflang="x-default" href={absolute(basePath(path))} />
+      <link rel="sitemap" href="/sitemap-index.xml" />
+    </>
+  )
+}
+<meta property="og:site_name" content="Codex Switch" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={isDoc ? 'article' : 'website'} />
+<meta property="og:locale" content={en ? 'en_US' : 'zh_CN'} />
+<meta property="og:locale:alternate" content={en ? 'zh_CN' : 'en_US'} />
+{canonical && <meta property="og:url" content={canonical} />}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{
+  image && (
+    <>
+      <meta property="og:image" content={image} />
+      <meta property="og:image:width" content="1280" />
+      <meta property="og:image:height" content="720" />
+      <meta
+        property="og:image:alt"
+        content={
+          en
+            ? 'Codex Switch interface with example model configurations'
+            : 'Codex Switch 多模型配置示例界面'
+        }
+      />
+      <meta name="twitter:image" content={image} />
+    </>
+  )
+}
+{
+  !is404 && (
+    <>
+      <script is:inline type="application/ld+json" set:html={json(page)} />
+      {basePath(path) === '/' ? (
+        <script is:inline type="application/ld+json" set:html={json(software)} />
+      ) : (
+        <script is:inline type="application/ld+json" set:html={json(breadcrumb)} />
+      )}
+    </>
+  )
+}

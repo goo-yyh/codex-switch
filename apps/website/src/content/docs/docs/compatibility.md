@@ -1,6 +1,6 @@
 ---
-title: 兼容范围
-description: 区分协议支持、普通摘要测试与真实 Codex App 验证。
+title: 接口兼容范围与验证说明
+description: 了解 Codex Switch 对 Responses、Chat Completions、流式文本、工具调用、普通摘要与远程压缩的支持范围和验证边界。
 ---
 
 当前版本为开发预览。协议转换、本地测试和供应商 HTTP 检查各有不同边界，不能把“模型能返回文本”当作“完整 Codex App 兼容”。

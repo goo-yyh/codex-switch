@@ -1,0 +1,159 @@
+---
+import { providerLogos } from '../../../../../packages/provider-registry/logos';
+import Site from '../../layouts/Site.astro';
+import presets from '../../../../../packages/provider-registry/providers.json';
+import product from '../../../../../packages/product-info/product.json';
+---
+
+<Site>
+  <main>
+    <section class="hero section-wrap">
+      <div class="hero-copy">
+        <a class="release-tag" href="/en/docs/changelog/"
+          ><span class="dot"></span>{product.version} Developer preview <span>↗</span></a
+        ><h1>Your Codex.<br /><span class="accent">Your models.</span></h1><p
+          class="hero-description"
+        >
+          The models you choose. The workflow you know.<br />Connect Codex App to more providers and
+          custom APIs.<br class="desktop-break" />Spend less time on setup, more time building.
+        </p><div class="hero-actions">
+          <a class="button" href="/en/download/">Get Codex Switch <span>↗</span></a><a
+            class="text-link"
+            href="/en/docs/quickstart/">See how it works <span>→</span></a
+          >
+        </div><p class="hero-note">
+          macOS · Windows <span> / </span>Runs locally · Free and open source
+        </p>
+      </div>
+      <figure class="hero-visual">
+        <div class="visual-grid" aria-hidden="true"></div>
+        <a href="/en/docs/quickstart/" class="product-screenshot">
+          <img
+            src="/screenshots/enabled.png"
+            width="1280"
+            height="720"
+            alt="Codex Switch interface with example Kimi and DeepSeek configurations and the Open Codex button"
+            fetchpriority="high"
+          />
+        </a>
+        <figcaption>
+          Actual interface · Browser preview · Example configurations and simulated connections
+        </figcaption>
+      </figure>
+    </section>
+    <section class="providers-strip section-wrap" aria-label="Model providers">
+      <p>Five providers.<br />Built-in presets.</p><div>
+        {
+          presets.map((p) => (
+            <a href="/en/docs/providers/">
+              <img src={providerLogos[p.id]} data-provider={p.id} alt="" width="22" height="22" />
+              {{
+                qianwen: 'Qwen',
+                minimax: 'MiniMax',
+                zhipu: 'GLM',
+                kimi: 'Kimi',
+                deepseek: 'DeepSeek',
+              }[p.id] || p.name}
+            </a>
+          ))
+        }<a href="/en/docs/relay/" class="custom-provider">＋ Custom APIs</a>
+      </div>
+    </section>
+    <section class="steps-section section-wrap" id="how">
+      <div class="section-kicker">FROM SETUP TO FLOW</div><div class="section-title">
+        <h2>Three steps to get started.</h2><p>
+          Bring your provider’s API key.<br />Let Codex Switch handle configuration and backups.
+        </p>
+      </div><div class="steps-grid">
+        <article>
+          <span class="step-number">01</span>
+          <a class="step-screenshot" href="/en/docs/quickstart/#1-add-a-configuration"
+            ><img
+              src="/screenshots/connection.png"
+              width="700"
+              height="650"
+              alt="Add a configuration: choose a provider and plan, then enter connection details"
+              loading="lazy"
+            /></a
+          >
+          <h3>Add a connection</h3><p>
+            Choose a provider and plan, check the URL and API format, and enter your key.
+          </p>
+        </article><article>
+          <span class="step-number">02</span>
+          <a class="step-screenshot" href="/en/docs/quickstart/#2-select-models-and-save"
+            ><img
+              src="/screenshots/models.png"
+              width="700"
+              height="650"
+              alt="Select models, choose a default and save"
+              loading="lazy"
+            /></a
+          >
+          <h3>Choose your models</h3><p>
+            Add multiple models to a configuration and adjust their capabilities. Saving sends no
+            test requests.
+          </p>
+        </article><article>
+          <span class="step-number">03</span>
+          <a class="step-screenshot" href="/en/docs/quickstart/#3-enable-and-open-codex"
+            ><img
+              src="/screenshots/selected.png"
+              width="1280"
+              height="720"
+              alt="Select configurations on the home screen and enable the bottom switch"
+              loading="lazy"
+            /></a
+          >
+          <h3>Enable and open Codex</h3><p>
+            Select configurations, enable the switch and open Codex. Choose a model by its
+            configuration name and model ID.
+          </p>
+        </article>
+      </div>
+      <p class="steps-caption">
+        Screenshots from the current app’s browser preview (Chinese interface).<a
+          href="/en/docs/quickstart/">Read the full walkthrough →</a
+        >
+      </p>
+    </section>
+    <section class="principles section-wrap">
+      <div class="principle-main">
+        <p class="section-kicker">A LITTLE UTILITY. A LOT LESS FRICTION.</p><h2>
+          One switch.<br />Easy to restore.
+        </h2><p>
+          Switch on to use your selected connections.<br />Switch off to restore the previous
+          configuration.<br />If no configuration file existed, return to that state too.
+        </p><a class="text-link" href="/en/docs/switch/"
+          >Explore backup and recovery <span>→</span></a
+        >
+      </div><div class="principle-cards">
+        <article>
+          <span>01 / LOCAL FIRST</span><h3>Your keys. Your device.</h3><p>
+            Keys stay in the system credential store. Requests go from your device to your chosen
+            service, without a Codex Switch cloud relay.
+          </p>
+        </article><article>
+          <span>02 / FOCUSED BY DESIGN</span><h3>Multiple models. One place.</h3><p>
+            Use multiple configurations with per-model settings. Connect Responses APIs directly or
+            adapt Chat Completions through the local router.
+          </p>
+        </article><article>
+          <span>03 / OPEN BY DEFAULT</span><h3>Open source. Clear scope.</h3><p>
+            Built with protocol conversion, streaming and model catalog code from CC Switch, with
+            its MIT copyright notices preserved.
+          </p><a href="/en/docs/open-source/">Open-source credits ↗</a> · <a
+            href="/en/docs/compatibility/">Compatibility ↗</a
+          >
+        </article>
+      </div>
+    </section>
+    <section class="final-cta section-wrap">
+      <div>
+        <p class="section-kicker">READY WHEN YOU ARE</p><h2>
+          Make time for what you want to build.
+        </h2><p>Start with one connection.</p>
+      </div><a class="button" href="/en/download/">Get Codex Switch <span>↗</span></a>
+    </section>
+  </main>
+</Site>

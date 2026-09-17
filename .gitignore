@@ -19,3 +19,6 @@ apps/desktop/src-tauri/gen/
 # Local browser verification artifacts
 .playwright-cli/
 output/playwright/
+
+# Vercel local project and build metadata
+.vercel/

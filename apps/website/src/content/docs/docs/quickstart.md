@@ -1,6 +1,6 @@
 ---
-title: 三步连接
-description: 按真实界面截图新增配置、选择模型并开启 Codex Switch。
+title: 三步为 Codex App 连接模型
+description: 跟随真实界面截图新增模型服务、填写 API Key、选择多个模型并开启 Codex Switch，快速完成 Codex App 连接配置。
 ---
 
 准备好已安装的 Codex App，以及服务商提供的 API Key、API 地址和可用模型。应用安装方式见[安装与下载](/docs/install/)。

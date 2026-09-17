@@ -1,6 +1,6 @@
 ---
-title: 开发与测试
-description: 安全预览、离线验证、普通摘要最小测试与文档站构建。
+title: 开发、测试与文档站部署
+description: 安全预览和构建 Codex Switch，运行离线测试与显式摘要验证，维护中英文文档、真实截图和网站 SEO 部署配置。
 ---
 
 ## 仓库结构
@@ -34,6 +34,8 @@ pnpm check:upstream
 cargo clippy -p codex-switch-core --all-targets --no-deps -- -D warnings
 pnpm build
 pnpm check:links
+pnpm check:seo
+pnpm check:deployment
 python3 scripts/check_secrets.py --artifacts
 ```
 
@@ -66,7 +68,7 @@ cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke -
 
 ## 维护文档和截图
 
-使用文档位于 `apps/website/src/content/docs/docs/`，导航在 `apps/website/astro.config.mjs`，截图位于 `apps/website/public/screenshots/`。更新界面后，通过浏览器预览实际操作、截图，使用虚构 Key 和明确的示例配置；不要用拼接界面或真实凭据替代。
+中文文档位于 `apps/website/src/content/docs/docs/`，英文位于 `apps/website/src/content/docs/en/docs/`，使用相同文件名，内容需同步维护。导航在 `apps/website/astro.config.mjs`，截图位于 `apps/website/public/screenshots/`。更新界面后，通过浏览器预览实际操作、截图，使用虚构 Key 和明确的示例配置；不要用拼接界面或真实凭据替代。
 
 采集方法、来源版本与各图说明见[截图记录](https://github.com/goo-yyh/codex-switch/blob/main/docs/design/screenshots.md)。截图展示界面，不承担原生功能或供应商验证结论。更新后运行构建与链接检查。
 
@@ -74,9 +76,30 @@ cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke -
 
 `packages/product-info/product.json` 集中保存版本、渠道、仓库、下载地址与 SHA-256。下载地址和校验值都填写后，下载页才显示按钮。正式发布前还需同步 Cargo / package / Tauri 构建版本；当前没有公开安装包地址。
 
-| 构建变量               | 用途                                                |
-| ---------------------- | --------------------------------------------------- |
-| `PUBLIC_SITE_URL`      | 官网部署的站点地址，用于 Astro 构建。               |
-| `VITE_PUBLIC_DOCS_URL` | 应用中的独立文档 HTTPS 入口；未设置时打开源码文档。 |
+| 构建变量                | 用途                                                                |
+| ----------------------- | ------------------------------------------------------------------- |
+| `PUBLIC_SITE_URL`       | 正式 HTTPS 域名，用于 canonical、语言版本链接、分享图片和站点地图。 |
+| `PUBLIC_SITE_INDEXABLE` | 预览部署设为 `false`，页面不索引且 robots 禁止抓取。                |
+| `VITE_PUBLIC_DOCS_URL`  | 应用中的独立文档 HTTPS 入口；未设置时打开源码文档。                 |
 
 两者均为公开构建信息，不要放凭据。`pnpm build` 生成静态站点到 `apps/website/dist/`，构建成功不代表已经部署。
+
+## 中英文网址与 SEO 部署
+
+默认中文使用 `/` 与 `/docs/`，英文使用 `/en/` 与 `/en/docs/`。语言切换进入当前页面的对应版本，不根据浏览器语言自动跳转。首页、下载页、文档正文、导航与搜索均区分语言；截图继续使用真实中文界面，英文文档提供对应操作说明。
+
+部署前在托管环境中设置真实域名，再构建：
+
+```sh
+PUBLIC_SITE_URL=https://your-domain.example pnpm --filter @codex-switch/website build
+pnpm check:links
+pnpm check:seo -- --require-site
+```
+
+上面的域名仅为示例，使用时替换为实际域名。本地未设置 `PUBLIC_SITE_URL` 时，页面标记为不索引，不生成虚构域名的 canonical 或语言版本链接。Vercel 可回退到系统提供的稳定生产域名，Preview 自动禁止索引；其他测试部署可设置 `PUBLIC_SITE_INDEXABLE=false`。
+
+每页使用独立标题与描述，统一生成 canonical、双向 `hreflang`、默认中文 `x-default`、Open Graph、Twitter 卡片及结构化数据。构建生成 `robots.txt` 与站点地图；404 不进入站点地图。`check:seo` 检查全部页面的语言对应、元数据、结构化数据与站点地图覆盖，`--require-site` 会要求完整正式域名配置。
+
+这些配置帮助搜索引擎理解内容，不代表页面已经被收录或保证排名。上线后需在实际域名再次验证。
+
+Vercel 部署请阅读[部署指南](/docs/deployment/)，包含仓库根目录设置、正式域名回退、Preview 自动禁止索引和中英文 HTTP 404 路由。

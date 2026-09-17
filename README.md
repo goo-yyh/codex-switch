@@ -112,3 +112,17 @@ cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke -
 [技术方案](docs/product-plan.md) · [供应商测试方案](docs/testing/provider-test-plan.md) · [开源致谢](apps/website/src/content/docs/docs/open-source.md)
 
 本项目使用 [MIT 许可证](LICENSE)，第三方代码保留各自版权与许可声明。
+
+## 中英文文档与 SEO
+
+网站默认显示中文，英文入口为 `/en/`，首页、下载页和使用文档可切换到对应语言页面。部署时设置 `PUBLIC_SITE_URL` 为正式 HTTPS 域名，用于 canonical、双向 hreflang、分享卡片与站点地图；预览部署设置 `PUBLIC_SITE_INDEXABLE=false`。本地未配置域名时默认不索引。
+
+网站构建后运行 `pnpm check:links` 与 `pnpm check:seo`；正式部署配置使用 `pnpm check:seo -- --require-site` 检查。详细设置见[文档站部署](apps/website/src/content/docs/docs/development.md)。
+
+## 部署到 Vercel
+
+导入仓库时 Root Directory 保持根目录 `.`，Framework Preset 选择 **Other**。根目录 `vercel.json` 已配置 `pnpm build:website` 和 `apps/website/dist`，只构建官网，不构建桌面应用。
+
+设置 `PUBLIC_SITE_URL` 为正式域名；未设置时可使用 Vercel 系统变量提供的稳定生产域名。Preview 自动禁止索引，中文与 `/en/` 英文路径分别返回对应语言的 HTTP 404。
+
+详见[中英文 Vercel 部署指南](apps/website/src/content/docs/docs/deployment.md)。本地运行 `pnpm build:website && pnpm check:deployment` 检查部署路由，`pnpm preview:website` 预览静态错误页行为。

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npx --yes pnpm@10.26.0 install --frozen-lockfile",
+  "buildCommand": "npx --yes pnpm@10.26.0 build:website",
+  "outputDirectory": "apps/website/dist",
+  "routes": [
+    {
+      "src": "^/404(?:\\.html|/)?$",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "^/en/404(?:\\.html|/|/index\\.html)?$",
+      "status": 404,
+      "dest": "/en/404/index.html"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/en(?:/.*)?$",
+      "status": 404,
+      "dest": "/en/404/index.html"
+    },
+    {
+      "src": "^/(.*)$",
+      "status": 404,
+      "dest": "/404.html"
+    }
+  ]
+}

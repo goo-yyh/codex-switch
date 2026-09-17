@@ -1,0 +1,29 @@
+---
+import Seo from '../Seo.astro';
+const { head, entry } = Astro.locals.starlightRoute;
+const owned = new Set([
+  'description',
+  'robots',
+  'twitter:card',
+  'twitter:title',
+  'twitter:description',
+  'twitter:image',
+]);
+const rest = head.filter(
+  ({ tag, attrs }) =>
+    tag !== 'title' &&
+    !(
+      tag === 'meta' &&
+      (owned.has(String(attrs?.name)) || String(attrs?.property).startsWith('og:'))
+    ) &&
+    !(tag === 'link' && ['canonical', 'alternate', 'sitemap'].includes(String(attrs?.rel))),
+);
+const is404 = /\/404(?:\.html|\/)?$/.test(Astro.url.pathname);
+---
+
+{rest.map(({ tag: Tag, attrs, content }) => <Tag {...attrs} set:html={content} />)}
+<Seo
+  title={`${entry.data.title} — Codex Switch`}
+  description={entry.data.description || ''}
+  is404={is404}
+/>

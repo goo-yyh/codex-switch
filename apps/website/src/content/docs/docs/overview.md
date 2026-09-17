@@ -1,6 +1,6 @@
 ---
-title: 产品介绍
-description: 用 Codex Switch 管理多个模型服务，了解使用流程、配置恢复和开源来源。
+title: Codex App 多模型连接管理
+description: 使用 Codex Switch 为 Codex App 接入国内模型与自定义 API，管理多个配置和模型，了解本地密钥保存、配置备份与恢复。
 ---
 
 Codex Switch 是为 **Codex App** 管理模型连接的独立桌面应用。一个配置包含一个 Key 和多个模型，首页可同时选择多个配置；开启前备份原配置，关闭后恢复。

@@ -1,6 +1,6 @@
 ---
-title: 隐私与密钥
-description: Codex Switch 隐私与密钥与使用说明。
+title: 本地存储、隐私与 API Key
+description: 了解 Codex Switch 的系统凭据库、本地配置存储和请求路径，以及删除配置、清理历史密钥和卸载应用的实际范围。
 ---
 
 ## 本机保存
