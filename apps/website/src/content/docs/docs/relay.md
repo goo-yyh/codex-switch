@@ -3,7 +3,7 @@ title: Coding Plan 套餐与自定义 API
 description: 为 Codex App 连接 Coding Plan 或自定义 HTTPS 服务，正确选择 Responses 与 Chat Completions，填写基础地址或完整请求端点。
 ---
 
-内置厂商可在「服务套餐」中选择专用套餐。没有对应预设的服务，在新增配置时选择「coding plan」，手动填写名称、地址、接口格式、Key 与模型 ID。
+智谱、MiniMax、千问和 Kimi 可在「服务套餐」中选择专用套餐；只有一种服务的厂商不显示此下拉框。没有对应预设的服务，在新增配置时选择「coding plan」，手动填写名称、地址、接口格式、Key 与模型 ID。
 
 ## 按量 API 与套餐
 
@@ -11,12 +11,20 @@ description: 为 Codex App 连接 Coding Plan 或自定义 HTTPS 服务，正确
 
 当前内置的额外套餐如下，属于本项目的初始配置值：
 
-| 套餐            | API 基础地址                                                         |
-| --------------- | -------------------------------------------------------------------- |
-| Kimi Coding     | `https://api.kimi.com/coding/v1`                                     |
-| 千问 Token Plan | `https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` |
+| 套餐 | API 基础地址 | 接口 |
+| --- | --- | --- |
+| 智谱 Coding Plan | `https://open.bigmodel.cn/api/coding/paas/v4` | Chat Completions |
+| MiniMax Token Plan | `https://api.minimax.cn/v1` | Responses |
+| Kimi Coding | `https://api.kimi.com/coding/v1` | Responses |
+| 千问 Token Plan | `https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` | Responses |
 
 选择套餐会载入对应地址、模型和能力，并清空待填写的 Key。实际账户权限以服务商为准；修改预设不会覆盖已保存的配置。
+
+智谱套餐预设提供 `glm-5.3` 和 `glm-5.3-flash`，使用官方 Chat 端点，由本地网关转换协议。智谱最新指南也列出供 Codex 使用的 Responses 地址 `https://open.bigmodel.cn/api/v1`；此地址与原有智谱预设一致。[官方模型切换说明](https://docs.bigmodel.cn/cn/coding-plan/latest-model)
+
+MiniMax 官方目前称订阅套餐为 **Token Plan**，Codex 接入使用上述 Responses 地址和 `MiniMax-M3`。请填写订阅管理中的订阅 Key，它与按量计费 Key 不互通。[官方接入说明](https://platform.minimax.cn/docs/token-plan/codex)、[密钥说明](https://platform.minimax.cn/docs/token-plan/quickstart)
+
+以上新增预设依据官方文档配置，尚未使用真实套餐 Key 做连通性验证。套餐下拉框只列实际套餐；需要修改地址或接口时，直接编辑下面的字段。
 
 ## 地址怎么填
 

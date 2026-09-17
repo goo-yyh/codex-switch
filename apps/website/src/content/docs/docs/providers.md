@@ -13,7 +13,7 @@ description: 查看 Codex Switch 内置五家模型服务的默认模型和 API 
 | Kimi     | `kimi-k3`           | `https://api.moonshot.cn/v1`                        | Responses |
 | DeepSeek | `deepseek-v4-flash` | `https://api.deepseek.com`                          | Responses |
 
-「服务套餐」另提供 Kimi Coding 与千问 Token Plan。选择套餐会载入对应地址、模型和能力，并清空待填写的密钥。所有服务的 API 地址均可自行修改。
+「服务套餐」另提供 智谱 Coding Plan、MiniMax Token Plan、Kimi Coding 与千问 Token Plan。选择套餐会载入对应地址、模型和能力，并清空待填写的密钥。所有服务的 API 地址均可自行修改。
 
 上下文长度、思考档位和图像支持按模型预设载入，选中模型后，点击该模型行后的「编辑」修改；确认修改后还需保存配置，取消则丢弃本次编辑。未知型号采用 CC Switch 的模板和能力注册表；请按实际服务能力调整。
 

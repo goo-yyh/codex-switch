@@ -49,8 +49,26 @@ _当前应用浏览器预览截图，使用示例配置。_
 
 ## 保存、测试与生效
 
+### 上下文预留
+
+内置模型的上下文预设按官方容量的 **80% 向下取整**，为请求和输出预留余量。例如 1,000,000 → 800,000，262,144 → 209,715，204,800 → 163,840。每个模型单独设置，不继承同厂商旗舰模型的较大容量。智谱 1M 文档示例存在差异，预设保守按 1,000,000 计算。
+
+Kimi Coding 套餐的 `k3` 默认按 Moderato 的 256K 权益设置为 209,715；Allegretto 及以上可改为 838,860。`k3-256k` 固定使用 209,715；`kimi-for-coding` 当前对应 K2.8 Preview，预设为 838,860。依据：[官方套餐规格](https://www.kimi.com/code/docs/kimi-code/models.html)。
+
+新配置或重新选择套餐时载入新预设。已有配置的上下文值保持不变，需要在模型编辑中手动调整；保存和启用不会再次乘 80%。这个值是声明给 Codex 的上下文容量，实际自动压缩时机仍由 Codex 决定，预留余量不保证所有请求都不会超限。
+
+### 操作说明
+
 - **保存配置**：只保存当前内容，不发测试请求、不自动勾选或开启。
 - **测试配置**：逐个使用模型最终生效的地址和接口，检查基础文本响应；不会保存或开启。可取消测试，测试期间不能修改字段或离开表单。
 - **开启 Codex Switch**：将所选配置的模型应用到 Codex。编辑配置前需先关闭，保存后再开启。
 
 同时选中多个配置时，每个配置的模型都会显示在 Codex 中。请求失败不会自动尝试其他配置；已有任务切换后的路由行为见[开启、关闭与恢复](/docs/switch/)。
+
+## 思考档位默认值
+
+模型能力弹窗会读取对应模型和套餐的思考预设，已有配置缺失的字段也会补齐；已填写的值保持不变。默认值按官方说明设置，不统一为 high。GLM 5.3/5.2、普通 API 的 Kimi K3 默认 max；Kimi Coding 的 k3/k3-256k 默认 high，kimi-for-coding 默认 max。千问 3.8 默认 xhigh，已明确公布的 3.7/3.6 型号使用 medium；DeepSeek 默认 high。
+
+MiniMax M3 的普通 Responses API 默认 none，官方 Codex 套餐示例使用 high。对于仅支持思考开关的模型，界面会说明 none/high 表示关闭/开启，并非原生强度等级。未查到官方单独默认值的型号保留自动选择。
+
+本次依据官方文档核对，未使用真实密钥实测。[千问](https://help.aliyun.com/zh/model-studio/codex)、[智谱](https://docs.bigmodel.cn/cn/guide/capabilities/thinking)、[MiniMax](https://platform.minimax.cn/docs/api-reference/responses-create)、[Kimi](https://platform.kimi.com/docs/api/chat)、[DeepSeek](https://api-docs.deepseek.com/guides/thinking_mode/)。

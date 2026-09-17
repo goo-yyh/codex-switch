@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import { Picker } from './components';
 import catalog from '../../../packages/provider-registry/models.json';
 
@@ -22,7 +22,6 @@ export function ModelSelection({
   onEditModel?: (model: string) => void;
 }) {
   const statusId = useId();
-  const listRef = useRef<HTMLDivElement>(null);
   const available: string[] =
     availableModels ?? (catalog as Record<string, string[]>)[provider] ?? [];
   const [customModels, setCustomModels] = useState(() =>
@@ -88,7 +87,6 @@ export function ModelSelection({
     onChange([...models, value]);
     setDraft('');
     setError('');
-    if (listRef.current) listRef.current.scrollTop = 0;
   }
 
   // Display order is independent of selection order, whose first item is the default.
@@ -104,7 +102,7 @@ export function ModelSelection({
         <span className="muted small">已选 {models.length}</span>
       </div>
       {choices.length > 0 && (
-        <div ref={listRef} className="model-options" role="group" aria-labelledby="models-label">
+        <div className="model-options" role="group" aria-labelledby="models-label">
           {choices.map((model) => {
             const selected = models.includes(model);
             const isDefault = models[0] === model;

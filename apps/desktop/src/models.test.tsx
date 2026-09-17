@@ -24,6 +24,8 @@ function EditableModels({
 }
 describe('model choices inside a profile', () => {
   it.each(registry)('$name has matching model choices', (p) => {
+    const choices = models[p.id as keyof typeof models];
+    expect(choices.length).toBeLessThanOrEqual(5);
     render(
       <ModelSelection
         provider={p.id}
@@ -33,7 +35,7 @@ describe('model choices inside a profile', () => {
         disabled={false}
       />,
     );
-    for (const model of models[p.id as keyof typeof models])
+    for (const model of choices)
       expect(screen.getByRole('checkbox', { name: model })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: p.model })).toBeChecked();
   });

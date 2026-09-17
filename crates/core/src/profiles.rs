@@ -66,15 +66,7 @@ impl Profile {
 pub fn ensure_editable(enabled: bool) -> Result<()> {
     if enabled {
         return Err(message(
-            "Codex Switch 已开启，请先关闭后再新增、编辑或删除配置。",
-        ));
-    }
-    Ok(())
-}
-pub fn ensure_selection(enabled: bool, ids: &[String]) -> Result<()> {
-    if enabled && ids.is_empty() {
-        return Err(message(
-            "开启期间必须保留至少一个配置；如需停用，请关闭 Codex Switch。",
+            "Codex Switch 已开启，请先关闭服务，再修改配置或设置。",
         ));
     }
     Ok(())
@@ -413,15 +405,11 @@ mod tests {
         assert!(a.route_ids.iter().all(|id| !b.route_ids.contains(id)));
     }
     #[test]
-    fn enabled_mode_requires_a_selection_and_locks_profile_edits() {
+    fn enabled_mode_locks_configuration_changes() {
         assert!(ensure_editable(true)
             .unwrap_err()
             .to_string()
             .contains("请先关闭"));
         assert!(ensure_editable(false).is_ok());
-        assert!(ensure_selection(true, &[]).is_err());
-        assert!(ensure_selection(false, &[]).is_ok());
-        assert!(ensure_selection(true, &["a".into()]).is_ok());
-        assert!(ensure_selection(true, &["a".into(), "b".into()]).is_ok());
     }
 }

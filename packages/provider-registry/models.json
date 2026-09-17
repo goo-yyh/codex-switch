@@ -1,38 +1,13 @@
 {
-  "qianwen": [
-    "qwen3.8-max",
-    "qwen3.8-flash",
-    "qwen3.8-2.4t-a95b",
-    "qwen3.8-27b",
-    "qwen3.7-max",
-    "qwen3.7-plus",
-    "qwen3.7-flash",
-    "qwen3.6-max-preview",
-    "qwen3.6-plus",
-    "qwen3.6-flash"
-  ],
+  "qianwen": ["qwen3.8-max", "qwen3.8-flash", "qwen3.8-2.4t-a95b", "qwen3.8-27b", "qwen3.7-max"],
   "minimax": [
     "MiniMax-M3",
     "MiniMax-M2.7",
     "MiniMax-M2.7-highspeed",
     "MiniMax-M2.5",
-    "MiniMax-M2.5-highspeed",
-    "MiniMax-M2.1",
-    "MiniMax-M2.1-highspeed",
-    "MiniMax-M2"
+    "MiniMax-M2.5-highspeed"
   ],
-  "zhipu": [
-    "glm-5.3",
-    "glm-5.3-flash",
-    "glm-5.2",
-    "glm-5.1",
-    "glm-5",
-    "glm-5-turbo",
-    "glm-5v-turbo",
-    "glm-4.7",
-    "glm-4.7-flashx",
-    "glm-4.7-flash"
-  ],
+  "zhipu": ["glm-5.3", "glm-5.3-flash", "glm-5.2", "glm-5.1", "glm-5"],
   "kimi": ["kimi-k3", "kimi-k2.7-code", "kimi-k2.7-code-highspeed", "kimi-k2.6"],
   "deepseek": [
     "deepseek-flash",

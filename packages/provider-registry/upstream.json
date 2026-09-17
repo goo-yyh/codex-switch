@@ -12,6 +12,22 @@
     "Kimi For Coding",
     "DeepSeek"
   ],
-  "note": "Selected upstream endpoint, protocol, model and capability fields. Local provider IDs, key/docs links and legacy candidate model IDs retained. Input modalities are omitted where upstream did not declare them. No provider verification is inherited.",
-  "registrySha256": "1f271d7ea307e041adfe40b48c8069ace2326a385af3a9568f3c66fd5fbcd083"
+  "note": "Originally selected upstream endpoint, protocol, model and capability fields. Local provider IDs and key/docs links retained. Local revisions below are maintained by Codex Switch and are not claimed to match the pinned upstream. No provider verification is inherited.",
+  "registrySha256": "9cc31df6dd86db21a6b53328ef7fc355a37ec24364f69214db8382982726a12a",
+  "localRevisions": [
+    {
+      "date": "2026-09-17",
+      "changes": [
+        "Reorder providers as Zhipu, DeepSeek, Kimi, Qwen, MiniMax.",
+        "Add GLM Coding Plan Chat and MiniMax Token Plan Responses variants using official documentation.",
+        "Complete reasoning capabilities and documented defaults for built-in and plan models; mark toggle-only models and unspecified defaults.",
+        "Set explicit per-model context presets to floor(official capacity base * 0.8), with conservative GLM 1M and Kimi membership limits; correct updated Kimi Coding aliases."
+      ],
+      "evidence": [
+        "README.md",
+        "../../docs/testing/model-reasoning-defaults-2026-09-17.md",
+        "../../docs/testing/model-context-windows-2026-09-17.md"
+      ]
+    }
+  ]
 }

@@ -3,7 +3,6 @@ import * as Switch from '@radix-ui/react-switch';
 import {
   ArrowUpRight,
   ArrowLeft,
-  Settings,
   ShieldCheck,
   Check,
   Eye,
@@ -24,6 +23,7 @@ import { CompatibilityFields, CompactionPreferences } from './CompatibilityField
 import { ModelSelection } from './ModelSelection';
 import { RequestFields } from './RequestFields';
 import { ModelCapabilityFields } from './ModelCapabilityFields';
+import { withReasoningDefaults } from './modelDefaults';
 import { ConnectionWorkspace, ServiceMark } from './ConnectionWorkspace';
 import { product, documentationUrl } from './product';
 import brandIcon from '../../../packages/brand/mark.png';
@@ -54,9 +54,17 @@ export default function App() {
   const busyRef = useRef(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
-  const [modal, setModal] = useState<'restart' | 'restore' | 'delete' | null>(null);
+  const [modal, setModal] = useState<'restart' | 'edit-locked' | 'delete' | null>(null);
   const [deleteId, setDeleteId] = useState('');
   const [validationId, setValidationId] = useState<string | null>(null);
+  useEffect(() => {
+    if (data?.enabled) {
+      setModal(null);
+      setEditingModel(null);
+      setKey('');
+      setShowKey(false);
+    }
+  }, [data?.enabled]);
   useEffect(() => {
     if (mainRef.current) mainRef.current.scrollTop = 0;
   }, [view]);
@@ -66,8 +74,6 @@ export default function App() {
     if (next.trayFeedback) {
       const { message, isError } = next.trayFeedback;
       setError(isError ? message : '');
-      setNotice(isError ? '' : message);
-      if (isError && message.includes('其他程序修改')) setModal('restore');
     }
   }
   useEffect(() => {
@@ -102,7 +108,6 @@ export default function App() {
     } catch (e) {
       const text = String(e);
       setError(text);
-      if (text.includes('其他程序修改')) setModal('restore');
       try {
         await refresh();
       } catch {
@@ -139,7 +144,8 @@ export default function App() {
   }
   function add() {
     if (data?.enabled) {
-      setError('请先关闭 Codex Switch 再新增配置。');
+      setError('');
+      setModal('edit-locked');
       return;
     }
     const p = data?.presets[0];
@@ -164,15 +170,14 @@ export default function App() {
     await run(async () => {
       await call('set_enabled', {
         enabled: value,
-        force: false,
       });
-      setNotice(value ? '原配置已备份，Codex Switch 已开启。' : '已恢复开启前的配置。');
     });
   }
   async function save() {
     if (busyRef.current) return;
     if (data?.enabled) {
-      setError('请先关闭 Codex Switch 再保存配置。');
+      setError('');
+      setModal('edit-locked');
       return;
     }
     if (!form.name.trim()) {
@@ -200,7 +205,6 @@ export default function App() {
       setKey('');
       setShowKey(false);
       setView('home');
-      setNotice(`「${saved.name}」已保存，包含 ${saved.models.length} 个模型。`);
     });
   }
   async function testConfiguration() {
@@ -224,6 +228,10 @@ export default function App() {
     setValidationId(null);
   }
   const preset = data?.presets.find((p) => p.id === form.presetId);
+  const variantIndex =
+    preset?.variants?.findIndex(
+      (variant) => variant.endpoint === form.endpoint && variant.protocol === form.protocol,
+    ) ?? -1;
   const packageVariant = preset?.variants
     ?.slice(1)
     .find((variant) => variant.endpoint === form.endpoint);
@@ -280,7 +288,7 @@ export default function App() {
     );
   return (
     <div className="app-shell">
-      <header className="app-header">
+      <header className="app-header" inert={data.enabled}>
         <button
           className="brand"
           disabled={busy}
@@ -310,26 +318,9 @@ export default function App() {
             <BookOpen size={16} />
             <span>文档</span>
           </button>
-          <button
-            className={`header-link ${view === 'settings' ? 'active' : ''}`}
-            aria-current={view === 'settings' ? 'page' : undefined}
-            title="设置"
-            aria-label="设置"
-            disabled={busy}
-            onClick={() => {
-              setView('settings');
-              setKey('');
-              setShowKey(false);
-              setError('');
-              setNotice('');
-            }}
-          >
-            <Settings size={16} />
-            <span>设置</span>
-          </button>
         </nav>
       </header>
-      <div className="app-content">
+      <div className="app-content" inert={data.enabled}>
         {isPreview && (
           <div className="preview-bar">交互预览 · 数据仅保存在本页，不会修改配置或调用服务</div>
         )}
@@ -341,16 +332,16 @@ export default function App() {
               onAdd={() => add()}
               onSelect={(ids) =>
                 run(async () => {
-                  if (data.enabled && !ids.length) {
-                    throw new Error('开启期间必须保留至少一个配置。');
+                  if (data.enabled) {
+                    throw new Error('请先关闭服务，再修改配置或设置。');
                   }
                   await call('select_profiles', { ids });
-                  if (data.enabled) setNotice('配置已切换，新旧会话的后续请求使用当前配置。');
                 })
               }
               onEdit={(c) => {
                 if (data.enabled) {
-                  setError('请先关闭 Codex Switch 再编辑配置。');
+                  setError('');
+                  setModal('edit-locked');
                   return;
                 }
                 setForm(c);
@@ -363,7 +354,8 @@ export default function App() {
               }}
               onDelete={(c) => {
                 if (data.enabled) {
-                  setError('请先关闭 Codex Switch 再删除配置。');
+                  setError('');
+                  setModal('edit-locked');
                   return;
                 }
                 setError('');
@@ -371,10 +363,16 @@ export default function App() {
                 setModal('delete');
               }}
               onToggle={toggle}
+              onSettings={() => {
+                setView('settings');
+                setKey('');
+                setShowKey(false);
+                setError('');
+                setNotice('');
+              }}
               onRecover={() =>
                 run(async () => {
                   await call('recover_connection');
-                  setNotice('本地连接已恢复，未打开或重启 Codex。');
                 })
               }
               onOpen={() => {
@@ -388,7 +386,6 @@ export default function App() {
                       return;
                     }
                     await call('open_codex');
-                    setNotice('已打开 Codex。');
                   });
               }}
             />
@@ -453,19 +450,18 @@ export default function App() {
                         ))}
                       </div>
                     )}
-                    {!!preset?.variants?.length && (
+                    {preset?.variants && preset.variants.length > 1 && (
                       <label className="field">
                         服务套餐
                         <Picker
                           label="服务套餐"
                           disabled={busy || data.enabled}
-                          value={String(
-                            preset.variants.findIndex((v) => v.endpoint === form.endpoint),
-                          )}
-                          options={[
-                            { value: '-1', label: '自定义地址或接口' },
-                            ...preset.variants.map((v, i) => ({ value: String(i), label: v.name })),
-                          ]}
+                          value={variantIndex < 0 ? '' : String(variantIndex)}
+                          placeholder="选择套餐"
+                          options={preset.variants.map((v, i) => ({
+                            value: String(i),
+                            label: v.name,
+                          }))}
                           onChange={(value) => {
                             const v = preset.variants?.[Number(value)];
                             if (v) {
@@ -581,7 +577,7 @@ export default function App() {
                       models={models}
                       disabled={busy || data.enabled}
                       onEditModel={(model) => {
-                        setModelDraft(structuredClone(form.options?.modelOverrides?.[model] ?? {}));
+                        setModelDraft(withReasoningDefaults(form, model, preset));
                         setEditingModel(model);
                       }}
                       onChange={(values) => {
@@ -679,7 +675,6 @@ export default function App() {
                   onChange={(settings) =>
                     run(async () => {
                       await call('save_routing_settings', { settings });
-                      setNotice('上下文压缩设置已自动保存，下次开启时生效。');
                     })
                   }
                 />
@@ -691,7 +686,7 @@ export default function App() {
                   <Switch.Root
                     className="switch"
                     checked={data.autostart}
-                    disabled={busy}
+                    disabled={busy || data.enabled}
                     onCheckedChange={(enabled) =>
                       run(async () => {
                         await call('set_autostart', { enabled });
@@ -763,20 +758,31 @@ export default function App() {
               <p className="about">Codex Switch {product.version} · 社区独立开源项目</p>
             </section>
           )}
-          {view !== 'form' && error && !modal && (
+          {view !== 'form' && error && !modal && !data.enabled && (
             <div className="feedback error" role="alert">
               {error}
-            </div>
-          )}
-          {view !== 'form' && notice && (
-            <div className="feedback success" role="status">
-              {notice}
             </div>
           )}
         </main>
       </div>
       <Modal
-        open={editingModel !== null}
+        open={data.enabled}
+        onClose={() => {}}
+        dismissible={false}
+        title="Codex Switch 已开启"
+        description="请先关闭服务，再修改配置或设置。"
+        error={error}
+        busy={busy}
+      >
+        <div className="dialog-actions">
+          <button className="primary" disabled={busy} onClick={() => toggle(false)}>
+            {busy && <LoaderCircle className="spin" size={16} />}
+            {busy ? '正在关闭…' : '关闭服务'}
+          </button>
+        </div>
+      </Modal>
+      <Modal
+        open={!data.enabled && editingModel !== null}
         onClose={() => setEditingModel(null)}
         title={`编辑 ${editingModel ?? ''} 能力`}
         description="修改仅用于当前配置的这个模型，保存配置后生效。地址和接口默认继承外层配置，能力留空时使用默认值。"
@@ -830,7 +836,7 @@ export default function App() {
       <Modal
         error={error}
         busy={busy}
-        open={modal === 'restart'}
+        open={!data.enabled && modal === 'restart'}
         onClose={() => setModal(null)}
         title="重新打开 Codex"
         description="Codex 正在运行。重启可能中断当前任务，请先完成任务再继续。"
@@ -846,7 +852,6 @@ export default function App() {
               run(async () => {
                 await call('restart_codex');
                 setModal(null);
-                setNotice('已重新打开 Codex。');
               })
             }
           >
@@ -855,36 +860,21 @@ export default function App() {
         </div>
       </Modal>
       <Modal
-        error={error}
-        busy={busy}
-        open={modal === 'restore'}
+        open={!data.enabled && modal === 'edit-locked'}
         onClose={() => setModal(null)}
-        title="配置在开启后有新的修改"
-        description="恢复会使用开启前的配置。我们会先另存现在的配置，确保这段时间的修改仍有备份。"
+        title="请先关闭服务"
+        description="Codex Switch 正在运行，请先关闭首页开关，再修改配置。"
       >
         <div className="dialog-actions">
-          <button className="secondary" disabled={busy} onClick={() => setModal(null)}>
-            保留当前状态
-          </button>
-          <button
-            className="primary"
-            disabled={busy}
-            onClick={() =>
-              run(async () => {
-                await call('set_enabled', { enabled: false, force: true });
-                setModal(null);
-                setNotice('已恢复开启前配置，并另存后续修改。');
-              })
-            }
-          >
-            备份并恢复
+          <button className="primary" onClick={() => setModal(null)}>
+            知道了
           </button>
         </div>
       </Modal>
       <Modal
         error={error}
         busy={busy}
-        open={modal === 'delete'}
+        open={!data.enabled && modal === 'delete'}
         onClose={() => setModal(null)}
         title="删除这个配置？"
         description="从列表移除此配置。重新开启后，旧会话的后续请求也将使用当前选中的配置。历史凭据不会自动清理。"

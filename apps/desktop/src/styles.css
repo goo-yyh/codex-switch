@@ -1133,11 +1133,22 @@ main:has(.connection-workspace) {
 .connection-control-note > svg {
   flex-shrink: 0;
 }
-.connection-control-note .text-button {
+.connection-control-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   margin-left: auto;
+  flex-shrink: 0;
+}
+.connection-control-actions .text-button {
   font-size: 11px;
   padding: 0;
   flex-shrink: 0;
+}
+.connection-control-actions .settings-button,
+.connection-control-actions .settings-button:hover:not(:disabled) {
+  color: var(--muted);
+  text-decoration: none;
 }
 .connection-reload-note {
   margin-top: 7px;
@@ -1262,8 +1273,6 @@ main:has(.connection-workspace) {
   grid-template-columns: 1fr;
   gap: 0;
   padding: 4px 10px;
-  max-height: 240px;
-  overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);

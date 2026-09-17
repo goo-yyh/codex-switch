@@ -3,7 +3,7 @@ title: Coding Plans and custom APIs
 description: Connect custom HTTPS services to Codex App using Responses or Chat Completions, with base URLs, full endpoints and per-model overrides.
 ---
 
-For built-in providers, use the **服务套餐 (Service plan)** selector. For services without a preset, choose **coding plan** when adding a configuration and enter its name, URL, API format, key and model IDs.
+For GLM, MiniMax, Qwen and Kimi, use the **服务套餐 (Service plan)** selector to choose a dedicated plan. Providers with only one service do not show this selector. For services without a preset, choose **coding plan** when adding a configuration and enter its name, URL, API format, key and model IDs.
 
 ## Standard APIs and plans
 
@@ -11,12 +11,20 @@ Standard APIs, Coding Plans, overseas endpoints and enterprise gateways may use 
 
 The project currently includes these additional plan presets:
 
-| Plan            | Base URL                                                             |
-| --------------- | -------------------------------------------------------------------- |
-| Kimi Coding     | `https://api.kimi.com/coding/v1`                                     |
-| Qwen Token Plan | `https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` |
+| Plan | Base URL | API format |
+| --- | --- | --- |
+| GLM Coding Plan | `https://open.bigmodel.cn/api/coding/paas/v4` | Chat Completions |
+| MiniMax Token Plan | `https://api.minimax.cn/v1` | Responses |
+| Kimi Coding | `https://api.kimi.com/coding/v1` | Responses |
+| Qwen Token Plan | `https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` | Responses |
 
 Choosing a plan loads its initial URL, models and capabilities and clears the key being entered. Account permissions depend on the provider. Updating presets does not overwrite saved configurations.
+
+The GLM plan preset offers `glm-5.3` and `glm-5.3-flash` through the official Chat endpoint, with local protocol conversion. GLM also documents `https://open.bigmodel.cn/api/v1` for Codex Responses requests; this matches the existing GLM preset. [Official model switching guide](https://docs.bigmodel.cn/cn/coding-plan/latest-model)
+
+MiniMax currently calls its subscription **Token Plan**. Its Codex guide uses the Responses URL above with `MiniMax-M3`. Enter the subscription key from subscription management; it is separate from a pay-as-you-go API key. [Official integration guide](https://platform.minimax.cn/docs/token-plan/codex), [key requirements](https://platform.minimax.cn/docs/token-plan/quickstart)
+
+These new presets follow official documentation and have not been tested with real subscription keys. The dropdown lists actual plans only; edit the URL and API format fields directly when needed.
 
 ## Which URL to enter
 

@@ -8,8 +8,10 @@ export interface ModelOptions {
   fullUrl?: boolean;
   baseInstructions?: string;
   contextWindow?: number;
+  contextNote?: string;
   reasoningLevels?: string[];
   defaultReasoningLevel?: string;
+  reasoningNote?: string;
   inputModalities?: string[];
   parallelToolCalls?: boolean;
 }
@@ -108,7 +110,7 @@ export async function call<T>(command: string, args: Record<string, unknown> = {
     case 'snapshot':
       return structuredClone(state) as T;
     case 'save_profile': {
-      if (state.enabled) throw new Error('Codex Switch 已开启，请先关闭后再新增、编辑或删除配置。');
+      if (state.enabled) throw new Error('Codex Switch 已开启，请先关闭服务，再修改配置或设置。');
       const p = structuredClone(args.profile as Profile);
       const original = state.profiles.find((other) => other.id === p.id);
       if (original && original.presetId !== p.presetId)
@@ -145,17 +147,12 @@ export async function call<T>(command: string, args: Record<string, unknown> = {
       state.pendingReload = state.app.running;
       break;
     case 'select_profiles':
-      if (state.enabled && !(args.ids as string[]).length)
-        throw new Error('开启期间必须保留至少一个配置；如需停用，请关闭 Codex Switch。');
+      if (state.enabled) throw new Error('请先关闭服务，再修改配置或设置。');
       state.selectedProfiles = [...(args.ids as string[])];
-      state.needsApply = !state.enabled;
-      if (state.enabled) {
-        state.routing = true;
-        state.pendingReload = state.app.running;
-      }
+      state.needsApply = true;
       break;
     case 'delete_profile':
-      if (state.enabled) throw new Error('Codex Switch 已开启，请先关闭后再新增、编辑或删除配置。');
+      if (state.enabled) throw new Error('Codex Switch 已开启，请先关闭服务，再修改配置或设置。');
       state.profiles = state.profiles.filter((p) => p.id !== args.id);
       state.selectedProfiles = state.selectedProfiles.filter((id) => id !== args.id);
       state.needsApply = true;
@@ -176,6 +173,7 @@ export async function call<T>(command: string, args: Record<string, unknown> = {
       state.routing = state.enabled;
       break;
     case 'set_autostart':
+      if (state.enabled) throw new Error('请先关闭服务，再修改配置或设置。');
       state.autostart = Boolean(args.enabled);
       break;
     case 'open_link':

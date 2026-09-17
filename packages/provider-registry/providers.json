@@ -1,160 +1,5 @@
 [
   {
-    "id": "qianwen",
-    "name": "千问",
-    "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-    "model": "qwen3.8-max",
-    "protocol": "responses",
-    "keyUrl": "https://bailian.console.aliyun.com/",
-    "docsUrl": "https://help.aliyun.com/zh/model-studio/compatibility-of-openai-with-dashscope",
-    "envKey": "qianwen_key",
-    "contextWindow": 983616,
-    "options": {
-      "fullUrl": false,
-      "endpointCandidates": [
-        "https://dashscope.aliyuncs.com/compatible-mode/v1"
-      ],
-      "modelOverrides": {
-        "qwen3.8-max": {
-          "contextWindow": 983616,
-          "reasoningLevels": [
-            "low",
-            "medium",
-            "xhigh"
-          ],
-          "defaultReasoningLevel": "xhigh",
-          "parallelToolCalls": false
-        }
-      }
-    },
-    "variants": [
-      {
-        "name": "千问",
-        "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-        "model": "qwen3.8-max",
-        "protocol": "responses",
-        "contextWindow": 983616,
-        "options": {
-          "fullUrl": false,
-          "endpointCandidates": [
-            "https://dashscope.aliyuncs.com/compatible-mode/v1"
-          ],
-          "modelOverrides": {
-            "qwen3.8-max": {
-              "contextWindow": 983616,
-              "reasoningLevels": [
-                "low",
-                "medium",
-                "xhigh"
-              ],
-              "defaultReasoningLevel": "xhigh",
-              "parallelToolCalls": false
-            }
-          }
-        }
-      },
-      {
-        "name": "千问 Token Plan",
-        "endpoint": "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
-        "model": "qwen3.8-max",
-        "protocol": "responses",
-        "contextWindow": 983616,
-        "options": {
-          "fullUrl": false,
-          "endpointCandidates": [
-            "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
-          ],
-          "modelOverrides": {
-            "qwen3.8-max": {
-              "contextWindow": 983616,
-              "reasoningLevels": [
-                "low",
-                "medium",
-                "xhigh"
-              ],
-              "defaultReasoningLevel": "xhigh",
-              "parallelToolCalls": false
-            },
-            "qwen3.8-flash": {
-              "contextWindow": 983616,
-              "reasoningLevels": [
-                "low",
-                "medium",
-                "xhigh"
-              ],
-              "defaultReasoningLevel": "xhigh",
-              "parallelToolCalls": false
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "minimax",
-    "name": "MiniMax",
-    "endpoint": "https://api.minimaxi.com/v1",
-    "model": "MiniMax-M3",
-    "protocol": "responses",
-    "keyUrl": "https://platform.minimaxi.com/",
-    "docsUrl": "https://platform.minimaxi.com/docs/api-reference/text-chat-openai",
-    "envKey": "minimax_key",
-    "contextWindow": 1000000,
-    "options": {
-      "fullUrl": false,
-      "endpointCandidates": [
-        "https://api.minimaxi.com/v1"
-      ],
-      "modelOverrides": {
-        "MiniMax-M3": {
-          "contextWindow": 1000000,
-          "reasoningLevels": [
-            "none",
-            "high"
-          ],
-          "defaultReasoningLevel": "high",
-          "parallelToolCalls": true,
-          "inputModalities": [
-            "text",
-            "image"
-          ],
-          "baseInstructions": "You are Codex, a coding agent based on MiniMax-M3. You and the user share the same workspace and collaborate to achieve the user's goals."
-        }
-      }
-    },
-    "variants": [
-      {
-        "name": "MiniMax",
-        "endpoint": "https://api.minimaxi.com/v1",
-        "model": "MiniMax-M3",
-        "protocol": "responses",
-        "contextWindow": 1000000,
-        "options": {
-          "fullUrl": false,
-          "endpointCandidates": [
-            "https://api.minimaxi.com/v1"
-          ],
-          "modelOverrides": {
-            "MiniMax-M3": {
-              "contextWindow": 1000000,
-              "reasoningLevels": [
-                "none",
-                "high"
-              ],
-              "defaultReasoningLevel": "high",
-              "parallelToolCalls": true,
-              "inputModalities": [
-                "text",
-                "image"
-              ],
-              "baseInstructions": "You are Codex, a coding agent based on MiniMax-M3. You and the user share the same workspace and collaborate to achieve the user's goals."
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
     "id": "zhipu",
     "name": "智谱 GLM",
     "endpoint": "https://open.bigmodel.cn/api/v1",
@@ -163,7 +8,7 @@
     "keyUrl": "https://open.bigmodel.cn/",
     "docsUrl": "https://docs.bigmodel.cn/cn/guide/start/latest-glm-4.7",
     "envKey": "zhipu_key",
-    "contextWindow": 1048576,
+    "contextWindow": 800000,
     "options": {
       "fullUrl": false,
       "endpointCandidates": [
@@ -171,7 +16,7 @@
       ],
       "modelOverrides": {
         "glm-5.3": {
-          "contextWindow": 1048576,
+          "contextWindow": 800000,
           "reasoningLevels": [
             "low",
             "high",
@@ -184,15 +29,89 @@
           ]
         },
         "glm-5-turbo": {
-          "contextWindow": 204800,
+          "contextWindow": 163840,
           "reasoningLevels": [
-            "max"
+            "none",
+            "high"
           ],
-          "defaultReasoningLevel": "max",
+          "defaultReasoningLevel": "high",
           "parallelToolCalls": true,
           "inputModalities": [
             "text"
-          ]
+          ],
+          "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。"
+        },
+        "glm-5.3-flash": {
+          "reasoningLevels": [
+            "low",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "max",
+          "contextWindow": 800000
+        },
+        "glm-5.2": {
+          "reasoningLevels": [
+            "none",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "max",
+          "contextWindow": 800000
+        },
+        "glm-5.1": {
+          "reasoningLevels": [
+            "none",
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+          "contextWindow": 163840
+        },
+        "glm-5": {
+          "reasoningLevels": [
+            "none",
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+          "contextWindow": 163840
+        },
+        "glm-5v-turbo": {
+          "reasoningLevels": [
+            "none",
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+          "contextWindow": 163840
+        },
+        "glm-4.7": {
+          "reasoningLevels": [
+            "none",
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+          "contextWindow": 163840
+        },
+        "glm-4.7-flashx": {
+          "reasoningLevels": [
+            "none",
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+          "contextWindow": 163840
+        },
+        "glm-4.7-flash": {
+          "reasoningLevels": [
+            "none",
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+          "contextWindow": 163840
         }
       }
     },
@@ -202,7 +121,7 @@
         "endpoint": "https://open.bigmodel.cn/api/v1",
         "model": "glm-5.3",
         "protocol": "responses",
-        "contextWindow": 1048576,
+        "contextWindow": 800000,
         "options": {
           "fullUrl": false,
           "endpointCandidates": [
@@ -210,7 +129,7 @@
           ],
           "modelOverrides": {
             "glm-5.3": {
-              "contextWindow": 1048576,
+              "contextWindow": 800000,
               "reasoningLevels": [
                 "low",
                 "high",
@@ -223,8 +142,110 @@
               ]
             },
             "glm-5-turbo": {
-              "contextWindow": 204800,
+              "contextWindow": 163840,
               "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true,
+              "inputModalities": [
+                "text"
+              ],
+              "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。"
+            },
+            "glm-5.3-flash": {
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "max",
+              "contextWindow": 800000
+            },
+            "glm-5.2": {
+              "reasoningLevels": [
+                "none",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "max",
+              "contextWindow": 800000
+            },
+            "glm-5.1": {
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+              "contextWindow": 163840
+            },
+            "glm-5": {
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+              "contextWindow": 163840
+            },
+            "glm-5v-turbo": {
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+              "contextWindow": 163840
+            },
+            "glm-4.7": {
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+              "contextWindow": 163840
+            },
+            "glm-4.7-flashx": {
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+              "contextWindow": 163840
+            },
+            "glm-4.7-flash": {
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+              "contextWindow": 163840
+            }
+          }
+        }
+      },
+      {
+        "name": "智谱 Coding Plan",
+        "endpoint": "https://open.bigmodel.cn/api/coding/paas/v4",
+        "model": "glm-5.3",
+        "protocol": "chat",
+        "contextWindow": 800000,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://open.bigmodel.cn/api/coding/paas/v4"
+          ],
+          "modelOverrides": {
+            "glm-5.3": {
+              "contextWindow": 800000,
+              "reasoningLevels": [
+                "low",
+                "high",
                 "max"
               ],
               "defaultReasoningLevel": "max",
@@ -232,128 +253,20 @@
               "inputModalities": [
                 "text"
               ]
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "kimi",
-    "name": "Kimi",
-    "endpoint": "https://api.moonshot.cn/v1",
-    "model": "kimi-k3",
-    "protocol": "responses",
-    "keyUrl": "https://platform.moonshot.cn/console/api-keys",
-    "docsUrl": "https://platform.kimi.com/docs/models",
-    "envKey": "kimi_key",
-    "contextWindow": 1048576,
-    "options": {
-      "fullUrl": false,
-      "endpointCandidates": [
-        "https://api.moonshot.cn/v1"
-      ],
-      "modelOverrides": {
-        "kimi-k3": {
-          "contextWindow": 1048576,
-          "reasoningLevels": [
-            "low",
-            "high",
-            "max"
-          ],
-          "defaultReasoningLevel": "high",
-          "parallelToolCalls": true
-        },
-        "kimi-k2.7-code": {
-          "contextWindow": 262144,
-          "reasoningLevels": [
-            "high"
-          ],
-          "defaultReasoningLevel": "high",
-          "parallelToolCalls": true
-        }
-      }
-    },
-    "variants": [
-      {
-        "name": "Kimi",
-        "endpoint": "https://api.moonshot.cn/v1",
-        "model": "kimi-k3",
-        "protocol": "responses",
-        "contextWindow": 1048576,
-        "options": {
-          "fullUrl": false,
-          "endpointCandidates": [
-            "https://api.moonshot.cn/v1"
-          ],
-          "modelOverrides": {
-            "kimi-k3": {
-              "contextWindow": 1048576,
+            },
+            "glm-5.3-flash": {
+              "contextWindow": 800000,
               "reasoningLevels": [
                 "low",
                 "high",
                 "max"
               ],
-              "defaultReasoningLevel": "high",
-              "parallelToolCalls": true
-            },
-            "kimi-k2.7-code": {
-              "contextWindow": 262144,
-              "reasoningLevels": [
-                "high"
-              ],
-              "defaultReasoningLevel": "high",
-              "parallelToolCalls": true
-            }
-          }
-        }
-      },
-      {
-        "name": "Kimi Coding 套餐",
-        "endpoint": "https://api.kimi.com/coding/v1",
-        "model": "kimi-for-coding",
-        "protocol": "responses",
-        "contextWindow": 262144,
-        "options": {
-          "endpointCandidates": [
-            "https://api.kimi.com/coding/v1"
-          ],
-          "modelOverrides": {
-            "kimi-for-coding": {
-              "contextWindow": 262144,
-              "reasoningLevels": [
-                "high"
-              ],
-              "defaultReasoningLevel": "high",
-              "parallelToolCalls": true
-            },
-            "kimi-for-coding-highspeed": {
-              "contextWindow": 262144,
-              "reasoningLevels": [
-                "high"
-              ],
-              "defaultReasoningLevel": "high",
-              "parallelToolCalls": true
-            },
-            "k3": {
-              "contextWindow": 1048576,
-              "reasoningLevels": [
-                "low",
-                "high",
-                "max"
-              ],
-              "defaultReasoningLevel": "high",
-              "parallelToolCalls": true
-            },
-            "k3-256k": {
-              "contextWindow": 262144,
-              "reasoningLevels": [
-                "low",
-                "high",
-                "max"
-              ],
-              "defaultReasoningLevel": "high",
-              "parallelToolCalls": true
+              "defaultReasoningLevel": "max",
+              "parallelToolCalls": true,
+              "inputModalities": [
+                "text",
+                "image"
+              ]
             }
           }
         }
@@ -369,7 +282,7 @@
     "keyUrl": "https://platform.deepseek.com/api_keys",
     "docsUrl": "https://api-docs.deepseek.com/",
     "envKey": "deepseek_key",
-    "contextWindow": 1048576,
+    "contextWindow": 838860,
     "options": {
       "fullUrl": false,
       "endpointCandidates": [
@@ -377,8 +290,9 @@
       ],
       "modelOverrides": {
         "deepseek-v4-flash": {
-          "contextWindow": 1048576,
+          "contextWindow": 838860,
           "reasoningLevels": [
+            "none",
             "low",
             "high",
             "max"
@@ -386,13 +300,34 @@
           "defaultReasoningLevel": "high"
         },
         "deepseek-v4-pro": {
-          "contextWindow": 1048576,
+          "contextWindow": 838860,
           "reasoningLevels": [
+            "none",
             "low",
             "high",
             "max"
           ],
           "defaultReasoningLevel": "high"
+        },
+        "deepseek-flash": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "high",
+          "contextWindow": 838860
+        },
+        "deepseek-v4-flash-vision-exp": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "high",
+          "contextWindow": 838860
         }
       }
     },
@@ -402,7 +337,7 @@
         "endpoint": "https://api.deepseek.com",
         "model": "deepseek-v4-flash",
         "protocol": "responses",
-        "contextWindow": 1048576,
+        "contextWindow": 838860,
         "options": {
           "fullUrl": false,
           "endpointCandidates": [
@@ -410,8 +345,9 @@
           ],
           "modelOverrides": {
             "deepseek-v4-flash": {
-              "contextWindow": 1048576,
+              "contextWindow": 838860,
               "reasoningLevels": [
+                "none",
                 "low",
                 "high",
                 "max"
@@ -419,13 +355,702 @@
               "defaultReasoningLevel": "high"
             },
             "deepseek-v4-pro": {
-              "contextWindow": 1048576,
+              "contextWindow": 838860,
               "reasoningLevels": [
+                "none",
                 "low",
                 "high",
                 "max"
               ],
               "defaultReasoningLevel": "high"
+            },
+            "deepseek-flash": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "high",
+              "contextWindow": 838860
+            },
+            "deepseek-v4-flash-vision-exp": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "high",
+              "contextWindow": 838860
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "kimi",
+    "name": "Kimi",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3",
+    "protocol": "responses",
+    "keyUrl": "https://platform.moonshot.cn/console/api-keys",
+    "docsUrl": "https://platform.kimi.com/docs/models",
+    "envKey": "kimi_key",
+    "contextWindow": 838860,
+    "options": {
+      "fullUrl": false,
+      "endpointCandidates": [
+        "https://api.moonshot.cn/v1"
+      ],
+      "modelOverrides": {
+        "kimi-k3": {
+          "contextWindow": 838860,
+          "reasoningLevels": [
+            "low",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "max",
+          "parallelToolCalls": true
+        },
+        "kimi-k2.7-code": {
+          "contextWindow": 209715,
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "parallelToolCalls": true,
+          "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。"
+        },
+        "kimi-k2.7-code-highspeed": {
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+          "contextWindow": 209715
+        },
+        "kimi-k2.6": {
+          "reasoningLevels": [
+            "none",
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方默认开启思考；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+          "contextWindow": 209715
+        }
+      }
+    },
+    "variants": [
+      {
+        "name": "Kimi",
+        "endpoint": "https://api.moonshot.cn/v1",
+        "model": "kimi-k3",
+        "protocol": "responses",
+        "contextWindow": 838860,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://api.moonshot.cn/v1"
+          ],
+          "modelOverrides": {
+            "kimi-k3": {
+              "contextWindow": 838860,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "max",
+              "parallelToolCalls": true
+            },
+            "kimi-k2.7-code": {
+              "contextWindow": 209715,
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true,
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。"
+            },
+            "kimi-k2.7-code-highspeed": {
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+              "contextWindow": 209715
+            },
+            "kimi-k2.6": {
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方默认开启思考；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
+              "contextWindow": 209715
+            }
+          }
+        }
+      },
+      {
+        "name": "Kimi Coding 套餐",
+        "endpoint": "https://api.kimi.com/coding/v1",
+        "model": "kimi-for-coding",
+        "protocol": "responses",
+        "contextWindow": 838860,
+        "options": {
+          "endpointCandidates": [
+            "https://api.kimi.com/coding/v1"
+          ],
+          "modelOverrides": {
+            "kimi-for-coding": {
+              "contextWindow": 838860,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "max",
+              "parallelToolCalls": true,
+              "reasoningNote": "当前对应 K2.8 Preview，官方默认 max。"
+            },
+            "kimi-for-coding-highspeed": {
+              "contextWindow": 209715,
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true,
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。"
+            },
+            "k3": {
+              "contextWindow": 209715,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true,
+              "contextNote": "默认按 Moderato 的 256K 权益预留 20%；Allegretto 及以上可改为 838860。"
+            },
+            "k3-256k": {
+              "contextWindow": 209715,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "qianwen",
+    "name": "千问",
+    "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3.8-max",
+    "protocol": "responses",
+    "keyUrl": "https://bailian.console.aliyun.com/",
+    "docsUrl": "https://help.aliyun.com/zh/model-studio/compatibility-of-openai-with-dashscope",
+    "envKey": "qianwen_key",
+    "contextWindow": 800000,
+    "options": {
+      "fullUrl": false,
+      "endpointCandidates": [
+        "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      ],
+      "modelOverrides": {
+        "qwen3.8-max": {
+          "contextWindow": 800000,
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "xhigh",
+          "parallelToolCalls": false,
+          "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。"
+        },
+        "qwen3.8-flash": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "xhigh",
+          "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。",
+          "contextWindow": 800000
+        },
+        "qwen3.8-2.4t-a95b": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "xhigh",
+          "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。",
+          "contextWindow": 800000
+        },
+        "qwen3.8-27b": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "xhigh",
+          "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。",
+          "contextWindow": 800000
+        },
+        "qwen3.7-max": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "medium",
+          "contextWindow": 800000
+        },
+        "qwen3.7-plus": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "medium",
+          "contextWindow": 800000
+        },
+        "qwen3.7-flash": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
+          "reasoningNote": "官方未单列此型号的默认思考档位；保留自动选择，不推测填值。",
+          "contextWindow": 800000
+        },
+        "qwen3.6-max-preview": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
+          "reasoningNote": "官方未单列此型号的默认思考档位；保留自动选择，不推测填值。",
+          "contextWindow": 209715
+        },
+        "qwen3.6-plus": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "medium",
+          "contextWindow": 800000
+        },
+        "qwen3.6-flash": {
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "medium",
+          "contextWindow": 800000
+        }
+      }
+    },
+    "variants": [
+      {
+        "name": "千问",
+        "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "model": "qwen3.8-max",
+        "protocol": "responses",
+        "contextWindow": 800000,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://dashscope.aliyuncs.com/compatible-mode/v1"
+          ],
+          "modelOverrides": {
+            "qwen3.8-max": {
+              "contextWindow": 800000,
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "parallelToolCalls": false,
+              "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。"
+            },
+            "qwen3.8-flash": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。",
+              "contextWindow": 800000
+            },
+            "qwen3.8-2.4t-a95b": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。",
+              "contextWindow": 800000
+            },
+            "qwen3.8-27b": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。",
+              "contextWindow": 800000
+            },
+            "qwen3.7-max": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "medium",
+              "contextWindow": 800000
+            },
+            "qwen3.7-plus": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "medium",
+              "contextWindow": 800000
+            },
+            "qwen3.7-flash": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "xhigh"
+              ],
+              "reasoningNote": "官方未单列此型号的默认思考档位；保留自动选择，不推测填值。",
+              "contextWindow": 800000
+            },
+            "qwen3.6-max-preview": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "xhigh"
+              ],
+              "reasoningNote": "官方未单列此型号的默认思考档位；保留自动选择，不推测填值。",
+              "contextWindow": 209715
+            },
+            "qwen3.6-plus": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "medium",
+              "contextWindow": 800000
+            },
+            "qwen3.6-flash": {
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "medium",
+              "contextWindow": 800000
+            }
+          }
+        }
+      },
+      {
+        "name": "千问 Token Plan",
+        "endpoint": "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+        "model": "qwen3.8-max",
+        "protocol": "responses",
+        "contextWindow": 800000,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
+          ],
+          "modelOverrides": {
+            "qwen3.8-max": {
+              "contextWindow": 800000,
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "parallelToolCalls": false,
+              "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。"
+            },
+            "qwen3.8-flash": {
+              "contextWindow": 800000,
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "parallelToolCalls": false,
+              "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "minimax",
+    "name": "MiniMax",
+    "endpoint": "https://api.minimaxi.com/v1",
+    "model": "MiniMax-M3",
+    "protocol": "responses",
+    "keyUrl": "https://platform.minimaxi.com/",
+    "docsUrl": "https://platform.minimaxi.com/docs/api-reference/text-chat-openai",
+    "envKey": "minimax_key",
+    "contextWindow": 800000,
+    "options": {
+      "fullUrl": false,
+      "endpointCandidates": [
+        "https://api.minimaxi.com/v1"
+      ],
+      "modelOverrides": {
+        "MiniMax-M3": {
+          "contextWindow": 800000,
+          "reasoningLevels": [
+            "none",
+            "high"
+          ],
+          "defaultReasoningLevel": "none",
+          "parallelToolCalls": true,
+          "inputModalities": [
+            "text",
+            "image"
+          ],
+          "baseInstructions": "You are Codex, a coding agent based on MiniMax-M3. You and the user share the same workspace and collaborate to achieve the user's goals.",
+          "reasoningNote": "Responses API 默认关闭思考；high 开启 Adaptive Thinking，不调节推理深度。"
+        },
+        "MiniMax-M2.7": {
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+          "contextWindow": 163840
+        },
+        "MiniMax-M2.7-highspeed": {
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+          "contextWindow": 163840
+        },
+        "MiniMax-M2.5": {
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+          "contextWindow": 163840
+        },
+        "MiniMax-M2.5-highspeed": {
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+          "contextWindow": 163840
+        },
+        "MiniMax-M2.1": {
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+          "contextWindow": 163840
+        },
+        "MiniMax-M2.1-highspeed": {
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+          "contextWindow": 163840
+        },
+        "MiniMax-M2": {
+          "reasoningLevels": [
+            "high"
+          ],
+          "defaultReasoningLevel": "high",
+          "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+          "contextWindow": 163840
+        }
+      }
+    },
+    "variants": [
+      {
+        "name": "MiniMax",
+        "endpoint": "https://api.minimaxi.com/v1",
+        "model": "MiniMax-M3",
+        "protocol": "responses",
+        "contextWindow": 800000,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://api.minimaxi.com/v1"
+          ],
+          "modelOverrides": {
+            "MiniMax-M3": {
+              "contextWindow": 800000,
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "none",
+              "parallelToolCalls": true,
+              "inputModalities": [
+                "text",
+                "image"
+              ],
+              "baseInstructions": "You are Codex, a coding agent based on MiniMax-M3. You and the user share the same workspace and collaborate to achieve the user's goals.",
+              "reasoningNote": "Responses API 默认关闭思考；high 开启 Adaptive Thinking，不调节推理深度。"
+            },
+            "MiniMax-M2.7": {
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+              "contextWindow": 163840
+            },
+            "MiniMax-M2.7-highspeed": {
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+              "contextWindow": 163840
+            },
+            "MiniMax-M2.5": {
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+              "contextWindow": 163840
+            },
+            "MiniMax-M2.5-highspeed": {
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+              "contextWindow": 163840
+            },
+            "MiniMax-M2.1": {
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+              "contextWindow": 163840
+            },
+            "MiniMax-M2.1-highspeed": {
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+              "contextWindow": 163840
+            },
+            "MiniMax-M2": {
+              "reasoningLevels": [
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "reasoningNote": "官方始终开启思考，不支持关闭或调节强度；high 为 Codex 的兼容表示。",
+              "contextWindow": 163840
+            }
+          }
+        }
+      },
+      {
+        "name": "MiniMax Token Plan",
+        "endpoint": "https://api.minimax.cn/v1",
+        "model": "MiniMax-M3",
+        "protocol": "responses",
+        "contextWindow": 800000,
+        "options": {
+          "fullUrl": false,
+          "endpointCandidates": [
+            "https://api.minimax.cn/v1"
+          ],
+          "modelOverrides": {
+            "MiniMax-M3": {
+              "contextWindow": 800000,
+              "reasoningLevels": [
+                "none",
+                "high"
+              ],
+              "defaultReasoningLevel": "high",
+              "parallelToolCalls": true,
+              "inputModalities": [
+                "text",
+                "image"
+              ],
+              "baseInstructions": "You are Codex, a coding agent based on MiniMax-M3. You and the user share the same workspace and collaborate to achieve the user's goals.",
+              "reasoningNote": "官方 Codex 接入示例默认 high，开启 Adaptive Thinking；不调节推理深度。普通 Responses API 省略参数时默认 none。"
             }
           }
         }

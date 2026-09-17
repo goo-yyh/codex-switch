@@ -31,9 +31,13 @@ pub struct ModelOptions {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub context_window: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub context_note: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reasoning_levels: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default_reasoning_level: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reasoning_note: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_modalities: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -218,9 +222,51 @@ pub fn normalize_address(input: &str, full_url: bool) -> Result<String> {
     Ok(u.to_string().trim_end_matches('/').to_owned())
 }
 
+fn with_reasoning_defaults(c: &Connection, presets: &[Preset]) -> ModelOptions {
+    let mut spec = c
+        .options
+        .model_overrides
+        .get(&c.model)
+        .cloned()
+        .unwrap_or_default();
+    let has_custom_levels = spec.reasoning_levels.is_some();
+    let defaults = presets.iter().find(|p| p.id == c.preset_id).and_then(|p| {
+        p.variants
+            .iter()
+            .find(|v| v.endpoint == c.endpoint && v.protocol == c.protocol)
+            .and_then(|v| v.options.model_overrides.get(&c.model))
+            .or_else(|| p.options.model_overrides.get(&c.model))
+    });
+    if let Some(defaults) = defaults {
+        if spec.reasoning_levels.is_none() {
+            spec.reasoning_levels = defaults.reasoning_levels.clone();
+        }
+        if spec.default_reasoning_level.is_none() {
+            spec.default_reasoning_level = defaults
+                .default_reasoning_level
+                .clone()
+                .filter(|level| {
+                    spec.reasoning_levels
+                        .as_ref()
+                        .is_some_and(|levels| levels.contains(level))
+                })
+                .or_else(|| {
+                    if !has_custom_levels || defaults.default_reasoning_level.is_none() {
+                        return None;
+                    }
+                    spec.reasoning_levels
+                        .as_ref()
+                        .and_then(|levels| levels.last().cloned())
+                });
+        }
+    }
+    spec
+}
+
 pub fn catalog(connections: &[Connection]) -> Value {
+    let defaults = presets();
     json!({"models":connections.iter().map(|c| {
-        let spec=c.options.model_overrides.get(&c.model).cloned().unwrap_or_default();
+        let spec=with_reasoning_defaults(c, &defaults);
         let host=url::Url::parse(&c.endpoint).ok().and_then(|u|u.host_str().map(str::to_owned));
         let mut row=cc_switch_codex::catalog::entry(&c.model,&format!("{}-{}",c.name,c.model),spec.context_window.unwrap_or(c.context_window),&serde_json::to_value(spec).expect("model options"),c.protocol==Protocol::Responses,host.as_deref()==Some("api.deepseek.com"));
         row["slug"]=json!(c.alias()); row
@@ -249,6 +295,76 @@ mod tests {
             assert!(normalize_endpoint(bad).is_err());
         }
     }
+    #[test]
+    fn catalog_fills_missing_reasoning_without_overwriting_user_values() {
+        let mut connection: Connection = serde_json::from_value(json!({
+            "id": "saved", "name": "GLM", "presetId": "zhipu",
+            "endpoint": "https://open.bigmodel.cn/api/v1", "model": "glm-5.3-flash",
+            "protocol": "responses", "contextWindow": 65536
+        }))
+        .unwrap();
+        let output = catalog(&[connection.clone()]);
+        assert_eq!(output["models"][0]["context_window"], 65536);
+        assert_eq!(output["models"][0]["default_reasoning_level"], "max");
+        assert_eq!(
+            output["models"][0]["supported_reasoning_levels"]
+                .as_array()
+                .unwrap()
+                .len(),
+            3
+        );
+        assert!(connection.options.model_overrides.is_empty());
+        connection.options.model_overrides.insert(
+            connection.model.clone(),
+            ModelOptions {
+                reasoning_levels: Some(vec!["low".into(), "high".into()]),
+                default_reasoning_level: Some("low".into()),
+                ..Default::default()
+            },
+        );
+        assert_eq!(
+            catalog(&[connection.clone()])["models"][0]["default_reasoning_level"],
+            "low"
+        );
+        connection
+            .options
+            .model_overrides
+            .get_mut(&connection.model)
+            .unwrap()
+            .default_reasoning_level = None;
+        assert_eq!(
+            catalog(&[connection])["models"][0]["default_reasoning_level"],
+            "high"
+        );
+    }
+
+    #[test]
+    fn catalog_preserves_each_discounted_preset_context_without_rescaling() {
+        for preset in presets() {
+            for variant in &preset.variants {
+                for (model, spec) in &variant.options.model_overrides {
+                    let expected = spec.context_window.expect("explicit model context");
+                    let connection = Connection {
+                        id: "preview".into(),
+                        name: preset.name.clone(),
+                        preset_id: preset.id.clone(),
+                        endpoint: variant.endpoint.clone(),
+                        model: model.clone(),
+                        protocol: variant.protocol,
+                        context_window: variant.context_window,
+                        options: variant.options.clone(),
+                    };
+                    let output = catalog(&[connection]);
+                    assert_eq!(output["models"][0]["context_window"], expected, "{model}");
+                    assert_eq!(
+                        output["models"][0]["max_context_window"], expected,
+                        "{model}"
+                    );
+                }
+            }
+        }
+    }
+
     #[test]
     fn registry_has_exactly_five_unique_presets() {
         let p = presets();

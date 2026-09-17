@@ -5,6 +5,7 @@ import {
   LoaderCircle,
   Pencil,
   Plus,
+  Settings,
   ShieldCheck,
   Trash2,
 } from 'lucide-react';
@@ -47,6 +48,7 @@ export function ConnectionWorkspace({
   onToggle,
   onOpen,
   onRecover,
+  onSettings,
 }: {
   data: Snapshot;
   busy: boolean;
@@ -57,6 +59,7 @@ export function ConnectionWorkspace({
   onToggle: (enabled: boolean) => void;
   onOpen: () => void;
   onRecover: () => void;
+  onSettings: () => void;
 }) {
   const selected = data.profiles.filter((p) => data.selectedProfiles.includes(p.id));
   const modelCount = selected.reduce((n, p) => n + p.models.length, 0);
@@ -103,9 +106,7 @@ export function ConnectionWorkspace({
           <div className="configuration-grid" role="list" aria-label="已保存的配置">
             {data.profiles.map((p) => {
               const checked = data.selectedProfiles.includes(p.id);
-              const lastSelected = data.enabled && checked && selected.length === 1;
-              const provider =
-                data.presets.find((v) => v.id === p.presetId)?.name || 'coding plan';
+              const provider = data.presets.find((v) => v.id === p.presetId)?.name || 'coding plan';
               return (
                 <article
                   className={`configuration-card ${checked ? 'is-selected' : ''}`}
@@ -125,8 +126,8 @@ export function ConnectionWorkspace({
                         type="checkbox"
                         aria-label={`选择 ${p.name}`}
                         aria-describedby={data.enabled ? 'workspace-policy' : undefined}
-                        disabled={busy || lastSelected}
-                        title={lastSelected ? '开启期间至少保留一个配置' : undefined}
+                        disabled={busy || data.enabled}
+                        title={data.enabled ? '请先关闭服务，再选择配置' : undefined}
                         checked={checked}
                         onChange={() =>
                           onSelect(
@@ -219,14 +220,25 @@ export function ConnectionWorkspace({
           <ShieldCheck size={14} aria-hidden="true" />
           <span>
             {data.enabled
-              ? '切换立即生效，至少保留一个配置；编辑请先关闭。'
+              ? '请先关闭服务，再修改配置或设置。'
               : '开启前自动备份，关闭后恢复原配置。'}
           </span>
-          {data.enabled && !data.routing && (
-            <button className="text-button" disabled={busy} onClick={onRecover}>
-              恢复连接
+          <div className="connection-control-actions">
+            {data.enabled && !data.routing && (
+              <button className="text-button" disabled={busy || data.enabled} onClick={onRecover}>
+                恢复连接
+              </button>
+            )}
+            <button
+              className="text-button settings-button"
+              aria-label="设置"
+              disabled={busy || data.enabled}
+              onClick={onSettings}
+            >
+              <Settings size={14} aria-hidden="true" />
+              设置
             </button>
-          )}
+          </div>
         </div>
         {data.pendingReload && (
           <p className="connection-reload-note">

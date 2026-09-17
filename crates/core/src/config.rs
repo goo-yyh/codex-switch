@@ -517,6 +517,30 @@ mod tests {
             .starts_with("before-restore-")));
     }
     #[test]
+    fn automatic_restore_preserves_external_edits_and_original_bytes() {
+        let (_t, m) = setup();
+        let original = b"# original settings\r\nmodel = 'original'\r\n";
+        atomic_write(&m.path(), original).unwrap();
+        on(&m, "a");
+        let external = b"# later edits\nmodel = 'external'\n";
+        atomic_write(&m.path(), external).unwrap();
+        m.disable(true).unwrap();
+        assert_eq!(fs::read(m.path()).unwrap(), original);
+        assert!(!m.enabled().unwrap());
+        let backup = fs::read_dir(&m.state_dir)
+            .unwrap()
+            .map(|entry| entry.unwrap().path())
+            .find(|path| {
+                path.file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .starts_with("before-restore-")
+            })
+            .unwrap();
+        assert_eq!(fs::read(backup).unwrap(), external);
+        assert!(!m.disable(true).unwrap());
+    }
+    #[test]
     fn corrupted_input_never_changes() {
         let (_t, m) = setup();
         atomic_write(&m.path(), b"invalid [[").unwrap();

@@ -50,6 +50,9 @@ export function ModelCapabilityFields({
           }
         />
       </label>
+      <p className="field-hint">
+        {spec.contextNote ?? '内置预设按官方上下文的 80% 设置，预留余量。'}
+      </p>
       <label className="field">
         思考档位（逗号分隔）
         <input
@@ -85,6 +88,7 @@ export function ModelCapabilityFields({
           ]}
         />
       </label>
+      {spec.reasoningNote && <p className="field-hint">{spec.reasoningNote}</p>}
       <label className="field">
         图像输入
         <Picker

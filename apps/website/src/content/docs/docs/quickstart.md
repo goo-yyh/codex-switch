@@ -9,7 +9,7 @@ description: 跟随真实界面截图新增模型服务、填写 API Key、选�
 
 ## 1. 新增配置
 
-在首页点击「新增配置」，选择厂商；使用 Kimi Coding 或千问 Token Plan 时，再选择对应的「服务套餐」。自定义服务选择「coding plan」。新增、编辑和删除前需先关闭 Codex Switch 总开关。
+在首页点击「新增配置」，选择厂商；使用智谱 Coding Plan、MiniMax Token Plan、Kimi Coding 或千问 Token Plan 时，再选择对应的「服务套餐」。自定义服务选择「coding plan」。新增、编辑和删除前需先关闭 Codex Switch 总开关。
 
 填写便于识别的配置名称，核对 API 地址与接口格式，向下滚动填写该服务的 API Key。通常可保留预设地址；完整端点的填写方式见[套餐与自定义接口](/docs/relay/)。
 
@@ -29,9 +29,7 @@ description: 跟随真实界面截图新增模型服务、填写 API Key、选�
 
 [![首页同时选择 Kimi 和 DeepSeek 配置，准备开启](/screenshots/selected.png)](/screenshots/selected.png)
 
-显示「已开启」后点击「打开 Codex」。如果 Codex 已在运行且需要重新加载配置，先完成当前任务，再按提示正常重启。详见[打开与重启 Codex](/docs/launch/)。
-
-[![开启后的配置列表与打开 Codex 按钮，浏览器预览中的模拟状态](/screenshots/enabled.png)](/screenshots/enabled.png)
+开启后会显示蒙层，只保留「关闭服务」操作；如需修改配置或设置，请先关闭服务。请从系统中打开 Codex；如果 Codex 已在运行且需要重新加载配置，先完成当前任务，再正常退出并重新打开。详见[打开与重启 Codex](/docs/launch/)。
 
 模型以 `配置名称-模型` 显示。例如，截图中的 Kimi 配置会提供 `Kimi 示例-kimi-k3` 和 `Kimi 示例-kimi-k2.7-code`。首次应用使用第一个选中配置的默认模型。
 

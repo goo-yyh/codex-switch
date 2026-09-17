@@ -13,7 +13,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     #[error("{0}")]
     Message(String),
-    #[error("配置在开启后被其他程序修改，请确认是否恢复开启前的配置。")]
+    #[error("配置被其他程序修改，本次操作未完成。请停止其他配置操作后重试。")]
     Conflict,
     #[error("本地文件操作失败，请检查目录权限。")]
     Io(#[from] std::io::Error),

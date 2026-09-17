@@ -22,7 +22,7 @@ Codex may not have reloaded its settings. Finish the task, quit normally and reo
 
 ## Another program modified the configuration
 
-Keep the current file or choose **Back up and restore**, which preserves a copy of the later edits before restoring the activation baseline. See [recovery rules](/en/docs/switch/).
+Stop other programs from writing the configuration and retry. Disabling Codex Switch automatically saves a copy of later edits and restores the activation baseline without another confirmation. If saving the copy or restoring fails, the error is shown and the service remains enabled. See [recovery rules](/en/docs/switch/).
 
 ## Local port is busy
 

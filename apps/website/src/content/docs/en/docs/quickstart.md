@@ -9,7 +9,7 @@ Have Codex App installed and your provider’s API key, API URL and model IDs re
 
 ## 1. Add a configuration
 
-Click **新增配置 (Add configuration)** and choose a provider. For Kimi Coding or Qwen Token Plan, also choose the matching **服务套餐 (Service plan)**. Choose **coding plan** for a custom service. Turn off the main Codex Switch toggle before adding, editing or deleting configurations.
+Click **新增配置 (Add configuration)** and choose a provider. For GLM Coding Plan, MiniMax Token Plan, Kimi Coding or Qwen Token Plan, also choose the matching **服务套餐 (Service plan)**. Choose **coding plan** for a custom service. Turn off the main Codex Switch toggle before adding, editing or deleting configurations.
 
 Enter a recognizable name, check the API URL and format, then scroll down to enter the corresponding API key. Preset URLs are usually a starting point; see [plans and custom APIs](/en/docs/relay/) for complete endpoint URLs.
 
@@ -29,9 +29,7 @@ Select one or more configurations on the home screen, then enable the bottom **C
 
 [![Select Kimi and DeepSeek configurations before enabling](/screenshots/selected.png)](/screenshots/selected.png)
 
-Once the status is **已开启 (Enabled)**, click **打开 Codex (Open Codex)**. If Codex is already running and needs to reload its configuration, finish the current task before restarting normally. See [launch and restart](/en/docs/launch/).
-
-[![Enabled configurations and Open Codex button with simulated browser-preview status](/screenshots/enabled.png)](/screenshots/enabled.png)
+While enabled, an overlay offers only **关闭服务 (Disable service)**. Disable before changing configurations or settings. Launch Codex from your operating system. If it is already running and needs to reload configuration, finish the current task before restarting normally. See [launch and restart](/en/docs/launch/).
 
 Models appear as `configuration-name-model`. For example, the pictured configuration offers `Kimi 示例-kimi-k3` and `Kimi 示例-kimi-k2.7-code`. Initial activation uses the default model of the first selected configuration.
 

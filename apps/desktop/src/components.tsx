@@ -9,6 +9,7 @@ export function Picker({
   label,
   id,
   disabled,
+  placeholder,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -16,11 +17,12 @@ export function Picker({
   label: string;
   id?: string;
   disabled?: boolean;
+  placeholder?: string;
 }) {
   return (
     <Select.Root disabled={disabled} value={value} onValueChange={onChange}>
       <Select.Trigger id={id} className="input picker" aria-label={label}>
-        <Select.Value />
+        <Select.Value placeholder={placeholder} />
         <Select.Icon className="picker-icon">
           <ChevronDown size={16} />
         </Select.Icon>
@@ -49,6 +51,7 @@ export function Modal({
   description,
   error,
   busy = false,
+  dismissible = true,
   children,
 }: {
   open: boolean;
@@ -57,18 +60,29 @@ export function Modal({
   description: string;
   error?: string;
   busy?: boolean;
+  dismissible?: boolean;
   children: ReactNode;
 }) {
   return (
-    <Dialog.Root open={open} onOpenChange={(v) => !v && !busy && onClose()}>
+    <Dialog.Root open={open} onOpenChange={(v) => !v && !busy && dismissible && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="overlay" />
-        <Dialog.Content className="dialog">
+        <Dialog.Content
+          className="dialog"
+          onEscapeKeyDown={(event) => {
+            if (!dismissible) event.preventDefault();
+          }}
+          onInteractOutside={(event) => {
+            if (!dismissible) event.preventDefault();
+          }}
+        >
           <div className="dialog-heading">
             <Dialog.Title>{title}</Dialog.Title>
-            <Dialog.Close className="icon-button" aria-label="关闭" disabled={busy}>
-              <X size={19} />
-            </Dialog.Close>
+            {dismissible && (
+              <Dialog.Close className="icon-button" aria-label="关闭" disabled={busy}>
+                <X size={19} />
+              </Dialog.Close>
+            )}
           </div>
           <Dialog.Description className="muted">{description}</Dialog.Description>
           {error && (

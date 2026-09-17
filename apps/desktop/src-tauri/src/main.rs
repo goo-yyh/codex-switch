@@ -7,7 +7,7 @@ use codex_switch_core::{
     config::ConfigManager,
     connections::{persist_connection, Credentials, UnavailableConnection},
     gateway::{probe, Gateway, Route},
-    profiles::{ensure_editable, ensure_selection, prepare_profile, Profile},
+    profiles::{ensure_editable, prepare_profile, Profile},
     providers::{presets, Preset, RoutingSettings},
     store::Store,
 };
@@ -264,15 +264,15 @@ async fn enable_profiles(s: &AppState, profile_ids: Option<&[String]>) -> Comman
 }
 
 #[tauri::command]
-async fn set_enabled(s: State<'_, AppState>, enabled: bool, force: bool) -> CommandResult<()> {
+async fn set_enabled(s: State<'_, AppState>, enabled: bool) -> CommandResult<()> {
     let _op = s.operation.lock().await;
-    set_enabled_inner(&s, enabled, force).await
+    set_enabled_inner(&s, enabled).await
 }
-async fn set_enabled_inner(s: &AppState, enabled: bool, force: bool) -> CommandResult<()> {
+async fn set_enabled_inner(s: &AppState, enabled: bool) -> CommandResult<()> {
     if enabled {
         enable_inner(s).await
     } else {
-        s.config.disable(force).map_err(err)?;
+        s.config.disable(true).map_err(err)?;
         let running = platform::app_info().running;
         *s.pending.lock().map_err(err)? = running;
         if !running {
@@ -284,17 +284,15 @@ async fn set_enabled_inner(s: &AppState, enabled: bool, force: bool) -> CommandR
 #[tauri::command]
 async fn select_profiles(s: State<'_, AppState>, ids: Vec<String>) -> CommandResult<()> {
     let _op = s.operation.lock().await;
-    let enabled = s.config.enabled().map_err(err)?;
-    ensure_selection(enabled, &ids).map_err(err)?;
-    if enabled {
-        enable_profiles(&s, Some(&ids)).await
-    } else {
-        s.store
-            .lock()
-            .map_err(err)?
-            .select_profiles(&ids)
-            .map_err(err)
-    }
+    select_profiles_inner(&s, &ids)
+}
+fn select_profiles_inner(s: &AppState, ids: &[String]) -> CommandResult<()> {
+    ensure_editable(s.config.enabled().map_err(err)?).map_err(err)?;
+    s.store
+        .lock()
+        .map_err(err)?
+        .select_profiles(ids)
+        .map_err(err)
 }
 #[tauri::command]
 async fn delete_profile(s: State<'_, AppState>, id: String) -> CommandResult<()> {
@@ -359,7 +357,13 @@ fn open_link(url: String) -> CommandResult<()> {
     platform::open_url(&url)
 }
 #[tauri::command]
-fn set_autostart(app: tauri::AppHandle, enabled: bool) -> CommandResult<()> {
+async fn set_autostart(
+    app: tauri::AppHandle,
+    s: State<'_, AppState>,
+    enabled: bool,
+) -> CommandResult<()> {
+    let _op = s.operation.lock().await;
+    ensure_editable(s.config.enabled().map_err(err)?).map_err(err)?;
     if enabled {
         app.autolaunch().enable()
     } else {
@@ -375,7 +379,7 @@ async fn quit(app: tauri::AppHandle, s: State<'_, AppState>) -> CommandResult<()
     {
         return Err("请先退出 Codex；关闭本窗口会继续在后台提供连接。".into());
     }
-    s.config.disable(false).map_err(err)?;
+    s.config.disable(true).map_err(err)?;
     s.runtime.lock().await.take();
     app.exit(0);
     Ok(())

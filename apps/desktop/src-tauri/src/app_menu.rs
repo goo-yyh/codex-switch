@@ -21,7 +21,7 @@ pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
             &PredefinedMenuItem::hide_others(app, Some("隐藏其他应用"))?,
             &PredefinedMenuItem::separator(app)?,
             // Quit still goes through the app's existing ExitRequested guard.
-            &PredefinedMenuItem::quit(app, Some("退出 Codex Switch"))?,
+            &PredefinedMenuItem::quit(app, Some("退出应用"))?,
         ],
     )?;
     Menu::with_items(app, &[&application])

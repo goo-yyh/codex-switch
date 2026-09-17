@@ -13,7 +13,7 @@ Presets reference a pinned CC Switch revision; this project maintains the candid
 | Kimi     | `kimi-k3`           | `https://api.moonshot.cn/v1`                        | Responses |
 | DeepSeek | `deepseek-v4-flash` | `https://api.deepseek.com`                          | Responses |
 
-The service plan selector also offers Kimi Coding and Qwen Token Plan. Selecting a plan loads its URL, models and capabilities and clears the key being entered. All provider URLs can be edited.
+The service plan selector also offers GLM Coding Plan, MiniMax Token Plan, Kimi Coding and Qwen Token Plan. Selecting a plan loads its URL, models and capabilities and clears the key being entered. All provider URLs can be edited.
 
 Context size, reasoning levels and image support come from model presets. Select a model and click **编辑 (Edit)** to adjust them. Confirm the dialog and then save the configuration; cancelling discards the dialog changes. Unknown models use CC Switch templates and its capability registry, which should be adjusted to match the service.
 
