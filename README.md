@@ -10,7 +10,7 @@ Tauri 2 + React + Rust 桌面应用，配套独立的 Astro + Starlight 官网�
 
 - 千问、MiniMax、智谱、Kimi、DeepSeek 五家原生 Responses 预设，包含 Kimi Coding、千问 Token Plan 的独立套餐选项。
 - 所有供应商地址可编辑；每个配置使用一个 API 地址，保存不会发送请求，可手动测试配置；选中模型后可点击该行的「编辑」设置能力。
-- 复用 CC Switch 的 Chat 转换、SSE、工具历史和模型目录；提供远程压缩开关与显式备用队列。
+- 复用 CC Switch 的 Chat 转换、SSE、工具历史和模型目录；提供自动保存状态的远程压缩开关。
 - 总开关：**开启前保存原配置，关闭后精确恢复**。同次开启切换服务不覆盖原始备份；下一次开启重新备份。
 - 配置外部修改冲突保护、异常退出恢复记录、原子写入。
 - 系统凭据库保存 Key；SQLite 只保存连接元数据。
@@ -66,11 +66,14 @@ pnpm --filter @codex-switch/desktop tauri build --config src-tauri/tauri.windows
 pnpm test:providers --all
 pnpm test:providers deepseek
 pnpm test:providers:summary --all # 显式调用真实服务：普通摘要压缩与续接
+cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke --all # 每家仅生成一次普通摘要
 ```
 
 每家最多 4 次合成请求，单次输出上限 256 tokens、60 秒超时；依次检查文本、流、虚拟函数调用和结果回传。失败后停止该服务，不切换域名重试，不执行模型返回的工具。请求可能产生少量费用。
 
 `test:providers:summary` 是独立的长上下文检查：每家最多 3 次普通 Responses 请求，约 128 KB 合成历史、单次输出上限 2,048 tokens、120 秒超时。验证原始历史召回、文本摘要生成、仅凭摘要续接及 token 减少；不调用 remote compact，也不启动 Codex App。报告见 [普通摘要压缩验证](docs/testing/provider-summary-validation-2026-09-16.md)。
+
+`--summary-smoke` 使用相同合成历史和摘要提示词，每家只发一次请求，检查成功 HTTP 状态、完成状态、非空摘要、流式文本一致且摘要比输入短。不做召回或续接验证，不启动 Codex 客户端。可将 `--all` 换成单个厂商 ID。
 
 设置 → 通用设置 → **远程上下文压缩** 默认关闭，Codex 通过普通模型请求执行摘要压缩。用户开启后，配置采用 CC Switch 的远程压缩标记，由 Codex 客户端选择协议；本项目透传原生 Responses 的 Remote V2 `compaction_trigger` 和旧版 compact 请求，不保证上游支持或失败时自动回退。开关保存后下次开启 Codex Switch 时生效。
 
@@ -82,7 +85,7 @@ pnpm test:providers:summary --all # 显式调用真实服务：普通摘要压�
 
 当前工作不启动、重启或终止真实 Codex App，不读写真实 Codex 配置、认证、会话和系统凭据。配置测试只使用临时目录；路由测试使用内存请求和本地合成 HTTP 服务。供应商 HTTP 检查是单独的显式命令。
 
-连通测试通过只证明当次接口检查通过，不能推导完整 Codex App 兼容。图片能力按模型目录声明，Chat 的工具搜索与图片转换复用上游。原生 remote 请求透传；旧版 Chat compact 路由仍走上游普通转换路径，不代表已支持远程契约。Chat 的 V2 触发项或加密压缩历史明确报错，不静默丢弃，也不伪造压缩项。普通摘要请求可走正常 Chat 桥接。备用队列默认关闭，不自动猜测接口或域名；转换缓存有界且不跨进程保存。
+连通测试通过只证明当次接口检查通过，不能推导完整 Codex App 兼容。图片能力按模型目录声明，Chat 的工具搜索与图片转换复用上游。原生 remote 请求透传；旧版 Chat compact 路由仍走上游普通转换路径，不代表已支持远程契约。Chat 的 V2 触发项或加密压缩历史明确报错，不静默丢弃，也不伪造压缩项。普通摘要请求可走正常 Chat 桥接。请求按所选模型转发，失败后不会自动切换配置、接口或域名；转换缓存有界且不跨进程保存。
 
 ## 目录
 

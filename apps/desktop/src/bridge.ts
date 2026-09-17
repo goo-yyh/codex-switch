@@ -28,8 +28,6 @@ export interface ConnectionOptions {
 }
 export interface RoutingSettings {
   remoteCompaction: boolean;
-  failoverEnabled: boolean;
-  fallbackProfiles: string[];
 }
 export interface Profile {
   id: string;

@@ -111,6 +111,46 @@ struct Run {
     failures: usize,
 }
 impl Run {
+    async fn summary_smoke(&mut self, c: &Connection, key: &str) {
+        let (mut input, _, _) = history();
+        let history_bytes = serde_json::to_vec(&input).unwrap().len();
+        self.emit(
+            c,
+            "summary_smoke_fixture",
+            json!({
+                "historyBytes": history_bytes, "historyItems": input.len(),
+                "promptSha256": format!("{:x}", Sha256::digest(SUMMARY_PROMPT.as_bytes())),
+                "remoteCompaction": false, "maxRequests": 1,
+            }),
+        );
+        input.push(json!({"role":"user","content":SUMMARY_PROMPT}));
+        let mut request = body(c, json!(input));
+        request["stream"] = json!(true);
+        let Some(summary) = self
+            .request(c, key, "summary_generate", false, request)
+            .await
+        else {
+            return;
+        };
+        let text = text_output(&summary);
+        let shorter = text.len() < history_bytes;
+        let ok = summary["_valid"] == true
+            && !text.trim().is_empty()
+            && summary["_stream_check"]["deltaMatchesFinal"] == true
+            && shorter;
+        self.assert(
+            c,
+            "summary_smoke_result",
+            ok,
+            json!({
+                "completed": summary["status"] == "completed",
+                "nonempty": !text.trim().is_empty(), "summaryBytes": text.len(),
+                "historyBytes": history_bytes, "shorterThanHistory": shorter,
+                "summarySha256": format!("{:x}", Sha256::digest(text.as_bytes())),
+                "usedRemoteEndpoint": false, "usedCompactionTrigger": false,
+            }),
+        );
+    }
     async fn summary_chain(&mut self, c: &Connection, key: &str) {
         let (input, expected, query) = history();
         let bytes = serde_json::to_vec(&input).unwrap();
@@ -285,9 +325,18 @@ async fn main() {
     let tools_only = args.iter().any(|a| a == "--tools-auto");
     let compact_control = args.iter().any(|a| a == "--compact-control");
     let summary_only = args.iter().any(|a| a == "--summary");
-    args.retain(|a| a != "--tools-auto" && a != "--compact-control" && a != "--summary");
+    let summary_smoke = args.iter().any(|a| a == "--summary-smoke");
+    args.retain(|a| {
+        ![
+            "--tools-auto",
+            "--compact-control",
+            "--summary",
+            "--summary-smoke",
+        ]
+        .contains(&a.as_str())
+    });
     let registry = presets();
-    if [tools_only, compact_control, summary_only]
+    if [tools_only, compact_control, summary_only, summary_smoke]
         .into_iter()
         .filter(|v| *v)
         .count()
@@ -297,7 +346,7 @@ async fn main() {
             .iter()
             .any(|a| a != "--all" && !registry.iter().any(|p| p.id == *a))
     {
-        eprintln!("Usage: provider-compact-check [--summary | --tools-auto | --compact-control] --all | qianwen minimax zhipu kimi deepseek");
+        eprintln!("Usage: provider-compact-check [--summary | --summary-smoke | --tools-auto | --compact-control] --all | qianwen minimax zhipu kimi deepseek");
         std::process::exit(2);
     }
     let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
@@ -352,6 +401,10 @@ async fn main() {
             run.assert(&c, "credentials", false, json!("missing_key"));
             continue;
         };
+        if summary_smoke {
+            run.summary_smoke(&c, key).await;
+            continue;
+        }
         if summary_only {
             run.summary_chain(&c, key).await;
             continue;

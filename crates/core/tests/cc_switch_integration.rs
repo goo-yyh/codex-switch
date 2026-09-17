@@ -185,7 +185,7 @@ async fn native_compact_is_exact_passthrough_at_full_url_with_query() {
     assert_eq!(s.active.load(std::sync::atomic::Ordering::SeqCst), 0);
 }
 #[tokio::test]
-async fn explicit_queue_uses_each_routes_protocol_model_and_credential() {
+async fn selected_route_keeps_its_protocol_model_and_credential_without_failover() {
     let first = mock(
         StatusCode::METHOD_NOT_ALLOWED,
         json!({"error":"unsupported"}),
@@ -202,9 +202,12 @@ async fn explicit_queue_uses_each_routes_protocol_model_and_credential() {
     let alias = a.connection.alias();
     let mut b = route(&next, Protocol::Chat, "key-B");
     b.connection.model = "different-model".into();
-    let state = GatewayState::new(vec![a.clone()], "local".into()).unwrap();
-    state.set_failover(vec![a, b]).await;
-    let response = send(state, &alias, "/v1/responses", false).await;
+    let b_alias = b.connection.alias();
+    let state = GatewayState::new(vec![a, b], "local".into()).unwrap();
+    let response = send(state.clone(), &alias, "/v1/responses", false).await;
+    assert_eq!(response.status(), 405);
+    assert!(next.seen.lock().unwrap().is_empty());
+    let response = send(state, &b_alias, "/v1/responses", false).await;
     assert_eq!(response.status(), 200);
     let out = json_body(response).await;
     assert_eq!(out["output"][0]["content"][0]["text"], "OK");
@@ -218,7 +221,7 @@ async fn explicit_queue_uses_each_routes_protocol_model_and_credential() {
     assert!(next[0]["body"]["messages"].is_array());
 }
 #[tokio::test]
-async fn failures_do_not_guess_a_protocol_without_an_explicit_queue() {
+async fn failures_do_not_guess_another_protocol() {
     let mock = mock(StatusCode::NOT_FOUND, json!({"error":"not_found"}), None).await;
     let r = route(&mock, Protocol::Responses, "key-A");
     let alias = r.connection.alias();
@@ -237,10 +240,11 @@ async fn committed_stream_failure_does_not_replay_against_next_provider() {
     let next = mock(StatusCode::OK, json!({}), None).await;
     let a = route(&first, Protocol::Responses, "A");
     let alias = a.connection.alias();
-    let state = GatewayState::new(vec![a.clone()], "local".into()).unwrap();
-    state
-        .set_failover(vec![a, route(&next, Protocol::Responses, "B")])
-        .await;
+    let state = GatewayState::new(
+        vec![a, route(&next, Protocol::Responses, "B")],
+        "local".into(),
+    )
+    .unwrap();
     let response = send(state.clone(), &alias, "/v1/responses", true).await;
     assert_eq!(response.status(), 200);
     let bytes = axum::body::to_bytes(response.into_body(), 100000)
@@ -408,23 +412,21 @@ async fn stream_rejects_unknown_tools() {
 }
 
 #[tokio::test]
-async fn empty_stream_can_fail_over_before_committing_a_response() {
+async fn empty_stream_returns_an_error_without_switching_provider() {
     let first = mock(StatusCode::OK, Value::Null, Some("")).await;
     let next=mock(StatusCode::OK,Value::Null,Some("event: response.completed\ndata: {\"type\":\"response.completed\",\"response\":{\"id\":\"r\",\"status\":\"completed\",\"output\":[]}}\n\n")).await;
     let a = route(&first, Protocol::Responses, "A");
     let alias = a.connection.alias();
-    let state = GatewayState::new(vec![a.clone()], "local".into()).unwrap();
-    state
-        .set_failover(vec![a, route(&next, Protocol::Responses, "B")])
-        .await;
+    let state = GatewayState::new(
+        vec![a, route(&next, Protocol::Responses, "B")],
+        "local".into(),
+    )
+    .unwrap();
     let response = send(state, &alias, "/v1/responses", true).await;
-    assert_eq!(response.status(), 200);
-    let bytes = axum::body::to_bytes(response.into_body(), 100000)
-        .await
-        .unwrap();
-    assert!(String::from_utf8_lossy(&bytes).contains("response.completed"));
-    assert_eq!(next.seen.lock().unwrap().len(), 1);
+    assert_eq!(response.status(), 502);
+    assert!(next.seen.lock().unwrap().is_empty());
 }
+
 #[test]
 fn sqlite_roundtrip_preserves_user_endpoint_and_capabilities_in_runtime_routes() {
     use codex_switch_core::{profiles::Profile, store::Store};
@@ -442,4 +444,36 @@ fn sqlite_roundtrip_preserves_user_endpoint_and_capabilities_in_runtime_routes()
         routes[0].upstream_url("responses").unwrap(),
         profile.endpoint
     );
+}
+
+#[test]
+fn compaction_setting_survives_reopening_and_ignores_retired_queue_fields() {
+    use codex_switch_core::{providers::RoutingSettings, store::Store};
+    let temp = tempfile::tempdir().unwrap();
+    let path = temp.path().join("state.sqlite");
+    assert!(!RoutingSettings::default().remote_compaction);
+    for enabled in [true, false] {
+        let store = Store::open(&path).unwrap();
+        // Keep the existing storage key so upgrades preserve the user's choice.
+        store
+            .set(
+                "routing_settings",
+                &json!({
+                    "remoteCompaction": enabled,
+                    "failoverEnabled": true,
+                    "fallbackProfiles": ["deleted-profile"]
+                })
+                .to_string(),
+            )
+            .unwrap();
+        drop(store);
+        let store = Store::open(&path).unwrap();
+        let settings: RoutingSettings =
+            serde_json::from_str(&store.setting("routing_settings").unwrap().unwrap()).unwrap();
+        assert_eq!(settings.remote_compaction, enabled);
+        assert_eq!(
+            serde_json::to_value(settings).unwrap(),
+            json!({"remoteCompaction": enabled})
+        );
+    }
 }

@@ -1362,16 +1362,6 @@ main:has(.connection-workspace) {
   padding-top: 16px;
   margin-top: 16px;
 }
-.routing-preferences {
-  padding: 20px;
-}
-.routing-preferences > button {
-  margin-right: 10px;
-  margin-top: 10px;
-}
-.routing-preferences li {
-  padding: 6px 0;
-}
 @media (max-width: 560px) {
   .model-capability {
     grid-template-columns: 1fr;

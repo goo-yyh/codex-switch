@@ -11,7 +11,7 @@
 
 `provider.rs` contains the original reasoning configuration type; `transform.rs` contains the three helpers needed by the Chat converter. `catalog.rs` contains the original tool profile, model specification, catalog builders, reasoning-level overrides, official-vendor builder and required-field backfill. The public `entry()` function in `catalog_adapter.rs` is a local adapter. Explicit parallel-tool overrides also apply to Chat in this adapter. The original extracted blocks are separately checksummed.
 
-`lib.rs` exposes a small API and supplies the minimum error/config/type shapes required by those modules. Upstream's application database, provider router and generic HTTP forwarder are not imported wholesale. The core crate supplies the HTTP/credential lifecycle and explicit ordered queue; the circuit breaker itself is upstream code.
+`lib.rs` exposes a small API and supplies the minimum error/config/type shapes required by those modules. Upstream's application database, provider router and generic HTTP forwarder are not imported wholesale. The core crate supplies the HTTP/credential lifecycle and selected-model routing. The upstream circuit breaker remains in the vendored source but is not used by the local gateway.
 
 Provider metadata is selected from `src/config/codexProviderPresets.ts`. `packages/provider-registry/upstream.json` records the source and selected rows. Local IDs, existing key/documentation links and legacy model candidates are retained. No upstream provider-test claim is inherited.
 
@@ -24,8 +24,8 @@ Provider metadata is selected from `src/config/codexProviderPresets.ts`. `packag
 - The local wrapper now rejects remote V2 `compaction_trigger` and opaque `compaction` input items on Chat routes instead of silently dropping them. Native Responses preserves these items and their JSON/SSE output. Ordinary text-summary requests, including compaction metadata, still use the normal bridge. This guard does not import the unmerged upstream PR #5536 or implement its envelope protocol.
 - Remote compaction is an explicit global preference because this app writes one shared Codex provider table. It uses upstream's `name = "OpenAI"` marker; disabled/default is `name = "Codex Switch"`. The config transaction and exact rollback remain local.
 - HTTPS external upstreams only; base mode retains prefixes and normalizes known endpoint suffixes. Full URL mode retains path/query; compact derives only from a known `/responses` ending. Opaque full endpoints fail with an actionable error. Local HTTP is used only by synthetic tests.
-- The explicit fallback queue uses each configuration's first model, endpoint, protocol and vault credential, in the displayed order (maximum eight, one attempt each). Without a queue, no downgrade occurs. Retryable pre-response statuses: 401, 403, 404, 405, 408, 429, 500, 502, 503, 504; network/JSON/initial-stream errors become 502. Local invalid requests do not retry. A committed stream is never replayed. This bounded HTTP policy is a local adapter, not a claim that the entire upstream forwarder was imported.
-- Remote compaction and fallback default off. Saved configurations do not get silently migrated to newer preset protocols/models/addresses.
+- The fallback queue was removed on 2026-09-17. Requests use the selected model's route, endpoint, protocol and credential; failures do not switch providers or protocols. Existing saved queue fields are ignored.
+- Remote compaction defaults off and its switch saves automatically. Saved configurations do not get silently migrated to newer preset protocols/models/addresses.
 
 ## Updating
 

@@ -590,35 +590,48 @@ describe('CC Switch compatible configuration', () => {
     expect(screen.getByLabelText('API Key')).toBeRequired();
     expect(call).not.toHaveBeenCalledWith('probe_endpoint', expect.anything());
   });
-  it('saves an explicit ordered queue and compaction switch without enabling Codex', async () => {
-    setup([profile(), profile('two', '工作账号')]);
+  it('automatically saves compaction in both directions and restores it after reopening', async () => {
+    const state = setup();
+    let view = render(<App />);
+    fireEvent.click(await screen.findByRole('button', { name: '设置' }));
+    expect(screen.queryByRole('switch', { name: '启用备用队列' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '保存路由设置' })).not.toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: '远程上下文压缩' })).not.toBeChecked();
+    for (const enabled of [true, false]) {
+      fireEvent.click(screen.getByRole('switch', { name: '远程上下文压缩' }));
+      await screen.findByText('上下文压缩设置已自动保存，下次开启时生效。');
+      await waitFor(() =>
+        expect(screen.getByRole('switch', { name: '远程上下文压缩' })).toBeEnabled(),
+      );
+      expect(call).toHaveBeenCalledWith('save_routing_settings', {
+        settings: { remoteCompaction: enabled },
+      });
+      expect(state.routingSettings?.remoteCompaction).toBe(enabled);
+      view.unmount();
+      view = render(<App />);
+      fireEvent.click(await screen.findByRole('button', { name: '设置' }));
+      expect(screen.getByRole('switch', { name: '远程上下文压缩' })).toHaveAttribute(
+        'aria-checked',
+        String(enabled),
+      );
+    }
+    expect(call).not.toHaveBeenCalledWith('set_enabled', expect.anything());
+  });
+  it('keeps the saved compaction state when automatic saving fails', async () => {
+    const state = setup();
+    state.routingSettings = { remoteCompaction: true };
     render(<App />);
     fireEvent.click(await screen.findByRole('button', { name: '设置' }));
-    expect(screen.getByRole('switch', { name: '远程上下文压缩' })).not.toBeChecked();
+    vi.mocked(call).mockRejectedValueOnce(new Error('无法保存设置'));
     fireEvent.click(screen.getByRole('switch', { name: '远程上下文压缩' }));
-    fireEvent.click(screen.getByRole('button', { name: '添加 工作账号' }));
-    fireEvent.click(screen.getByRole('button', { name: '添加 Kimi' }));
-    fireEvent.click(screen.getByRole('switch', { name: '启用备用队列' }));
-    fireEvent.click(screen.getByRole('button', { name: '保存路由设置' }));
+    await screen.findByText('Error: 无法保存设置');
     await waitFor(() =>
-      expect(call).toHaveBeenCalledWith('save_routing_settings', {
-        settings: {
-          remoteCompaction: true,
-          failoverEnabled: true,
-          fallbackProfiles: ['two', 'one'],
-        },
-      }),
+      expect(screen.getByRole('switch', { name: '远程上下文压缩' })).toBeEnabled(),
     );
-    expect(call).not.toHaveBeenCalledWith('set_enabled', expect.anything());
-    await screen.findByText('路由设置已保存，下次开启时生效。');
-    fireEvent.click(screen.getByRole('button', { name: '返回' }));
-    fireEvent.click(screen.getByRole('button', { name: '设置' }));
     expect(screen.getByRole('switch', { name: '远程上下文压缩' })).toBeChecked();
-    fireEvent.click(screen.getByRole('switch', { name: '远程上下文压缩' }));
-    fireEvent.click(screen.getByRole('button', { name: '保存路由设置' }));
-    await waitFor(() => expect(call).toHaveBeenLastCalledWith('snapshot'));
-    await waitFor(() =>
-      expect(screen.getByRole('switch', { name: '远程上下文压缩' })).not.toBeChecked(),
-    );
+    expect(state.routingSettings?.remoteCompaction).toBe(true);
+    expect(
+      screen.queryByText('上下文压缩设置已自动保存，下次开启时生效。'),
+    ).not.toBeInTheDocument();
   });
 });

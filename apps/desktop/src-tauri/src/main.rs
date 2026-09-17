@@ -99,19 +99,6 @@ async fn save_routing_settings(
     let _op = s.operation.lock().await;
     ensure_editable(s.config.enabled().map_err(err)?).map_err(err)?;
     let store = s.store.lock().map_err(err)?;
-    let profiles = store.profiles().map_err(err)?;
-    let mut seen = std::collections::HashSet::new();
-    if settings.fallback_profiles.len() > 8
-        || settings
-            .fallback_profiles
-            .iter()
-            .any(|id| !seen.insert(id) || !profiles.iter().any(|p| &p.id == id))
-    {
-        return Err("备用队列包含无效或重复的配置，最多 8 个。".into());
-    }
-    if settings.failover_enabled && settings.fallback_profiles.is_empty() {
-        return Err("请先添加备用队列。".into());
-    }
     store
         .set(
             "routing_settings",
@@ -248,34 +235,6 @@ async fn enable_profiles(s: &AppState, profile_ids: Option<&[String]>) -> Comman
         .and_then(|v| v.parse::<u16>().ok())
         .unwrap_or(0);
     let settings = routing_settings(&*s.store.lock().map_err(err)?)?;
-    let mut fallback = vec![];
-    if settings.failover_enabled {
-        let store = s.store.lock().map_err(err)?;
-        let profiles = store.profiles().map_err(err)?;
-        for id in &settings.fallback_profiles {
-            let profile = profiles
-                .iter()
-                .find(|p| &p.id == id)
-                .ok_or("备用配置已删除，请更新通用设置。")?;
-            let connection = profile
-                .routes()
-                .into_iter()
-                .next()
-                .ok_or("备用配置缺少模型。")?;
-            let key = Vault.read(&profile.credential_id).map_err(err)?;
-            if key.trim().is_empty() {
-                return Err("备用配置的密钥为空。".into());
-            }
-            fallback.push(Route {
-                connection,
-                key,
-                aliases: vec![],
-            });
-        }
-        if fallback.is_empty() {
-            return Err("备用队列为空，请更新通用设置。".into());
-        }
-    }
     codex_switch_core::activation::activate_with_options(
         &s.config,
         &mut runtime,
@@ -300,9 +259,6 @@ async fn enable_profiles(s: &AppState, profile_ids: Option<&[String]>) -> Comman
     )
     .await
     .map_err(err)?;
-    if let Some(gateway) = runtime.as_ref() {
-        gateway.state.set_failover(fallback).await;
-    }
     *s.pending.lock().unwrap_or_else(|e| e.into_inner()) = running;
     Ok(())
 }
@@ -439,7 +395,7 @@ fn main() {
         .plugin(tauri_plugin_autostart::Builder::new().build())
         .setup(|app| {
             #[cfg(target_os = "macos")]
-            app_menu::hide_edit_actions()?;
+            app_menu::configure_visibility()?;
             let data = app.path().app_data_dir()?;
             let home = std::env::var_os("CODEX_HOME")
                 .map(PathBuf::from)

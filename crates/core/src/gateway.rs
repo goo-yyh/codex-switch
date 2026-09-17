@@ -56,8 +56,6 @@ struct History {
 pub struct GatewayState {
     pub routes: Arc<RwLock<HashMap<String, Route>>>,
     pub token: String,
-    failover: Arc<RwLock<Vec<Route>>>,
-    breakers: Arc<RwLock<HashMap<String, Arc<cc_switch_codex::CircuitBreaker>>>>,
     visible_models: Arc<RwLock<Vec<String>>>,
     client: reqwest::Client,
     history: Arc<RwLock<VecDeque<(String, History)>>>,
@@ -72,17 +70,11 @@ impl GatewayState {
             )),
             routes: Arc::new(RwLock::new(route_map(routes))),
             token,
-            failover: Default::default(),
-            breakers: Default::default(),
             client: http_client()?,
             history: Arc::new(RwLock::new(VecDeque::new())),
             active: Arc::new(AtomicUsize::new(0)),
             cancel: CancellationToken::new(),
         })
-    }
-    pub async fn set_failover(&self, routes: Vec<Route>) {
-        *self.failover.write().await = routes;
-        self.breakers.write().await.clear();
     }
     pub async fn replace_routes(&self, routes: Vec<Route>) {
         let visible = routes.iter().map(|r| r.connection.alias()).collect();
@@ -349,50 +341,7 @@ async fn forward(s: GatewayState, h: HeaderMap, body: Value, is_compact: bool) -
             "找不到此模型对应的连接，请重新选择模型。",
         );
     };
-    let queue = s.failover.read().await.clone();
-    if queue.is_empty() {
-        return forward_route(s, body, is_compact, primary, alias).await;
-    }
-    // Like CC Switch, explicit failover uses only the ordered queue. Never infer a different protocol or reuse another provider's key.
-    let mut last = None;
-    for route in queue {
-        if s.cancel.is_cancelled() {
-            break;
-        }
-        let breaker = {
-            let mut all = s.breakers.write().await;
-            all.entry(route.connection.id.clone())
-                .or_insert_with(|| {
-                    Arc::new(cc_switch_codex::CircuitBreaker::new(Default::default()))
-                })
-                .clone()
-        };
-        let permit = breaker.allow_request().await;
-        if !permit.allowed {
-            continue;
-        }
-        let response =
-            forward_route(s.clone(), body.clone(), is_compact, route, alias.clone()).await;
-        let status = response.status();
-        // Only pre-response transport/auth/rate-limit/availability failures are retried.
-        // Local request validation errors and a committed SSE body are never replayed.
-        if matches!(
-            status.as_u16(),
-            401 | 403 | 404 | 405 | 408 | 429 | 500 | 502 | 503 | 504
-        ) {
-            breaker.record_failure(permit.used_half_open_permit).await;
-            last = Some(response);
-            continue;
-        }
-        breaker.record_success(permit.used_half_open_permit).await;
-        return response;
-    }
-    last.unwrap_or_else(|| {
-        error(
-            StatusCode::SERVICE_UNAVAILABLE,
-            "备用队列中的服务暂时不可用。",
-        )
-    })
+    forward_route(s, body, is_compact, primary, alias).await
 }
 async fn forward_route(
     s: GatewayState,

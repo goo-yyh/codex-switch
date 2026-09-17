@@ -20,7 +20,7 @@ import {
   type ModelOptions,
 } from './bridge';
 import { Picker, Modal } from './components';
-import { CompatibilityFields, RoutingPreferences } from './CompatibilityFields';
+import { CompatibilityFields, CompactionPreferences } from './CompatibilityFields';
 import { ModelSelection } from './ModelSelection';
 import { RequestFields } from './RequestFields';
 import { ModelCapabilityFields } from './ModelCapabilityFields';
@@ -667,29 +667,22 @@ export default function App() {
                 返回
               </button>
               <h1>通用设置</h1>
-              <p className="muted form-description">上下文压缩、备用队列、启动行为与配置恢复。</p>
-              {data.enabled && (
-                <p className="muted small">请先关闭 Codex Switch，再修改压缩和备用队列设置。</p>
-              )}
-              <RoutingPreferences
-                profiles={data.profiles}
-                settings={
-                  data.routingSettings ?? {
-                    remoteCompaction: false,
-                    failoverEnabled: false,
-                    fallbackProfiles: [],
-                  }
-                }
-                disabled={busy || data.enabled}
-                onSave={(settings) =>
-                  run(async () => {
-                    await call('save_routing_settings', { settings });
-                    setNotice('路由设置已保存，下次开启时生效。');
-                  })
-                }
-              />
-              <h2 className="settings-section-title">启动与应用</h2>
+              <h2 className="settings-section-title">应用设置</h2>
               <div className="settings-group">
+                <CompactionPreferences
+                  settings={
+                    data.routingSettings ?? {
+                      remoteCompaction: false,
+                    }
+                  }
+                  disabled={busy || data.enabled}
+                  onChange={(settings) =>
+                    run(async () => {
+                      await call('save_routing_settings', { settings });
+                      setNotice('上下文压缩设置已自动保存，下次开启时生效。');
+                    })
+                  }
+                />
                 <div className="setting-row">
                   <div>
                     <h3>登录电脑时启动</h3>

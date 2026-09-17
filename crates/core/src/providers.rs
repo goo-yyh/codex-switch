@@ -268,8 +268,6 @@ mod tests {
 #[serde(default, rename_all = "camelCase")]
 pub struct RoutingSettings {
     pub remote_compaction: bool,
-    pub failover_enabled: bool,
-    pub fallback_profiles: Vec<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
