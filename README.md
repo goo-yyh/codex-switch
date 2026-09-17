@@ -100,6 +100,8 @@ cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke -
 
 ## 目录与许可
 
+详细模块职责、调用链与维护约束见[架构说明](docs/development/architecture.md)。
+
 | 目录                     | 内容                                    |
 | ------------------------ | --------------------------------------- |
 | `apps/desktop`           | React 界面与 Tauri 原生壳               |

@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ModelSelection } from './ModelSelection';
-import registry from '../../../packages/provider-registry/providers.json';
-import models from '../../../packages/provider-registry/models.json';
+import registry from '../../../../../packages/provider-registry/providers.json';
+import models from '../../../../../packages/provider-registry/models.json';
 function EditableModels({
   initial = [],
   disabled = false,

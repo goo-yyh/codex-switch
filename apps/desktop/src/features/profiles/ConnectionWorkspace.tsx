@@ -9,34 +9,8 @@ import {
   ShieldCheck,
   Trash2,
 } from 'lucide-react';
-import type { Profile, Snapshot } from './bridge';
-import { providerLogos } from '../../../packages/provider-registry/logos';
-
-export function ServiceMark({
-  name,
-  presetId = 'custom',
-  large = false,
-}: {
-  name: string;
-  presetId?: string;
-  large?: boolean;
-}) {
-  return (
-    <span
-      className={`service-mark ${large ? 'large' : ''}`}
-      data-service={presetId}
-      aria-hidden="true"
-    >
-      {providerLogos[presetId] ? (
-        <img src={providerLogos[presetId]} alt="" />
-      ) : presetId === 'custom' ? (
-        '>_'
-      ) : (
-        name.slice(0, 1)
-      )}
-    </span>
-  );
-}
+import type { Profile, Snapshot } from '../../api/bridge';
+import { ServiceMark } from '../../components/ServiceMark';
 
 export function ConnectionWorkspace({
   data,
@@ -47,7 +21,6 @@ export function ConnectionWorkspace({
   onDelete,
   onToggle,
   onOpen,
-  onRecover,
   onSettings,
 }: {
   data: Snapshot;
@@ -58,7 +31,6 @@ export function ConnectionWorkspace({
   onDelete: (p: Profile) => void;
   onToggle: (enabled: boolean) => void;
   onOpen: () => void;
-  onRecover: () => void;
   onSettings: () => void;
 }) {
   const selected = data.profiles.filter((p) => data.selectedProfiles.includes(p.id));
@@ -224,11 +196,6 @@ export function ConnectionWorkspace({
               : '开启前自动备份，关闭后恢复原配置。'}
           </span>
           <div className="connection-control-actions">
-            {data.enabled && !data.routing && (
-              <button className="text-button" disabled={busy || data.enabled} onClick={onRecover}>
-                恢复连接
-              </button>
-            )}
             <button
               className="text-button settings-button"
               aria-label="设置"

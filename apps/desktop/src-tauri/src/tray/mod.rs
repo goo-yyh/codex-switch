@@ -1,4 +1,7 @@
-use crate::{enable_inner, err, select_profiles_inner, set_enabled_inner, AppState, CommandResult};
+use crate::{
+    service::{enable_inner, select_profiles_inner, set_enabled_inner},
+    state::{err, AppState, CommandResult},
+};
 use codex_switch_core::profiles::Profile;
 use serde::Serialize;
 use std::sync::Mutex;
@@ -9,7 +12,6 @@ use tauri::{
 };
 
 #[cfg(target_os = "macos")]
-#[path = "tray_selection.rs"]
 mod persistent_menu;
 
 const TRAY_ID: &str = "codex-switch";
@@ -87,7 +89,7 @@ pub fn request_quit(app: &AppHandle) {
     let app = app.clone();
     tauri::async_runtime::spawn(async move {
         let s = app.state::<AppState>();
-        if let Err(message) = crate::quit(app.clone(), s.clone()).await {
+        if let Err(message) = crate::commands::quit(app.clone(), s.clone()).await {
             *s.tray_feedback.lock().unwrap_or_else(|e| e.into_inner()) = Some(Feedback {
                 message,
                 is_error: true,
@@ -455,7 +457,6 @@ mod tests {
             operation: tokio::sync::Mutex::new(()),
             pending: std::sync::Mutex::new(false),
             tray_feedback: std::sync::Mutex::new(None),
-            unavailable: std::sync::Mutex::new(vec![]),
             checks: std::sync::Mutex::new(Default::default()),
         };
         for (id, expected) in [

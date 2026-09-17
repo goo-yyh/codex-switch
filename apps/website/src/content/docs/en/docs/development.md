@@ -15,6 +15,10 @@ packages/                Shared design tokens, product info and model presets
 docs/                    Design notes, source research and historical test reports
 ```
 
+The desktop UI separates `api/`, `hooks/`, shared `components/`, and `features/profiles/` / `features/settings/`. The native shell separates `commands.rs`, `service.rs`, `state.rs`, and `tray/`; `main.rs` only assembles the app. The core gateway separates forwarding, history replay, HTTP limits, and explicit probes. Bilingual download pages share one `DownloadCards.astro` component.
+
+See the [architecture and maintenance guide](https://github.com/goo-yyh/codex-switch/blob/main/docs/development/architecture.md) for call paths, credential rollback, legacy migration, and native menu constraints. `pnpm test` includes native coordinator tests alongside UI, core, and protocol tests.
+
 ## Preview and build
 
 See [installation](/en/docs/install/) for platform requirements.

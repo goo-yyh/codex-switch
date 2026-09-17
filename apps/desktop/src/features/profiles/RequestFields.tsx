@@ -1,7 +1,7 @@
 import { useId } from 'react';
 import * as Switch from '@radix-ui/react-switch';
-import { Picker } from './components';
-import type { ModelOptions, Protocol } from './bridge';
+import { Picker } from '../../components/controls';
+import type { ModelOptions, Protocol } from '../../api/bridge';
 
 export function RequestFields({
   model,

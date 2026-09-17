@@ -1,4 +1,4 @@
-import type { ModelOptions, Preset, Profile } from './bridge';
+import type { ModelOptions, Preset, Profile } from '../../api/bridge';
 
 // Fill missing reasoning fields only. Never replace saved connection settings or
 // explicit model customizations when the bundled presets change.

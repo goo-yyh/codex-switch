@@ -1,5 +1,5 @@
 //! macOS profile checkboxes remain open and persist during native menu tracking.
-use crate::{err, CommandResult};
+use crate::state::{err, CommandResult};
 use objc2::{
     define_class, msg_send, rc::Retained, runtime::AnyObject, sel, DeclaredClass, MainThreadMarker,
     MainThreadOnly,

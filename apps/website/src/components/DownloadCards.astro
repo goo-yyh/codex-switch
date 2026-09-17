@@ -1,0 +1,66 @@
+---
+import product from '../../../../packages/product-info/product.json';
+import type { Locale } from '../lib/i18n';
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const english = locale === 'en';
+const copy = english
+  ? {
+      channel: 'Developer preview',
+      download: 'Download installer ↗',
+      checksum: 'SHA-256 checksum',
+      pending: 'Installer not yet released',
+      build: 'View build instructions ↗',
+    }
+  : {
+      channel: product.channel,
+      download: '下载安装包 ↗',
+      checksum: 'SHA-256 校验值',
+      pending: '安装包待发布',
+      build: '查看构建步骤 ↗',
+    };
+---
+
+<div class="download-grid">
+  {
+    product.downloads.map((platform) => {
+      // Both locales require a verified artifact URL and checksum before advertising a download.
+      const released = Boolean(platform.url && platform.sha256);
+      const note = english
+        ? platform.platform === 'macOS'
+          ? 'Build each architecture separately.'
+          : 'Native builds and device validation are pending.'
+        : platform.note;
+      const guide = english
+        ? platform.platform === 'macOS'
+          ? '/en/docs/install/#build-from-source'
+          : '/en/docs/install/#windows'
+        : platform.guide;
+      return (
+        <article>
+          <span class="platform-symbol">{platform.symbol}</span>
+          <h2>{platform.platform}</h2>
+          <p>
+            {platform.architecture}
+            <br />
+            {note}
+          </p>
+          <span class="availability">
+            {released ? `${product.version} ${copy.channel}` : copy.pending}
+          </span>
+          <a class="button" href={released ? platform.url : guide}>
+            {released ? copy.download : copy.build}
+          </a>
+          {released && (
+            <details>
+              <summary>{copy.checksum}</summary>
+              <code style="overflow-wrap:anywhere">{platform.sha256}</code>
+            </details>
+          )}
+        </article>
+      );
+    })
+  }
+</div>

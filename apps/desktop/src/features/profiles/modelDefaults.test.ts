@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import registry from '../../../packages/provider-registry/providers.json';
-import models from '../../../packages/provider-registry/models.json';
-import type { Preset, Profile } from './bridge';
+import registry from '../../../../../packages/provider-registry/providers.json';
+import models from '../../../../../packages/provider-registry/models.json';
+import type { Preset, Profile } from '../../api/bridge';
 import { withReasoningDefaults } from './modelDefaults';
 
 const presets = registry as Preset[];

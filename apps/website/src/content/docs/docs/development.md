@@ -15,6 +15,10 @@ packages/                共享设计变量、产品信息与服务模型预设
 docs/                    设计、源码研究和历史测试报告
 ```
 
+桌面 UI 按 `api/`、`hooks/`、共享 `components/` 与 `features/profiles/`、`features/settings/` 分层。原生端由 `commands.rs`、`service.rs`、`state.rs` 与 `tray/` 分担职责，`main.rs` 只装配应用。核心网关分别维护转发、会话历史、网络限制与显式测试。中英文下载页共用 `DownloadCards.astro`。
+
+详细调用链、凭据回滚、旧配置迁移和原生菜单约束见[架构与维护说明](https://github.com/goo-yyh/codex-switch/blob/main/docs/development/architecture.md)。`pnpm test` 同时运行 UI、核心、协议与原生协调测试。
+
 ## 预览与构建
 
 环境与原生构建依赖见[安装与下载](/docs/install/)。

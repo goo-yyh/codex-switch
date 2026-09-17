@@ -1,4 +1,5 @@
 ---
+import DownloadCards from '../../components/DownloadCards.astro';
 import Site from '../../layouts/Site.astro';
 import product from '../../../../../packages/product-info/product.json';
 const hasDownloads = product.downloads.some((p) => p.url && p.sha256);
@@ -19,51 +20,7 @@ const hasDownloads = product.downloads.some((p) => p.url && p.sha256);
           ? 'Installers and source builds available.'
           : 'Source builds are available. Public installers have not been released.'
       }<br />Read the compatibility notes before you start.
-    </p><div class="download-grid">
-      {
-        product.downloads.map((platform) => (
-          <article>
-            <>
-              <span class="platform-symbol">{platform.symbol}</span>
-              <h2>{platform.platform}</h2>
-            </>
-            <p>
-              {platform.architecture}
-              <br />
-              {platform.platform === 'macOS'
-                ? 'Build each architecture separately.'
-                : 'Native builds and device validation are pending.'}
-            </p>
-            {platform.url && platform.sha256 ? (
-              <>
-                <span class="availability">{product.version} Developer preview</span>
-                <a class="button" href={platform.url}>
-                  Download installer ↗
-                </a>
-                <details>
-                  <summary>SHA-256 checksum</summary>
-                  <code style="overflow-wrap:anywhere">{platform.sha256}</code>
-                </details>
-              </>
-            ) : (
-              <>
-                <span class="availability">Installer not yet released</span>
-                <a
-                  class="button"
-                  href={
-                    platform.platform === 'macOS'
-                      ? '/en/docs/install/#build-from-source'
-                      : '/en/docs/install/#windows'
-                  }
-                >
-                  View build instructions ↗
-                </a>
-              </>
-            )}
-          </article>
-        ))
-      }
-    </div><aside class="download-note">
+    </p><DownloadCards locale="en" /><aside class="download-note">
       <h2>Before you start</h2><p>
         Install the official Codex App and have your provider’s API key ready. Codex Switch does not
         sell credits. API usage is billed by your chosen provider.

@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent, act, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
-import { call, subscribeToTray, type Snapshot, type Profile, type Preset } from './bridge';
+import { call, subscribeToTray, type Snapshot, type Profile, type Preset } from './api/bridge';
 import registry from '../../../packages/provider-registry/providers.json';
-vi.mock('./bridge', () => ({
+vi.mock('./api/bridge', () => ({
   isPreview: true,
   call: vi.fn(),
   subscribeToTray: vi.fn(async () => () => {}),
@@ -23,7 +23,6 @@ function setup(profiles: Profile[] = [profile()]) {
     profiles,
     presets: registry as Preset[],
     selectedProfiles: [],
-    needsApply: true,
     enabled: false,
     routing: false,
     pendingReload: false,
@@ -47,12 +46,10 @@ function setup(profiles: Profile[] = [profile()]) {
       const ids = args?.ids as string[];
       if (state.enabled) throw new Error('请先关闭服务，再修改配置或设置。');
       state.selectedProfiles = ids;
-      state.needsApply = !state.enabled;
     }
     if (command === 'set_enabled') {
       state.enabled = Boolean(args?.enabled);
       state.routing = state.enabled;
-      state.needsApply = false;
       state.pendingReload = state.app.running;
     }
     if (command === 'delete_profile') {
@@ -86,7 +83,6 @@ describe('configuration lifecycle', () => {
     await screen.findByRole('heading', { name: '我的配置' });
     state.selectedProfiles = ['two'];
     state.enabled = state.routing = true;
-    state.needsApply = false;
     state.trayFeedback = { message: '已从托盘切换到工作账号。', isError: false };
     act(() => notify());
     await screen.findByRole('dialog', { name: 'Codex Switch 已开启' });
@@ -105,6 +101,22 @@ describe('configuration lifecycle', () => {
     expect(screen.getByRole('button', { name: '设置' })).toBeEnabled();
     view.unmount();
     expect(stop).toHaveBeenCalledOnce();
+  });
+  it('preserves an action failure when refresh also consumes old tray success feedback', async () => {
+    const state = setup();
+    state.selectedProfiles = ['one'];
+    const invoke = vi.mocked(call).getMockImplementation()!;
+    vi.mocked(call).mockImplementation(async (command, args) => {
+      if (command === 'set_enabled') {
+        state.trayFeedback = { message: '旧操作成功', isError: false };
+        throw new Error('配置被其他程序修改');
+      }
+      return invoke(command, args);
+    });
+    render(<App />);
+    fireEvent.click(await screen.findByRole('switch', { name: '开启 Codex Switch' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('配置被其他程序修改');
+    expect(screen.getByRole('switch', { name: '开启 Codex Switch' })).not.toBeChecked();
   });
   it('does not configure or open Codex on mount', async () => {
     setup();

@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
-import { Picker } from './components';
-import catalog from '../../../packages/provider-registry/models.json';
+import { Picker } from '../../components/controls';
+import catalog from '../../../../../packages/provider-registry/models.json';
 
 const CUSTOM = '__custom_model__';
 

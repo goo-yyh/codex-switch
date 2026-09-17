@@ -9,13 +9,13 @@ use codex_switch_core::{
 };
 use std::sync::Mutex;
 use tauri::{Listener, State};
-#[path = "../src/tray.rs"]
+#[path = "../src/tray/mod.rs"]
 mod tray;
-type CommandResult<T> = Result<T, String>;
-fn err(e: impl std::fmt::Display) -> String {
+pub(crate) type CommandResult<T> = Result<T, String>;
+pub(crate) fn err(e: impl std::fmt::Display) -> String {
     e.to_string()
 }
-struct AppState {
+pub(crate) struct AppState {
     store: Mutex<Store>,
     config: ConfigManager,
     operation: tokio::sync::Mutex<()>,
@@ -23,8 +23,6 @@ struct AppState {
     tray_feedback: Mutex<Option<tray::Feedback>>,
     #[cfg(test)]
     runtime: tokio::sync::Mutex<Option<codex_switch_core::gateway::Gateway>>,
-    #[cfg(test)]
-    unavailable: Mutex<Vec<codex_switch_core::connections::UnavailableConnection>>,
     #[cfg(test)]
     checks: Mutex<std::collections::HashMap<String, tokio_util::sync::CancellationToken>>,
 }
@@ -36,7 +34,7 @@ mod platform {
         AppInfo { running: false }
     }
 }
-fn select_profiles_inner(s: &AppState, ids: &[String]) -> CommandResult<()> {
+pub(crate) fn select_profiles_inner(s: &AppState, ids: &[String]) -> CommandResult<()> {
     ensure_editable(s.config.enabled().map_err(err)?).map_err(err)?;
     s.store
         .lock()
@@ -46,15 +44,25 @@ fn select_profiles_inner(s: &AppState, ids: &[String]) -> CommandResult<()> {
     println!("SELECTION {ids:?}");
     Ok(())
 }
-async fn enable_inner(_: &AppState) -> CommandResult<()> {
+pub(crate) async fn enable_inner(_: &AppState) -> CommandResult<()> {
     Err("隔离测试不启动服务。".into())
 }
-async fn set_enabled_inner(_: &AppState, _: bool) -> CommandResult<()> {
+pub(crate) async fn set_enabled_inner(_: &AppState, _: bool) -> CommandResult<()> {
     Err("隔离测试不启动服务。".into())
 }
-async fn quit(app: tauri::AppHandle, _: State<'_, AppState>) -> CommandResult<()> {
+pub(crate) async fn quit(app: tauri::AppHandle, _: State<'_, AppState>) -> CommandResult<()> {
     app.exit(0);
     Ok(())
+}
+// Expose the same boundaries as production while deliberately stubbing activation.
+mod service {
+    pub(crate) use super::{enable_inner, select_profiles_inner, set_enabled_inner};
+}
+mod state {
+    pub(crate) use super::{err, AppState, CommandResult};
+}
+mod commands {
+    pub(crate) use super::quit;
 }
 fn main() {
     let temp = tempfile::tempdir().unwrap();
@@ -87,8 +95,6 @@ fn main() {
         tray_feedback: Mutex::new(None),
         #[cfg(test)]
         runtime: Default::default(),
-        #[cfg(test)]
-        unavailable: Default::default(),
         #[cfg(test)]
         checks: Default::default(),
     };

@@ -1,100 +1,10 @@
-import { invoke } from '@tauri-apps/api/core';
-import { listen } from '@tauri-apps/api/event';
-import registry from '../../../packages/provider-registry/providers.json';
-export type Protocol = 'chat' | 'responses';
-export interface ModelOptions {
-  endpoint?: string;
-  protocol?: Protocol;
-  fullUrl?: boolean;
-  baseInstructions?: string;
-  contextWindow?: number;
-  contextNote?: string;
-  reasoningLevels?: string[];
-  defaultReasoningLevel?: string;
-  reasoningNote?: string;
-  inputModalities?: string[];
-  parallelToolCalls?: boolean;
-}
-export interface ConnectionOptions {
-  fullUrl?: boolean;
-  endpointCandidates?: string[];
-  modelOverrides?: Partial<Record<string, ModelOptions>>;
-  chatReasoning?: {
-    supportsThinking?: boolean;
-    supportsEffort?: boolean;
-    thinkingParam?: string;
-    effortParam?: string;
-    effortValueMode?: string;
-    outputFormat?: string;
-  } | null;
-}
-export interface RoutingSettings {
-  remoteCompaction: boolean;
-}
-export interface Profile {
-  id: string;
-  name: string;
-  presetId: string;
-  endpoint: string;
-  models: string[];
-  protocol: Protocol;
-  contextWindow: number;
-  options?: ConnectionOptions;
-}
-export interface EndpointVariant {
-  name: string;
-  endpoint: string;
-  model: string;
-  protocol: Protocol;
-  contextWindow: number;
-  options?: ConnectionOptions;
-}
-export interface Preset {
-  variants?: EndpointVariant[];
-  id: string;
-  name: string;
-  endpoint: string;
-  model: string;
-  protocol: Protocol;
-  keyUrl: string;
-  docsUrl: string;
-  envKey: string;
-  contextWindow: number;
-  options?: ConnectionOptions;
-}
-export interface Snapshot {
-  profiles: Profile[];
-  presets: Preset[];
-  selectedProfiles: string[];
-  needsApply: boolean;
-  enabled: boolean;
-  routing: boolean;
-  pendingReload: boolean;
-  activeRequests: number;
-  app: { installed: boolean; running: boolean };
-  configPath: string;
-  autostart: boolean;
-  routingSettings?: RoutingSettings;
-  unavailable?: { id: string; message: string }[];
-  trayFeedback?: { message: string; isError: boolean } | null;
-}
-export interface Receipt {
-  ok: boolean;
-  status: number | null;
-  message: string;
-  elapsedMs: number;
-}
-export const isPreview = !(window as unknown as { __TAURI_INTERNALS__?: unknown })
-  .__TAURI_INTERNALS__;
-export async function subscribeToTray(onChange: () => void): Promise<() => void> {
-  if (isPreview) return () => {};
-  return listen('tray-state-changed', onChange);
-}
+import registry from '../../../../packages/provider-registry/providers.json';
+import type { Snapshot, Preset, Profile, RoutingSettings } from './types';
+
 const state: Snapshot = {
   profiles: [],
   presets: registry as Preset[],
   selectedProfiles: [],
-  needsApply: false,
   enabled: false,
   routing: false,
   pendingReload: false,
@@ -103,8 +13,10 @@ const state: Snapshot = {
   configPath: '~/.codex/config.toml',
   autostart: false,
 };
-export async function call<T>(command: string, args: Record<string, unknown> = {}): Promise<T> {
-  if (!isPreview) return invoke<T>(command, args);
+export async function previewCall<T>(
+  command: string,
+  args: Record<string, unknown> = {},
+): Promise<T> {
   // UI preview has no native, network, file, or credential side effects.
   switch (command) {
     case 'snapshot':
@@ -126,7 +38,6 @@ export async function call<T>(command: string, args: Record<string, unknown> = {
       const index = state.profiles.findIndex((other) => other.id === p.id);
       if (index < 0) state.profiles.push(p);
       else state.profiles[index] = p;
-      state.needsApply = true;
       return p as T;
     }
     case 'save_routing_settings':
@@ -137,25 +48,20 @@ export async function call<T>(command: string, args: Record<string, unknown> = {
       return { ok: true, status: 200, message: '界面预览：未发送请求', elapsedMs: 0 } as T;
     case 'cancel_validation':
       break;
-    case 'check_connection':
-      return { ok: true, status: 200, message: '示例连接验证通过', elapsedMs: 0 } as T;
     case 'set_enabled':
       if (args.enabled && !state.selectedProfiles.length) throw new Error('请至少勾选一个配置。');
       state.enabled = Boolean(args.enabled);
       state.routing = state.enabled;
-      state.needsApply = false;
       state.pendingReload = state.app.running;
       break;
     case 'select_profiles':
       if (state.enabled) throw new Error('请先关闭服务，再修改配置或设置。');
       state.selectedProfiles = [...(args.ids as string[])];
-      state.needsApply = true;
       break;
     case 'delete_profile':
       if (state.enabled) throw new Error('Codex Switch 已开启，请先关闭服务，再修改配置或设置。');
       state.profiles = state.profiles.filter((p) => p.id !== args.id);
       state.selectedProfiles = state.selectedProfiles.filter((id) => id !== args.id);
-      state.needsApply = true;
       break;
     case 'recover_connection':
       if (!state.enabled || !state.selectedProfiles.length)

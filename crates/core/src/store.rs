@@ -173,27 +173,8 @@ impl Store {
         }
         Ok(aliases)
     }
+    /// Commit the activated routes atomically; selection is saved separately while off.
     pub fn commit_profiles(&self, routes: &[Connection], port: u16) -> Result<()> {
-        self.commit_profiles_inner(routes, port, None)
-    }
-    /// Commit a quick switch and the homepage selection together, after activation succeeds.
-    pub fn commit_profile_switch(
-        &self,
-        routes: &[Connection],
-        port: u16,
-        ids: &[String],
-    ) -> Result<()> {
-        if serde_json::to_value(self.routes_for_profiles(ids)?)? != serde_json::to_value(routes)? {
-            return Err(crate::message("配置已变化，请重新选择。"));
-        }
-        self.commit_profiles_inner(routes, port, Some(ids))
-    }
-    fn commit_profiles_inner(
-        &self,
-        routes: &[Connection],
-        port: u16,
-        ids: Option<&[String]>,
-    ) -> Result<()> {
         let first = routes
             .first()
             .ok_or_else(|| crate::message("请至少勾选一个配置。"))?;
@@ -212,9 +193,6 @@ impl Store {
             }
         }
         self.set("historical_routes", &serde_json::to_string(&known)?)?;
-        if let Some(ids) = ids {
-            self.select_profiles(ids)?;
-        }
         tx.commit()?;
         Ok(())
     }
@@ -497,61 +475,17 @@ mod tests {
         assert_eq!(s.applied_routes().unwrap()[0].id, "a-m1");
     }
     #[test]
-    fn quick_switch_stages_without_changing_selection_then_commits_all_models() {
+    fn invalid_selection_and_empty_activation_do_not_change_saved_state() {
         let s = Store::memory().unwrap();
-        let a = profile("a", "Work", &["m1"]);
-        let b = profile("b", "Personal", &["m2", "m3"]);
-        for p in [&a, &b] {
-            s.save_profile(p).unwrap();
-        }
-        s.select_profiles(&["a".into()]).unwrap();
-        s.commit_profiles(&a.routes(), 1234).unwrap();
-        let staged = s.routes_for_profiles(&["b".into()]).unwrap();
-        assert_eq!(s.selected_profiles().unwrap(), ["a"]);
-        assert_eq!(s.applied_routes().unwrap()[0].name, "Work");
-        s.commit_profile_switch(&staged, 5678, &["b".into()])
-            .unwrap();
-        assert_eq!(s.selected_profiles().unwrap(), ["b"]);
-        assert_eq!(s.selected_routes().unwrap().len(), 2);
-        assert_eq!(s.applied_routes().unwrap().len(), 2);
-        assert_eq!(s.setting("selected").unwrap().as_deref(), Some("b-m2"));
-        assert_eq!(s.historical_routes().unwrap().len(), 3);
-    }
-    #[test]
-    fn quick_switch_failure_in_final_selection_write_rolls_back_entire_commit() {
-        let s = Store::memory().unwrap();
-        let a = profile("a", "Work", &["m1"]);
-        let b = profile("b", "Personal", &["m2"]);
-        for p in [&a, &b] {
-            s.save_profile(p).unwrap();
-        }
-        s.select_profiles(&["a".into()]).unwrap();
-        s.commit_profiles(&a.routes(), 1234).unwrap();
-        s.db.execute_batch("CREATE TRIGGER fail_tray_selection BEFORE INSERT ON settings WHEN NEW.key='selected_profiles' BEGIN SELECT RAISE(ABORT,'injected'); END;").unwrap();
-        assert!(s
-            .commit_profile_switch(&b.routes(), 5678, &["b".into()])
-            .is_err());
-        assert_eq!(s.selected_profiles().unwrap(), ["a"]);
-        assert_eq!(s.applied_routes().unwrap()[0].id, "a-m1");
-        assert_eq!(s.setting("port").unwrap().as_deref(), Some("1234"));
-        assert_eq!(s.setting("selected").unwrap().as_deref(), Some("a-m1"));
-        assert_eq!(s.historical_routes().unwrap().len(), 1);
-    }
-    #[test]
-    fn stale_or_invalid_quick_switch_cannot_change_state() {
-        let s = Store::memory().unwrap();
-        let mut p = profile("a", "Work", &["m1"]);
+        let p = profile("a", "Work", &["m1"]);
         s.save_profile(&p).unwrap();
-        let staged = p.routes();
-        p.name = "Edited".into();
-        s.save_profile(&p).unwrap();
-        assert!(s
-            .commit_profile_switch(&staged, 1234, &["a".into()])
-            .is_err());
-        assert!(s.routes_for_profiles(&["deleted".into()]).is_err());
-        assert!(s.routes_for_profiles(&["a".into(), "a".into()]).is_err());
-        assert!(s.commit_profile_switch(&[], 1234, &[]).is_err());
-        assert!(s.selected_profiles().unwrap().is_empty());
+        s.select_profiles(&["a".into()]).unwrap();
+        for ids in [vec!["deleted".into()], vec!["a".into(), "a".into()]] {
+            assert!(s.routes_for_profiles(&ids).is_err());
+            assert!(s.select_profiles(&ids).is_err());
+        }
+        assert!(s.commit_profiles(&[], 1234).is_err());
+        assert_eq!(s.selected_profiles().unwrap(), ["a"]);
         assert!(s.applied_routes().unwrap().is_empty());
         assert!(s.setting("port").unwrap().is_none());
     }

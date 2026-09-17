@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import registry from '../../../packages/provider-registry/providers.json';
-import candidates from '../../../packages/provider-registry/models.json';
-import type { Preset } from './bridge';
+import registry from '../../../../../packages/provider-registry/providers.json';
+import candidates from '../../../../../packages/provider-registry/models.json';
+import type { Preset } from '../../api/bridge';
 
 const presets = registry as Preset[];
 // Official capacity bases and the two conservative choices are documented in

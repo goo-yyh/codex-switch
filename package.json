@@ -8,7 +8,7 @@
     "desktop": "pnpm --filter @codex-switch/desktop tauri dev",
     "website": "pnpm --filter @codex-switch/website dev --host 127.0.0.1",
     "build": "pnpm -r build",
-    "test": "pnpm --filter @codex-switch/desktop test && cargo test -p codex-switch-core -p cc-switch-codex",
+    "test": "pnpm --filter @codex-switch/desktop test && cargo test --locked -p codex-switch-core -p cc-switch-codex -p codex-switch-desktop",
     "check": "pnpm --filter @codex-switch/desktop check && pnpm --filter @codex-switch/website check",
     "test:providers": "cargo run -p codex-switch-core --bin provider-check --",
     "test:providers:compact": "cargo run -p codex-switch-core --bin provider-compact-check --",

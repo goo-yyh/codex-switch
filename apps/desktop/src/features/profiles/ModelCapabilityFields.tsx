@@ -1,6 +1,6 @@
-import { Picker } from './components';
+import { Picker } from '../../components/controls';
 import { RequestFields } from './RequestFields';
-import type { ModelOptions, Protocol } from './bridge';
+import type { ModelOptions, Protocol } from '../../api/bridge';
 const efforts = ['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'];
 
 export function ModelCapabilityFields({
