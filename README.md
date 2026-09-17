@@ -1,44 +1,67 @@
 # Codex Switch
 
-让 Codex App 连接你选择的模型。一个具名配置对应一个 API Key 和多个模型，可同时启用多个配置。**新增配置 → 勾选配置并应用 → 打开 Codex**。
+让 Codex App 连接你选择的模型。**一个配置、一个 API Key、多个模型**，首页可同时启用多个配置；开启前备份，关闭后恢复原配置。
 
-Tauri 2 + React + Rust 桌面应用，配套独立的 Astro + Starlight 官网文档。第一版为开发预览：实现与隔离测试可以运行，尚未进行真实 Codex App 端到端测试。
+支持 macOS / Windows，使用 Tauri 2、React 和 Rust 构建，配套 Astro + Starlight 文档站。当前为 **0.1.0 开发预览版**，尚未提供公开签名安装包，也未完成真实 Codex App 端到端验证。
 
-支持平台仅限 macOS 和 Windows；CI 在这两个平台上校验与构建，不提供其他系统的安装包。
+[快速开始](apps/website/src/content/docs/docs/quickstart.md) · [配置说明](apps/website/src/content/docs/docs/configuration.md) · [安装与构建](apps/website/src/content/docs/docs/install.md) · [兼容范围](apps/website/src/content/docs/docs/compatibility.md)
 
-## 功能
+![Codex Switch 实际界面：多选配置并开启连接](apps/website/public/screenshots/enabled.png)
 
-- 千问、MiniMax、智谱、Kimi、DeepSeek 五家原生 Responses 预设，包含 Kimi Coding、千问 Token Plan 的独立套餐选项。
-- 所有供应商地址可编辑；每个配置使用一个 API 地址，保存不会发送请求，可手动测试配置；选中模型后可点击该行的「编辑」设置能力。
-- 复用 CC Switch 的 Chat 转换、SSE、工具历史和模型目录；提供自动保存状态的远程压缩开关。
-- 总开关：**开启前保存原配置，关闭后精确恢复**。同次开启切换服务不覆盖原始备份；下一次开启重新备份。
-- 配置外部修改冲突保护、异常退出恢复记录、原子写入。
-- 系统凭据库保存 Key；SQLite 只保存连接元数据。
-- 原生打开 / 正常重启 Codex、托盘快速开关与切换配置、后台运行、可选登录启动。
-- 原创简明界面、官网首页、下载说明、12 篇可搜索产品文档。
+_截图来自当前应用的浏览器预览，使用示例配置；原生连接、备份和进程状态为模拟数据。[截图记录](docs/design/screenshots.md)_
 
-## 安装依赖
+## 能做什么
 
-需要 Node.js 22.12+、pnpm 10、Rust stable。原生构建还需要 Xcode Command Line Tools（macOS）或 Microsoft C++ Build Tools / WebView2（Windows）。
+- **管理多个服务**：内置千问、MiniMax、智谱 GLM、Kimi、DeepSeek，提供 Kimi Coding 与千问 Token Plan 套餐选项，也可填写自定义 HTTPS 接口。
+- **按模型配置**：一个配置可选 1–20 个模型，指定默认模型，逐模型覆盖地址、接口格式、上下文长度、思考档位、图像与并行工具能力。
+- **兼容两种接口**：支持原生 Responses 转发，以及 Chat Completions 的本地协议转换。请求失败后不会自动切换服务或协议。
+- **可恢复的配置切换**：开启前保存原始 `config.toml`，关闭后按字节恢复；检测外部修改冲突，不改写 `auth.json` 或会话文件。
+- **在本机运行**：Key 存入系统凭据库，请求由本机直接发往选定服务；支持托盘、后台运行、可选登录启动与正常打开 / 重启 Codex。
+
+## 三步连接
+
+1. **新增配置**：选择服务及套餐，填写配置名称、API 地址和对应的 Key。
+2. **选择模型并保存**：勾选模型，按需编辑能力。保存不会发请求；「测试配置」是独立、手动触发的连通检查。
+3. **勾选配置并开启**：首页至少选中一个配置，打开总开关，再点击「打开 Codex」。模型以 `配置名称-模型` 显示。
+
+新增、编辑和删除前需关闭总开关。开启期间可切换已保存的配置；关闭窗口仍在后台提供连接。完整步骤见[截图教程](apps/website/src/content/docs/docs/quickstart.md)，恢复行为见[开启、关闭与恢复](apps/website/src/content/docs/docs/switch.md)。
+
+## 配置要点
+
+| 设置           | 怎么填 / 有什么作用                                                                                      |
+| -------------- | -------------------------------------------------------------------------------------------------------- |
+| API 地址       | 默认填写基础地址，应用追加 `/responses` 或 `/chat/completions`，保留已有路径前缀。                       |
+| 完整 URL       | 开启后普通请求直接使用填写的 URL，不追加路径；用于服务商给出的完整请求端点。                             |
+| 接口格式       | 根据目标服务选择 Responses 或 Chat Completions，不会失败后自动互换。                                     |
+| API Key        | 同一配置的模型共用一个 Key。编辑时留空可保留原 Key；更换请求地址或完整 URL 模式需重新填写。              |
+| 模型设置       | 默认继承外层地址与接口，可在模型行的「编辑」中覆盖；确认后还需保存整个配置。                             |
+| 远程上下文压缩 | 默认关闭，建议保持关闭；关闭时仍可通过普通模型请求生成摘要。开关自动保存，下次开启 Codex Switch 时生效。 |
+
+详细说明：[配置字段与模型能力](apps/website/src/content/docs/docs/configuration.md) · [套餐与自定义接口](apps/website/src/content/docs/docs/relay.md) · [通用设置](apps/website/src/content/docs/docs/settings.md)。能力声明不等于服务实测通过，远程压缩尤其需要上游支持。
+
+## 开源致谢：CC Switch
+
+本项目参考并直接复用了 [CC Switch](https://github.com/farion1231/cc-switch) 的部分开源代码和测试，感谢作者及贡献者。复用内容包括 **Chat / Responses 转换、SSE 处理、工具历史与 schema 辅助逻辑、模型目录及能力模板**。
+
+- 固定上游提交：[`06082e189d65e6d6dbadc35dacdac1ce6c79d89a`](https://github.com/farion1231/cc-switch/tree/06082e189d65e6d6dbadc35dacdac1ce6c79d89a)。
+- 源码位于 [`crates/cc-switch-codex`](crates/cc-switch-codex)，保留[上游 MIT 许可证](crates/cc-switch-codex/LICENSE)及版权声明。
+- 复用范围、本地差异和更新方式见 [UPSTREAM.md](crates/cc-switch-codex/UPSTREAM.md)；文件与片段通过清单校验。
+
+Codex Switch 的界面、配置备份与恢复、凭据管理、HTTP 路由生命周期和文档站由本项目维护。该模块是源码提取，不是 CC Switch 官方 SDK；本项目是社区独立项目，与 OpenAI 无隶属关系。
+
+## 本地开发
+
+需要 Node.js 22.12+、pnpm 10、Rust stable。原生构建另需 macOS Xcode Command Line Tools，或 Windows Microsoft C++ Build Tools / WebView2。
 
 ```sh
+git clone https://github.com/goo-yyh/codex-switch.git
+cd codex-switch
 pnpm install --frozen-lockfile
+pnpm dev       # 桌面界面浏览器预览，默认 http://127.0.0.1:1420
+pnpm website   # 官网与文档，默认 http://127.0.0.1:4321
 ```
 
-## 安全预览
-
-```sh
-pnpm dev       # http://127.0.0.1:1420，桌面界面内存模拟
-pnpm website   # http://127.0.0.1:4321，官网与文档
-```
-
-浏览器中的桌面预览不读取密钥、不联网调用模型、不修改 Codex 配置。只有启动原生应用后才会接入本机功能。
-
-```sh
-pnpm desktop   # 真实原生应用，会访问本机配置与凭据库
-```
-
-## 验证与构建
+以上两个开发服务分别在终端运行。浏览器预览仅使用页内模拟数据，不读取密钥、不调用模型、不修改 Codex 配置。`pnpm desktop` 启动真实原生应用，会访问本机配置与系统凭据库。
 
 ```sh
 pnpm check
@@ -46,73 +69,46 @@ pnpm test
 pnpm check:upstream
 cargo clippy -p codex-switch-core --all-targets --no-deps -- -D warnings
 pnpm build
+pnpm check:links
 pnpm check:secrets
-pnpm --filter @codex-switch/desktop tauri build
 ```
 
-`pnpm build` 构建网页界面和官网；Tauri 命令生成原生包，输出到 `target/release/bundle/`。Windows 使用：
+`pnpm build` 构建界面和文档站。原生包输出到 `target/release/bundle/`：
 
 ```sh
+# macOS
+pnpm --filter @codex-switch/desktop tauri build
+# Windows
 pnpm --filter @codex-switch/desktop tauri build --config src-tauri/tauri.windows.conf.json
 ```
 
-当前没有公开签名安装包。macOS 本地构建未经 Apple 公证；Windows 原生实机验证和正式分发签名留待发布阶段。CI 只构建与上传测试产物，不自动发布版本。
+文档站可通过 `PUBLIC_SITE_URL` 设置部署地址；应用通过 `VITE_PUBLIC_DOCS_URL` 设置文档入口。详见[开发与测试](apps/website/src/content/docs/docs/development.md)。
 
-## 真实供应商测试
+## 验证与限制
 
-根目录 `.env` 使用 `.env.example` 中的空变量模板，实际值留在本机。
+离线测试使用临时配置目录、模拟凭据与本地合成 HTTP 服务，不操作真实 Codex。真实供应商测试需按 `.env.example` 配置本机 `.env` 后显式运行，可能产生 API 费用：
 
 ```sh
-pnpm test:providers --all
-pnpm test:providers deepseek
-pnpm test:providers:summary --all # 显式调用真实服务：普通摘要压缩与续接
-cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke --all # 每家仅生成一次普通摘要
+pnpm test:providers deepseek # 文本、流式、虚拟工具与结果回传
+# 最小摘要验证：每家默认模型仅发送一次普通摘要请求，不启动 Codex
+cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke --all
 ```
 
-每家最多 4 次合成请求，单次输出上限 256 tokens、60 秒超时；依次检查文本、流、虚拟函数调用和结果回传。失败后停止该服务，不切换域名重试，不执行模型返回的工具。请求可能产生少量费用。
+2026-09-17 的[最小摘要验证](docs/testing/provider-summary-smoke-2026-09-17.md)中，五家预设默认模型均返回完成状态和非空摘要。它只证明当次摘要生成成功，不代表摘要事实完整性、续接效果、远程压缩或 Codex App 端到端兼容。更多测试命令和范围见[开发文档](apps/website/src/content/docs/docs/development.md)。
 
-`test:providers:summary` 是独立的长上下文检查：每家最多 3 次普通 Responses 请求，约 128 KB 合成历史、单次输出上限 2,048 tokens、120 秒超时。验证原始历史召回、文本摘要生成、仅凭摘要续接及 token 减少；不调用 remote compact，也不启动 Codex App。报告见 [普通摘要压缩验证](docs/testing/provider-summary-validation-2026-09-16.md)。
+公开签名、公证与 Windows 实机验证仍待完成；CI 构建产物不等于正式发布。Codex 工具可能共用配置目录，本项目暂不为 CLI / IDE 扩展提供适配保证。
 
-`--summary-smoke` 使用相同合成历史和摘要提示词，每家只发一次请求，检查成功 HTTP 状态、完成状态、非空摘要、流式文本一致且摘要比输入短。不做召回或续接验证，不启动 Codex 客户端。可将 `--all` 换成单个厂商 ID。
+## 目录与许可
 
-设置 → 通用设置 → **远程上下文压缩** 默认关闭，Codex 通过普通模型请求执行摘要压缩。用户开启后，配置采用 CC Switch 的远程压缩标记，由 Codex 客户端选择协议；本项目透传原生 Responses 的 Remote V2 `compaction_trigger` 和旧版 compact 请求，不保证上游支持或失败时自动回退。开关保存后下次开启 Codex Switch 时生效。
+| 目录                     | 内容                                    |
+| ------------------------ | --------------------------------------- |
+| `apps/desktop`           | React 界面与 Tauri 原生壳               |
+| `crates/core`            | 配置恢复事务、网关、兼容适配、存储      |
+| `crates/cc-switch-codex` | 固定版本的 CC Switch 模块、测试与许可证 |
+| `apps/website`           | 官网、使用文档和界面截图                |
+| `packages`               | 共享设计变量、服务与模型预设            |
+| `docs`                   | 技术方案、源码研究、测试记录            |
 
-配置页的 API 地址和接口格式使用厂商预设作为初始值，可并排修改；勾选模型不会改变外层配置。打开 API 地址标签右侧的 **完整 URL** 后，普通请求直接使用填写的地址，不追加 `/responses` 或 `/chat/completions`。模型编辑弹窗可分别覆盖地址、接口格式和完整 URL 模式，也可恢复继承外层设置；上下文长度只在模型弹窗中编辑。手动测试和实际路由均使用各模型的有效设置。更换已保存配置的请求地址（包括单个模型的地址）需要重新填写密钥；保存不会自动发送测试请求。
+[技术方案](docs/product-plan.md) · [供应商测试方案](docs/testing/provider-test-plan.md) · [开源致谢](apps/website/src/content/docs/docs/open-source.md)
 
-密钥仅由显式测试入口读取；普通测试和 CI 不读取 `.env`。不要使用 `source .env`、不要上传凭据或原始响应。提交前可运行 `python3 scripts/check_secrets.py --artifacts` 检查源码和构建产物。
-
-## 测试边界
-
-当前工作不启动、重启或终止真实 Codex App，不读写真实 Codex 配置、认证、会话和系统凭据。配置测试只使用临时目录；路由测试使用内存请求和本地合成 HTTP 服务。供应商 HTTP 检查是单独的显式命令。
-
-连通测试通过只证明当次接口检查通过，不能推导完整 Codex App 兼容。图片能力按模型目录声明，Chat 的工具搜索与图片转换复用上游。原生 remote 请求透传；旧版 Chat compact 路由仍走上游普通转换路径，不代表已支持远程契约。Chat 的 V2 触发项或加密压缩历史明确报错，不静默丢弃，也不伪造压缩项。普通摘要请求可走正常 Chat 桥接。请求按所选模型转发，失败后不会自动切换配置、接口或域名；转换缓存有界且不跨进程保存。
-
-## 目录
-
-| 目录                     | 内容                                      |
-| ------------------------ | ----------------------------------------- |
-| `apps/desktop`           | React 界面与 Tauri 原生壳                 |
-| `crates/core`            | 配置恢复事务、网关、兼容适配、存储        |
-| `crates/cc-switch-codex` | 固定版本的 CC Switch 模块、原测试与许可证 |
-| `apps/website`           | 官网与独立产品文档                        |
-| `packages`               | 共享设计变量、服务预设                    |
-| `docs`                   | 技术方案、源码研究、测试记录              |
-
-- [技术方案](docs/product-plan.md)
-- [界面规范](docs/design/ui-spec.md)
-- [CC Switch 源码研究](docs/research/cc-switch.md)
-- [测试记录](docs/testing/implementation-validation.md)
-- [单元测试方案](docs/testing/unit-test-plan.md)
-- [供应商测试方案](docs/testing/provider-test-plan.md)
-
-## 实现与配置恢复
-
-只投影 `config.toml`，不修改 `auth.json`。原始内容保存在应用数据目录的恢复记录中。关闭后原文件按字节恢复，原先不存在则删除本次创建的文件。配置冲突必须先保留当前版本才能恢复。
-
-关闭窗口会继续在托盘提供连接；完全退出前需先正常退出 Codex，并恢复原配置。异常退出后重新打开应用，可恢复旧配置或重新建立路由。
-
-本项目面向 Codex App，但 Codex 客户端可能共用配置目录；不为 CLI / IDE 提供适配保证。官网不依赖 codex-docs.com，发布时可通过 `PUBLIC_SITE_URL` 设置自己的站点域名。
-
-## 许可
-
-MIT。兼容内核直接复用 [CC Switch](https://github.com/farion1231/cc-switch) 固定提交的源码与测试，保留上游 MIT 版权声明。来源及本地差异见 [UPSTREAM.md](crates/cc-switch-codex/UPSTREAM.md)。Codex Switch 是社区独立项目，与 OpenAI 无隶属关系。
+本项目使用 [MIT 许可证](LICENSE)，第三方代码保留各自版权与许可声明。

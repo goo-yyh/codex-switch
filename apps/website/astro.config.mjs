@@ -16,6 +16,7 @@ export default defineConfig({
       favicon: '/mark.png',
       social: [{ icon: 'github', label: 'GitHub', href: product.repository }],
       customCss: ['./src/styles/docs.css'],
+      components: { Header: './src/components/docs/Header.astro' },
       sidebar: [
         {
           label: '开始使用',
@@ -30,7 +31,9 @@ export default defineConfig({
           items: [
             { label: '开启、关闭与恢复', slug: 'docs/switch' },
             { label: '国内模型', slug: 'docs/providers' },
-            { label: 'coding plan', slug: 'docs/relay' },
+            { label: '套餐与自定义接口', slug: 'docs/relay' },
+            { label: '配置字段与模型能力', slug: 'docs/configuration' },
+            { label: '通用设置', slug: 'docs/settings' },
             { label: '打开与重启 Codex', slug: 'docs/launch' },
           ],
         },
@@ -41,6 +44,7 @@ export default defineConfig({
             { label: '常见问题', slug: 'docs/troubleshooting' },
             { label: '隐私与密钥', slug: 'docs/privacy' },
             { label: '开发与测试', slug: 'docs/development' },
+            { label: '开源致谢', slug: 'docs/open-source' },
             { label: '更新日志', slug: 'docs/changelog' },
           ],
         },

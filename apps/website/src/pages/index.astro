@@ -24,67 +24,19 @@ import product from '../../../../packages/product-info/product.json';
           >
         </div><p class="hero-note">macOS · Windows <span> / </span>本地运行 · 开源免费</p>
       </div>
-      <div class="hero-visual" aria-label="Codex Switch 界面示意">
-        <div class="visual-grid"></div><div class="demo-window">
-          <div class="window-bar">
-            <span class="traffic"><i></i><i></i><i></i></span><span>Codex Switch</span><span
-              class="window-settings">☷</span
-            >
-          </div><div class="demo-title"><h2>我的配置</h2><span>＋ 新增配置</span></div>
-          <div class="demo-quick-list">
-            {
-              [
-                {
-                  id: 'deepseek',
-                  name: '工作账号',
-                  model: '2 个模型 · deepseek-flash、deepseek-v4-pro',
-                },
-                { id: 'kimi', name: 'Kimi', model: '2 个模型 · kimi-k2.7-code、kimi-k3' },
-                { id: 'qianwen', name: '千问', model: '1 个模型 · qwen-plus' },
-              ].map((p, i) => (
-                <div class:list={['demo-quick-row', { selected: i < 2 }]}>
-                  <>
-                    <span class="demo-choice">{i < 2 ? '✓' : ''}</span>
-                    <img
-                      src={providerLogos[p.id]}
-                      data-provider={p.id}
-                      alt=""
-                      width="24"
-                      height="24"
-                    />
-                    <div>
-                      <>
-                        <b>{p.name}</b>
-                        <small>{p.model}</small>
-                      </>
-                    </div>
-                    <span class="demo-edit">✎</span>
-                  </>
-                </div>
-              ))
-            }
-          </div><div class="demo-quick-control">
-            <span id="demo-status">已开启</span><button
-              id="demo-toggle"
-              class="demo-toggle"
-              role="switch"
-              aria-checked="true"
-              aria-label="体验开关效果"><span></span></button
-            >
-          </div>
-          <div class="demo-profile-actions">
-            <div class="demo-open"><span id="demo-action">配置已开启</span></div><div
-              class="demo-open secondary-demo"
-            >
-              ↗ 打开 Codex
-            </div>
-          </div><div class="demo-secure">
-            <span id="demo-note">开启前自动备份，关闭后恢复原配置。</span>
-          </div>
-        </div><div class="floating-note">
-          <span>↶</span><div><b>随时回到原来的配置</b><small>试试上面的开关</small></div>
-        </div>
-      </div>
+      <figure class="hero-visual">
+        <div class="visual-grid" aria-hidden="true"></div>
+        <a href="/docs/quickstart/" class="product-screenshot">
+          <img
+            src="/screenshots/enabled.png"
+            width="1280"
+            height="720"
+            alt="Codex Switch 实际界面：已选择 Kimi 与 DeepSeek 示例配置，底部可打开 Codex"
+            fetchpriority="high"
+          />
+        </a>
+        <figcaption>真实界面 · 浏览器预览 · 示例配置与模拟连接状态</figcaption>
+      </figure>
     </section>
     <section class="providers-strip section-wrap" aria-label="支持的模型服务">
       <p>内置五家<br />国内服务预设。</p><div>
@@ -95,7 +47,7 @@ import product from '../../../../packages/product-info/product.json';
               {p.name}
             </a>
           ))
-        }<a href="/docs/relay/" class="custom-provider">＋ coding plan</a>
+        }<a href="/docs/relay/" class="custom-provider">＋ 自定义接口</a>
       </div>
     </section>
     <section class="steps-section section-wrap" id="how">
@@ -105,23 +57,50 @@ import product from '../../../../packages/product-info/product.json';
         </p>
       </div><div class="steps-grid">
         <article>
-          <span class="step-number">01</span><div class="step-art chips">
-            <span>DeepSeek <b>✓</b></span><span>Kimi</span><span>千问</span>
-          </div><h3>新增配置</h3><p>内置五家国内模型服务。已有中转站？填入 API 地址即可。</p>
+          <span class="step-number">01</span>
+          <a class="step-screenshot" href="/docs/quickstart/#1-新增配置"
+            ><img
+              src="/screenshots/connection.png"
+              width="700"
+              height="650"
+              alt="新增配置：选择服务和套餐，填写连接信息"
+              loading="lazy"
+            /></a
+          >
+          <h3>填写连接信息</h3><p>选择服务与套餐，核对地址和接口，填入对应的 API Key。</p>
         </article><article>
-          <span class="step-number">02</span><div class="step-art key-art">
-            <span>API Key</span><strong>••••••••••••••••</strong><i>⌁</i>
-          </div><h3>粘贴密钥</h3><p>
-            为配置命名，填写一个 Key，勾选多个模型。验证后保存，密钥留在系统凭据库。
+          <span class="step-number">02</span>
+          <a class="step-screenshot" href="/docs/quickstart/#2-选择模型并保存"
+            ><img
+              src="/screenshots/models.png"
+              width="700"
+              height="650"
+              alt="勾选模型，指定默认模型并保存"
+              loading="lazy"
+            /></a
+          >
+          <h3>选择模型并保存</h3><p>
+            一个配置可添加多个模型。按需编辑能力，保存时不会发送测试请求。
           </p>
         </article><article>
-          <span class="step-number">03</span><div class="step-art launch-art">
-            ↗ <b>配置到 Codex</b>
-          </div><h3>打开 Codex</h3><p>
-            首页可同时勾选多个配置。应用后打开 Codex，以「配置名称-模型」选择模型。
+          <span class="step-number">03</span>
+          <a class="step-screenshot" href="/docs/quickstart/#3-勾选配置并开启"
+            ><img
+              src="/screenshots/selected.png"
+              width="1280"
+              height="720"
+              alt="首页勾选配置并通过底部开关开启"
+              loading="lazy"
+            /></a
+          >
+          <h3>开启并打开 Codex</h3><p>
+            勾选配置，打开总开关，再打开 Codex。以「配置名称-模型」选择模型。
           </p>
         </article>
       </div>
+      <p class="steps-caption">
+        截图采集自当前应用浏览器预览。<a href="/docs/quickstart/">查看完整操作步骤 →</a>
+      </p>
     </section>
     <section class="principles section-wrap">
       <div class="principle-main">
@@ -142,8 +121,10 @@ import product from '../../../../packages/product-info/product.json';
           </p>
         </article><article>
           <span>03 / OPEN BY DEFAULT</span><h3>开源，也说明边界。</h3><p>
-            支持原生 Responses 和 Chat 接口转换。图片、远程压缩等能力，请先查看兼容说明。
-          </p><a href="/docs/compatibility/">查看兼容范围 ↗</a>
+            参考并复用 CC Switch 的协议转换、流处理与模型目录代码，保留 MIT 版权声明。
+          </p><a href="/docs/open-source/">开源致谢 ↗</a> · <a href="/docs/compatibility/"
+            >兼容范围 ↗</a
+          >
         </article>
       </div>
     </section>
@@ -155,16 +136,4 @@ import product from '../../../../packages/product-info/product.json';
       </div><a class="button" href="/download/">获取 Codex Switch <span>↗</span></a>
     </section>
   </main>
-  <script>
-    const toggle = document.querySelector<HTMLButtonElement>('#demo-toggle');
-    toggle?.addEventListener('click', () => {
-      const on = toggle.getAttribute('aria-checked') !== 'true';
-      toggle.setAttribute('aria-checked', String(on));
-      document.querySelector('#demo-status')!.textContent = on ? '已开启' : '已关闭';
-      document.querySelector('#demo-action')!.textContent = on ? '配置已开启' : '配置到 Codex';
-      document.querySelector('#demo-note')!.textContent = on
-        ? '开启前保存原配置，关闭后恢复。'
-        : '已恢复开启前的配置。';
-    });
-  </script>
 </Site>

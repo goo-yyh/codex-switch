@@ -1,0 +1,21 @@
+---
+import Search from '@astrojs/starlight/components/Search.astro';
+import SiteTitle from '@astrojs/starlight/components/SiteTitle.astro';
+import SocialIcons from '@astrojs/starlight/components/SocialIcons.astro';
+import ThemeSelect from '@astrojs/starlight/components/ThemeSelect.astro';
+
+const isChangelog = Astro.url.pathname.replace(/\/$/, '') === '/docs/changelog';
+---
+
+<div class="docs-header">
+  <div class="docs-header-brand"><SiteTitle /></div>
+  <nav class="docs-header-nav" aria-label="文档导航">
+    <a href="/docs/overview/" aria-current={!isChangelog ? 'true' : undefined}>使用文档</a>
+    <a href="/docs/changelog/" aria-current={isChangelog ? 'page' : undefined}>更新日志</a>
+    <a href="/download/">获取应用</a>
+  </nav>
+  <div class="docs-header-actions">
+    <Search />
+    <div class="docs-header-desktop"><ThemeSelect /><SocialIcons /></div>
+  </div>
+</div>
