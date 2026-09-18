@@ -134,4 +134,8 @@ cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke -
 
 设置 `PUBLIC_SITE_URL` 为正式域名；未设置时可使用 Vercel 系统变量提供的稳定生产域名。Preview 自动禁止索引，中文与 `/en/` 英文路径分别返回对应语言的 HTTP 404。
 
+文档站已接入 `@vercel/analytics`，覆盖中英文页面与 404。在 Vercel 项目的 **Analytics** 中启用 Web Analytics，再部署网站即可查看访问统计，无需额外环境变量。
+
 本地运行 `pnpm build:website && pnpm check:deployment` 检查部署路由，`pnpm preview:website` 预览静态错误页行为。
+
+网站构建会自动生成 `/registry/models-v1.json`，部署后可通过 `https://你的域名/registry/models-v1.json` 访问。数据来自 `packages/provider-registry/models.json`（候选列表）与 `providers.json`（连接和模型能力预设），包含格式版本和内容哈希，不包含用户配置或 API Key。以后修改源文件并部署网站即可更新 CDN 上的目录，无需手动上传或维护副本。模型核对及排除规则见 [预设维护说明](packages/provider-registry/README.md)。桌面应用目前仍使用内置预设，启动时下载和合并远程目录尚未接入。

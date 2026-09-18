@@ -134,4 +134,8 @@ Import the repository with Root Directory set to `.` and Framework Preset set to
 
 Set `PUBLIC_SITE_URL` to the production origin. If omitted, the stable production domain provided by Vercel system variables can be used. Preview deployments disable indexing automatically. Chinese paths and `/en/` paths return HTTP 404 pages in the corresponding language.
 
+The documentation site includes `@vercel/analytics` on Chinese and English pages, including 404s. Enable Web Analytics in the project's **Analytics** tab on Vercel, then deploy the website to view traffic. No additional environment variables are needed.
+
 Run `pnpm build:website && pnpm check:deployment` to check deployment routing locally. Use `pnpm preview:website` to preview static error-page behavior.
+
+The website build generates `/registry/models-v1.json`, available at `https://your-domain/registry/models-v1.json` after deployment. It uses `packages/provider-registry/models.json` (candidates) and `providers.json` (connection and model capability presets), with a schema version and content hash. It contains no user configurations or API keys. Update the source files and deploy the website to refresh the CDN catalog; no separate upload or duplicate files are needed. Follow the [preset maintenance rules](packages/provider-registry/README.md). The desktop app still uses bundled presets; downloading and merging the remote catalog at startup is not implemented yet.

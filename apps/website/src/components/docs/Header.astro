@@ -3,6 +3,8 @@ import Search from '@astrojs/starlight/components/Search.astro';
 import SiteTitle from '@astrojs/starlight/components/SiteTitle.astro';
 import SocialIcons from '@astrojs/starlight/components/SocialIcons.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import ImagePreview from './ImagePreview.astro';
+import Analytics from '@vercel/analytics/astro';
 
 import LanguageSwitch from '../LanguageSwitch.astro';
 ---
@@ -15,3 +17,5 @@ import LanguageSwitch from '../LanguageSwitch.astro';
     <div class="docs-header-desktop"><ThemeToggle /><SocialIcons /></div>
   </div>
 </div>
+<ImagePreview />
+<Analytics />

@@ -1,6 +1,7 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolveSiteConfig } from '../apps/website/site-config.mjs';
 import { createPreviewServer } from './preview_website.mjs';
 
@@ -12,6 +13,30 @@ before(async () => {
   origin = `http://127.0.0.1:${server.address().port}`;
 });
 after(() => new Promise((resolve) => server.close(resolve)));
+
+test('model registry serves JSON with matching candidates, capabilities and content revision', async () => {
+  const response = await fetch(origin + '/registry/models-v1.json');
+  assert.equal(response.status, 200);
+  assert.equal(response.redirected, false);
+  assert.match(response.headers.get('content-type'), /^application\/json/);
+  const { revision, ...content } = await response.json();
+  assert.equal(content.schemaVersion, 1);
+  for (const name of ['models', 'providers']) {
+    const source = JSON.parse(
+      readFileSync(new URL(`../packages/provider-registry/${name}.json`, import.meta.url), 'utf8'),
+    );
+    assert.deepEqual(content[name], source);
+  }
+  assert.equal(revision, createHash('sha256').update(JSON.stringify(content)).digest('hex'));
+  for (const [id, models] of Object.entries(content.models)) {
+    assert.ok(models.length > 0 && models.length <= 5, id);
+    const preset = content.providers.find((provider) => provider.id === id);
+    assert.ok(preset, id);
+    for (const model of models) {
+      assert.ok(preset.options.modelOverrides[model]?.contextWindow > 0, `${id}/${model}`);
+    }
+  }
+});
 
 test('website deployment uses the repository root and only builds the static website', () => {
   assert.equal(config.buildCommand, 'npx --yes pnpm@10.26.0 build:website');
