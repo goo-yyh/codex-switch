@@ -2,11 +2,21 @@ name: Validate
 on:
   pull_request:
   push:
+    branches:
+      - '**'
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      release-ref:
+        type: string
+        default: ''
+      skip-native:
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: validate-${{ github.workflow }}-${{ inputs.release-ref || github.ref }}
   cancel-in-progress: true
 jobs:
   quality:
@@ -14,6 +24,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release-ref || github.sha }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -27,6 +39,11 @@ jobs:
           key: quality
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Test release version and asset guards
+        run: python -m unittest discover -s scripts -p 'test_release.py'
       - name: Check Rust formatting
         run: cargo fmt -p codex-switch-core -p codex-switch-desktop --check
       - name: Verify vendored CC Switch sources
@@ -59,6 +76,7 @@ jobs:
           path: apps/website/dist
           if-no-files-found: error
   native:
+    if: ${{ !inputs.skip-native }}
     strategy:
       fail-fast: false
       matrix:
@@ -73,6 +91,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release-ref || github.sha }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:

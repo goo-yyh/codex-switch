@@ -86,12 +86,11 @@ docs/                          开发说明、设计依据、研究与历史验�
 
 应用启动、回到前台和定时触发 `check_update`，原生端成功结果缓存 6 小时，失败后至少间隔 15 分钟重试。检查独立于服务操作锁，只请求公开 GitHub Release 元数据，不读取 API Key，不影响启停和配置编辑。
 
-发布者需在 `goo-yyh/codex-switch` 发布语义化版本标签（例如 `v0.2.0`）的正式 Release，并上传 macOS `.dmg` 或 Windows `.exe` 安装包。仅显示比当前原生版本更新、且当前系统与架构已有非空安装包的版本；草稿、预发布、源码归档和未完成的附件不触发提示。请同步更新 Cargo 工作区、Tauri 配置和产品元数据版本。现有 CI 仍只上传构建产物，不会自动发布 Release。
+发布者需在 `goo-yyh/codex-switch` 发布语义化版本标签（例如 `v0.2.0`）的正式 Release，并上传 macOS `.dmg` 或 Windows `.exe` 安装包。仅显示比当前原生版本更新、且当前系统与架构已有非空安装包的版本；草稿、预发布、源码归档和未完成的附件不触发提示。请同步更新 Cargo 工作区、Tauri 配置和产品元数据版本。日常 Validate CI 只上传构建产物；Release 工作流在推送 `v*` 标签后校验版本、复用质量检查并构建三个平台安装包，全部成功后自动公开 Release 和 SHA-256 校验文件。带预发布后缀的标签发布为 Pre-release。安装包不使用发布者签名或 Apple 公证。
 
 安装包名称需保留 Tauri 的架构标识，例如 `_aarch64.dmg`、`_x64.dmg`、`_x64-setup.exe` 或 `_arm64-setup.exe`；macOS 也支持 `_universal.dmg`，优先选择原生架构包。架构不明或不匹配时不提示更新。
 
 按钮直接打开本仓库 `releases/download/<tag>/<asset>` 的安装包链接，由系统默认浏览器下载，不进入 Release 页面，不执行安装或重启。浏览器预览默认无更新；使用 `?previewUpdate=available` 可展示 0.2.0 的模拟提示，不请求 GitHub，也不表示该版本已发布。
-
 
 ## 远程模型目录
 

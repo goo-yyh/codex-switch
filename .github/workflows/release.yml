@@ -1,0 +1,168 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing version tag, e.g. v0.1.0 or v0.2.0-beta.1'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+      commit: ${{ steps.release.outputs.commit }}
+      prerelease: ${{ steps.release.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Validate existing tag and version
+        id: release
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Validate syntax before using input as a ref; never create a tag implicitly.
+          python -c 'import os, sys; sys.path.insert(0, "scripts"); from release import TAG; assert TAG.fullmatch(os.environ["RELEASE_TAG"]), "Invalid version tag"'
+          commit=$(git rev-parse --verify "refs/tags/$RELEASE_TAG^{commit}")
+          git checkout --detach "$commit"
+          python scripts/release.py check --tag "$RELEASE_TAG"
+          echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          if [[ "$RELEASE_TAG" == *-* ]]; then
+            echo 'prerelease=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'prerelease=false' >> "$GITHUB_OUTPUT"
+          fi
+  quality:
+    needs: prepare
+    uses: ./.github/workflows/check.yml
+    with:
+      release-ref: ${{ needs.prepare.outputs.commit }}
+      skip-native: true
+  build:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            target: aarch64-apple-darwin
+            args: '--bundles dmg'
+          - os: macos-14
+            target: x86_64-apple-darwin
+            args: '--bundles dmg'
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            args: '--config src-tauri/tauri.windows.conf.json'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.commit }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: release-${{ matrix.target }}
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Test native coordinator on runner architecture
+        run: cargo test --locked -p codex-switch-desktop
+      - name: Build installer without publisher signing or notarization
+        # macOS may use the toolchain's ad-hoc signature; no Apple identity is used.
+        run: pnpm --filter @codex-switch/desktop tauri build --ci --target ${{ matrix.target }} ${{ matrix.args }} -- --locked
+      - name: Collect installer with updater-compatible architecture name
+        env:
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+          RELEASE_TARGET: ${{ matrix.target }}
+        shell: bash
+        run: python scripts/release.py collect --tag "$RELEASE_TAG" --target "$RELEASE_TARGET"
+      - name: Scan source and installers for credentials
+        run: python scripts/check_secrets.py --artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.target }}
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 14
+  publish:
+    needs: [prepare, quality, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.commit }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: release-assets
+          merge-multiple: true
+      - name: Verify complete asset set and calculate SHA-256
+        env:
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+        run: python scripts/release.py manifest --tag "$RELEASE_TAG"
+      - name: Publish all installers together
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+          PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
+          RELEASE_COMMIT: ${{ needs.prepare.outputs.commit }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          remote_commit=$(git ls-remote origin "refs/tags/$RELEASE_TAG^{}" | cut -f1)
+          if [[ -z "$remote_commit" ]]; then
+            remote_commit=$(git ls-remote origin "refs/tags/$RELEASE_TAG" | cut -f1)
+          fi
+          [[ "$remote_commit" == "$RELEASE_COMMIT" ]] || { echo 'Tag moved during build'; exit 1; }
+          if gh release view "$RELEASE_TAG" --json isDraft > release-state.json; then
+            python -c 'import json; assert json.load(open("release-state.json"))["isDraft"], "Refusing to overwrite a published release; use a new version"'
+          else
+            flags=()
+            if [[ "$PRERELEASE" == true ]]; then flags+=(--prerelease); fi
+            gh release create "$RELEASE_TAG" --verify-tag --draft \
+              --title "Codex Switch $RELEASE_TAG" --notes-file docs/releases/unsigned-notes.md \
+              --generate-notes "${flags[@]}"
+          fi
+          gh release upload "$RELEASE_TAG" release-assets/* --clobber
+          gh release view "$RELEASE_TAG" --json assets > release-assets-state.json
+          python - <<'PYTHON'
+          import json
+          from pathlib import Path
+          local = {p.name: p.stat().st_size for p in Path('release-assets').iterdir()}
+          remote = {a['name']: a['size'] for a in json.load(open('release-assets-state.json'))['assets']}
+          assert local == remote, 'Uploaded asset set or sizes do not match; inspect the draft'
+          PYTHON
+          # Public releases are never edited on rerun. Only an unfinished draft is resumable.
+          gh release edit "$RELEASE_TAG" --draft=false --prerelease="$PRERELEASE"
+          gh release view "$RELEASE_TAG" --json url --jq .url >> "$GITHUB_STEP_SUMMARY"

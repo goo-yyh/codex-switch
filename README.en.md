@@ -8,6 +8,20 @@ Built for macOS / Windows with Tauri 2, React and Rust, with an Astro + Starligh
 
 [Quickstart](apps/website/src/content/docs/en/docs/quickstart.md) · [Model settings](apps/website/src/content/docs/en/docs/configuration.md) · [Installation](apps/website/src/content/docs/en/docs/install.md)
 
+## Downloads
+
+[Latest stable release and release notes](https://github.com/goo-yyh/codex-switch/releases/latest) · [All releases, including previews](https://github.com/goo-yyh/codex-switch/releases)
+
+| Platform                             | Installer                                                                                                         |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| macOS · Apple Silicon (M1 and newer) | [Download DMG](https://github.com/goo-yyh/codex-switch/releases/latest/download/Codex-Switch_aarch64.dmg)         |
+| macOS · Intel                        | [Download DMG](https://github.com/goo-yyh/codex-switch/releases/latest/download/Codex-Switch_x64.dmg)             |
+| Windows · x64                        | [Download installer](https://github.com/goo-yyh/codex-switch/releases/latest/download/Codex-Switch_x64-setup.exe) |
+
+[SHA-256 checksums](https://github.com/goo-yyh/codex-switch/releases/latest/download/SHA256SUMS.txt)
+
+These links become available after the first stable release and follow the latest stable version automatically. For previews, use “All releases.” Installers are not publisher-signed, and macOS apps are not notarized by Apple. Your system may warn or block installation; read the release instructions first.
+
 ![Codex Switch interface with multiple selected configurations and the service toggle](apps/website/public/screenshots/selected.png)
 
 _The screenshot shows the Chinese app in browser preview with example configurations. Native connection, backup and process states are simulated. [Screenshot notes (Chinese)](docs/design/screenshots.md)_

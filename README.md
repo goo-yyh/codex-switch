@@ -8,6 +8,20 @@
 
 [快速开始](apps/website/src/content/docs/docs/quickstart.md) · [配置说明](apps/website/src/content/docs/docs/configuration.md) · [安装与下载](apps/website/src/content/docs/docs/install.md)
 
+## 下载安装
+
+[最新正式版与更新说明](https://github.com/goo-yyh/codex-switch/releases/latest) · [所有版本（含预览版）](https://github.com/goo-yyh/codex-switch/releases)
+
+| 系统                                   | 安装包下载                                                                                                  |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| macOS · Apple Silicon（M1 及更新芯片） | [下载 DMG](https://github.com/goo-yyh/codex-switch/releases/latest/download/Codex-Switch_aarch64.dmg)       |
+| macOS · Intel                          | [下载 DMG](https://github.com/goo-yyh/codex-switch/releases/latest/download/Codex-Switch_x64.dmg)           |
+| Windows · x64                          | [下载安装程序](https://github.com/goo-yyh/codex-switch/releases/latest/download/Codex-Switch_x64-setup.exe) |
+
+[SHA-256 校验文件](https://github.com/goo-yyh/codex-switch/releases/latest/download/SHA256SUMS.txt)
+
+以上链接在首次正式 Release 发布成功后生效，后续自动指向最新正式版，无需修改 README。预览版请从“所有版本”下载。安装包未使用发布者证书签名，macOS 未经 Apple 公证；系统可能提示或阻止运行，请先阅读对应 Release 的安装说明。
+
 ![Codex Switch 实际界面：多选配置与底部服务开关](apps/website/public/screenshots/selected.png)
 
 _截图来自当前应用的浏览器预览，使用示例配置；原生连接、备份和进程状态为模拟数据。[截图记录](docs/design/screenshots.md)_
@@ -90,6 +104,34 @@ pnpm --filter @codex-switch/desktop tauri build --config src-tauri/tauri.windows
 ```
 
 文档站可通过 `PUBLIC_SITE_URL` 设置部署地址；应用通过 `VITE_PUBLIC_DOCS_URL` 设置文档入口。
+
+## 自动发布安装包
+
+`.github/workflows/release.yml` 在推送 `v*` 标签后自动运行：校验版本 → 质量检查与三个原生构建 → 生成 SHA-256 → 上传到草稿 → 全部完成后公开 GitHub Release。
+
+Release 附件采用不含版本号的固定文件名，以保持 README 最新版直链有效；版本由 Release 标签区分，构建收集时仍严格校验原始安装包的版本。
+
+产物包括 macOS Apple Silicon 的 `*_aarch64.dmg`、macOS Intel 的 `*_x64.dmg`、Windows x64 的 `*_x64-setup.exe`，以及 `SHA256SUMS.txt`。不使用发布者签名或 Apple 公证，不需要签名 Secrets；macOS 工具链可能自动附加 ad-hoc 签名，这不等于 Apple 开发者身份认证。发布说明会提示系统可能拦截未签名安装包。
+
+发布步骤（首次发布当前版本 `0.1.0`）：
+
+1. 将工作流及代码提交、推送到 GitHub，确认要发布的提交。
+2. 保持根目录、desktop、website 的 `package.json`、Cargo 工作区与 `Cargo.lock` 中本项目包、Tauri 配置、`packages/product-info/product.json` 的应用版本一致。后续升级时先修改这些版本；模型目录的 `version.json` 独立管理，不因应用发布而递增。
+3. 在要发布的提交上创建并推送标签：
+
+   ```sh
+   python3 scripts/release.py check --tag v0.1.0
+   git tag -a v0.1.0 -m "Codex Switch v0.1.0"
+   git push origin v0.1.0
+   ```
+
+4. 在 GitHub Actions 查看 **Release**。全部成功后，到仓库 Releases 下载对应安装包。CI 打包不等于已完成各平台实机安装测试。
+
+`v0.2.0-beta.1` 等标签会自动标记为 Pre-release（代码版本也须为 `0.2.0-beta.1`），不会触发客户端稳定版更新提示。正式标签会发布正式 Release，客户端仅提示比当前版本更高且架构匹配的版本。
+
+失败时可重新运行工作流，或在 Actions → Release → Run workflow 填写**已存在且包含发布脚本的标签**。未完成草稿可以补传；已公开 Release 禁止覆盖，修复请使用更高版本。只使用 GitHub 提供的 `GITHUB_TOKEN`，发布任务授予 `contents: write`；组织策略需允许该权限。
+
+本地发布逻辑检查：`python3 -m unittest discover -s scripts -p 'test_release.py'`。这不会构建安装包、创建标签或发布 Release。
 
 ## 验证与限制
 

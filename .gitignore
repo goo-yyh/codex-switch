@@ -22,3 +22,7 @@ output/playwright/
 
 # Vercel local project and build metadata
 .vercel/
+
+# Release staging artifacts
+release-assets/
+__pycache__/

@@ -32,7 +32,7 @@ for p in paths:
     if p.name.startswith('.env') and p.name != '.env.example':
         issues.add((str(p.relative_to(ROOT)), 'credential file is a Git candidate'))
 if args.artifacts:
-    for base in ['apps/desktop/dist', 'apps/website/dist', 'target/release/bundle']:
+    for base in ['apps/desktop/dist', 'apps/website/dist', 'target/release/bundle', 'release-assets']:
         folder = ROOT / base
         if folder.exists():
             paths.update(p for p in folder.rglob('*') if p.is_file() and not p.is_symlink())
