@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from release import TARGETS, asset_name, collect, manifest, validate_version
 
@@ -23,6 +24,18 @@ class ReleaseTests(unittest.TestCase):
         (self.root / 'Cargo.lock').write_text(''.join(
             f'[[package]]\nname = "{name}"\nversion = "0.1.0"\n'
             for name in ['codex-switch-core', 'codex-switch-desktop']))
+
+    def test_manifests_are_utf8_even_on_legacy_windows_locale(self):
+        file = self.root / 'apps/desktop/src-tauri/tauri.conf.json'
+        file.write_text(json.dumps({'version': '0.1.0', 'description': '配置模型连接'}, ensure_ascii=False), encoding='utf-8')
+        original = Path.read_text
+
+        def windows_read_text(path, *args, **kwargs):
+            kwargs.setdefault('encoding', 'cp1252')
+            return original(path, *args, **kwargs)
+
+        with patch.object(Path, 'read_text', windows_read_text):
+            self.assertEqual(validate_version('v0.1.0', self.root), '0.1.0')
 
     def test_matching_version(self):
         self.assertEqual(validate_version('v0.1.0', self.root), '0.1.0')

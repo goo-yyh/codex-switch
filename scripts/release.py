@@ -28,13 +28,13 @@ def validate_version(tag, root=ROOT):
                  'apps/website/package.json', 'apps/desktop/src-tauri/tauri.conf.json',
                  'packages/product-info/product.json']
     for file in manifests:
-        actual = json.loads((root / file).read_text())['version']
+        actual = json.loads((root / file).read_text(encoding='utf-8'))['version']
         if actual != version:
             raise ValueError(f'{file}: version {actual} does not match {tag}')
-    cargo = tomllib.loads((root / 'Cargo.toml').read_text())
+    cargo = tomllib.loads((root / 'Cargo.toml').read_text(encoding='utf-8'))
     if cargo['workspace']['package']['version'] != version:
         raise ValueError(f'Cargo.toml: workspace version does not match {tag}')
-    lock = tomllib.loads((root / 'Cargo.lock').read_text())
+    lock = tomllib.loads((root / 'Cargo.lock').read_text(encoding='utf-8'))
     for name in ['codex-switch-core', 'codex-switch-desktop']:
         packages = [p for p in lock['package'] if p['name'] == name and 'source' not in p]
         if len(packages) != 1 or packages[0]['version'] != version:

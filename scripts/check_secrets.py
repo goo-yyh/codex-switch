@@ -14,7 +14,7 @@ args = parser.parse_args()
 keys = []
 env_file = ROOT / '.env'
 if env_file.exists():
-    for line in env_file.read_text().splitlines():
+    for line in env_file.read_text(encoding='utf-8').splitlines():
         if not line.strip() or line.lstrip().startswith('#') or '=' not in line:
             continue
         name, value = line.split('=', 1)
@@ -49,7 +49,7 @@ for p in sorted(paths):
                 break
             tail = data[-max([512, *(len(key) for key in keys)]):]
     if p.name == '.env.example':
-        for line in p.read_text().splitlines():
+        for line in p.read_text(encoding='utf-8').splitlines():
             if line.strip() and not line.lstrip().startswith('#') and '=' in line and line.split('=',1)[1].strip():
                 issues.add((str(p.relative_to(ROOT)), 'example values must be empty'))
 if issues:
