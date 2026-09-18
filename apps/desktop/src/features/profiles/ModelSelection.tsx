@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n';
 import { useId, useState } from 'react';
 import { Picker } from '../../components/controls';
 import catalog from '../../../../../packages/provider-registry/models.json';
@@ -21,6 +22,7 @@ export function ModelSelection({
   disabled: boolean;
   onEditModel?: (model: string) => void;
 }) {
+  const { t, message } = useI18n();
   const statusId = useId();
   const available: string[] =
     availableModels ?? (catalog as Record<string, string[]>)[provider] ?? [];
@@ -36,11 +38,11 @@ export function ModelSelection({
   if (!multiple)
     return (
       <div className="field">
-        <label htmlFor="model">模型</label>
+        <label htmlFor="model">{t('模型')}</label>
         {available.length > 0 && (
           <Picker
             id="model"
-            label="模型"
+            label={t('模型')}
             disabled={disabled}
             value={customMode ? CUSTOM : current}
             options={[
@@ -48,7 +50,7 @@ export function ModelSelection({
                 value,
                 label: value,
               })),
-              { value: CUSTOM, label: '自定义模型…' },
+              { value: CUSTOM, label: t('自定义模型…') },
             ]}
             onChange={(value) => {
               setCustom(value === CUSTOM);
@@ -59,14 +61,14 @@ export function ModelSelection({
         {(available.length === 0 || customMode) && (
           <input
             id={available.length ? 'custom-model' : 'model'}
-            aria-label={available.length ? '自定义模型 ID' : '模型'}
+            aria-label={available.length ? t('自定义模型 ID') : t('模型')}
             className="input"
             value={current}
             required
             maxLength={200}
             disabled={disabled}
             onChange={(e) => onChange([e.target.value])}
-            placeholder="输入服务商提供的模型 ID"
+            placeholder={t('输入服务商提供的模型 ID')}
           />
         )}
       </div>
@@ -98,8 +100,8 @@ export function ModelSelection({
   return (
     <div className="field model-selection">
       <div className="form-card-heading">
-        <h2 id="models-label">模型选择</h2>
-        <span className="muted small">已选 {models.length}</span>
+        <h2 id="models-label">{t('模型选择')}</h2>
+        <span className="muted small">{t('已选 {count}', { count: models.length })}</span>
       </div>
       {choices.length > 0 && (
         <div className="model-options" role="group" aria-labelledby="models-label">
@@ -126,7 +128,7 @@ export function ModelSelection({
                   <span>{model}</span>
                   {isDefault && (
                     <span className="model-default" id={statusId}>
-                      默认
+                      {t('默认')}
                     </span>
                   )}
                 </label>
@@ -136,15 +138,15 @@ export function ModelSelection({
                       className="text-button model-delete"
                       type="button"
                       disabled={disabled}
-                      aria-label={`删除模型 ${model}`}
-                      title="删除模型"
+                      aria-label={t('删除模型 {value0}', { value0: model })}
+                      title={t('删除模型')}
                       onClick={() => {
                         setError('');
                         setCustomModels((items) => items.filter((m) => m !== model));
                         onChange(models.filter((m) => m !== model));
                       }}
                     >
-                      删除
+                      {t('删除')}
                     </button>
                   )}
                   {onEditModel && selected && (
@@ -152,11 +154,11 @@ export function ModelSelection({
                       className="text-button model-edit-action"
                       type="button"
                       disabled={disabled}
-                      aria-label={`编辑 ${model} 能力`}
-                      title="编辑模型能力"
+                      aria-label={t('编辑 {value0} 能力', { value0: model })}
+                      title={t('编辑模型能力')}
                       onClick={() => onEditModel(model)}
                     >
-                      编辑
+                      {t('编辑')}
                     </button>
                   )}
                   {!isDefault && selected && (
@@ -164,10 +166,10 @@ export function ModelSelection({
                       className="text-button model-default-action"
                       type="button"
                       disabled={disabled}
-                      aria-label={`将 ${model} 设为默认`}
+                      aria-label={t('将 {value0} 设为默认', { value0: model })}
                       onClick={() => onChange([model, ...models.filter((m) => m !== model)])}
                     >
-                      设为默认
+                      {t('设为默认')}
                     </button>
                   )}
                 </span>
@@ -179,8 +181,8 @@ export function ModelSelection({
       <div className="custom-model-entry">
         <input
           className="input"
-          aria-label="添加自定义模型"
-          placeholder="其他模型 ID"
+          aria-label={t('添加自定义模型')}
+          placeholder={t('其他模型 ID')}
           maxLength={200}
           value={draft}
           disabled={disabled}
@@ -201,15 +203,15 @@ export function ModelSelection({
           disabled={disabled || !draft.trim()}
           onClick={addCustom}
         >
-          添加模型
+          {t('添加模型')}
         </button>
       </div>
       {error && (
         <span className="field-hint" role="alert">
-          {error}
+          {message(error)}
         </span>
       )}
-      {draft.trim() && <span className="field-hint">点击「添加模型」或回车加入选择。</span>}
+      {draft.trim() && <span className="field-hint">{t('点击「添加模型」或回车加入选择。')}</span>}
     </div>
   );
 }

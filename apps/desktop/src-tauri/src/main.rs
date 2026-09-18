@@ -2,10 +2,12 @@
 #[cfg(target_os = "macos")]
 mod app_menu;
 mod commands;
+mod locale;
 mod platform;
 mod service;
 mod state;
 mod tray;
+mod updates;
 use codex_switch_core::{config::ConfigManager, store::Store};
 use state::AppState;
 use std::{path::PathBuf, sync::Mutex};
@@ -24,8 +26,6 @@ fn main() {
         }))
         .plugin(tauri_plugin_autostart::Builder::new().build())
         .setup(|app| {
-            #[cfg(target_os = "macos")]
-            app_menu::configure_visibility()?;
             let data = app.path().app_data_dir()?;
             let home = std::env::var_os("CODEX_HOME")
                 .map(PathBuf::from)
@@ -42,6 +42,11 @@ fn main() {
                 tray_feedback: Mutex::new(None),
                 checks: Mutex::new(std::collections::HashMap::new()),
             });
+            #[cfg(target_os = "macos")]
+            {
+                app.set_menu(app_menu::build(app.handle())?)?;
+                app_menu::configure_visibility()?;
+            }
             tray::install(app.handle())?;
             Ok(())
         })
@@ -53,6 +58,8 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::snapshot,
+            updates::check_update,
+            commands::set_locale,
             commands::cancel_validation,
             commands::save_profile,
             commands::save_routing_settings,
@@ -62,7 +69,6 @@ fn main() {
             commands::delete_profile,
             commands::open_codex,
             commands::restart_codex,
-            commands::recover_connection,
             commands::open_link,
             commands::set_autostart,
             commands::quit,

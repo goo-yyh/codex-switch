@@ -1,41 +1,34 @@
 ---
-title: Connect Codex App in three steps
-description: Follow screenshots to add a model provider, choose models, enable Codex Switch and open Codex App with your selected configurations.
+title: Connect in three steps
+description: Follow screenshots to add an API key, select models and enable Codex Switch, then use your models in Codex App or turn off the service.
 ---
 
-Have Codex App installed and your provider’s API key, API URL and model IDs ready. See [installation](/en/docs/install/) for building the app.
+Have Codex App installed, plus a provider API key and available credits. Need Codex Switch? See [installation](/en/docs/install/).
 
-> Screenshots show the actual Chinese interface in the browser preview, using example configurations and a fictional key. Connection, backup and process states are simulated, not evidence of native app or provider connectivity. Click an image to view the original.
+**Saving does not enable the service. Disable it before editing configurations or settings.**
 
-## 1. Add a configuration
+## 1. Add a provider and key
 
-Click **新增配置 (Add configuration)** and choose a provider. For GLM Coding Plan, MiniMax Token Plan, Kimi Coding or Qwen Token Plan, also choose the matching **服务套餐 (Service plan)**. Choose **coding plan** for a custom service. Turn off the main Codex Switch toggle before adding, editing or deleting configurations.
+Click **Add configuration**, choose your provider and plan, then enter a name and API key. Keep the preset URL for a standard service. See [connect providers](/en/docs/providers/) for plans and custom URLs.
 
-Enter a recognizable name, check the API URL and format, then scroll down to enter the corresponding API key. Preset URLs are usually a starting point; see [plans and custom APIs](/en/docs/relay/) for complete endpoint URLs.
+[![Add a configuration with a provider, name, URL and API key](/screenshots/connection.png)](/screenshots/connection.png)
 
-[![Add a Kimi configuration, name it and check its URL and Responses format](/screenshots/connection.png)](/screenshots/connection.png)
+_Screenshots show the Chinese app in browser preview with example data and simulated connection states. Click to enlarge._
 
 ## 2. Select models and save
 
-Select 1–20 models. Add an exact model ID if it is not listed. Use **设为默认 (Set as default)** to change the default. **编辑 (Edit)** beside a model opens its URL and capability settings; see [configuration and capabilities](/en/docs/configuration/).
+Select your models and click **Save configuration**. Add an exact model ID if it is not listed. Hover over a model row to **Set as default**. Preset capabilities are usually enough to get started.
 
-[![Two selected Kimi models, default model and save controls](/screenshots/models.png)](/screenshots/models.png)
+[![Select multiple models and save the configuration](/screenshots/models.png)](/screenshots/models.png)
 
-Click **保存配置 (Save configuration)** to return home. **Saving sends no request and does not enable the configuration.** **测试配置 (Test configuration)** requests basic text from each selected model but does not save. Real provider tests may incur API charges.
+**Test configuration** is optional. It requests each selected model and may incur API charges; it does not save the configuration.
 
-## 3. Enable and open Codex
+## 3. Select configurations and enable
 
-Select one or more configurations on the home screen, then enable the bottom **Codex Switch** toggle. The native app first backs up the original configuration, then writes the selected models into Codex’s model catalog.
+On the home screen, select one or more configurations and turn on the bottom **Codex Switch** toggle. Open Codex App from your operating system. Models appear as `configuration-name-model`.
 
-[![Select Kimi and DeepSeek configurations before enabling](/screenshots/selected.png)](/screenshots/selected.png)
+[![Select configurations and enable the service on the home screen](/screenshots/selected.png)](/screenshots/selected.png)
 
-While enabled, an overlay offers only **关闭服务 (Disable service)**. Disable before changing configurations or settings. Launch Codex from your operating system. If it is already running and needs to reload configuration, finish the current task before restarting normally. See [launch and restart](/en/docs/launch/).
+If Codex is already running, finish your task before quitting and reopening it to load the model list. Codex Switch does not restart Codex automatically.
 
-Models appear as `configuration-name-model`. For example, the pictured configuration offers `Kimi 示例-kimi-k3` and `Kimi 示例-kimi-k2.7-code`. Initial activation uses the default model of the first selected configuration.
-
-## Next steps
-
-- Adjust connections and model parameters: [Configuration and capabilities](/en/docs/configuration/).
-- Manage compaction and startup: [Settings](/en/docs/settings/).
-- Switch services, handle existing sessions or restore files: [Switching and recovery](/en/docs/switch/).
-- Diagnose failures: [Troubleshooting](/en/docs/troubleshooting/) and [compatibility](/en/docs/compatibility/).
+An overlay locks editing while enabled. **Turn off its service switch to restore the original configuration and edit again.** See [enable and disable](/en/docs/switch/).

@@ -1,5 +1,6 @@
 //! Tauri IPC boundary: validate input and hold the operation lock before mutations.
 use crate::{
+    locale::Locale,
     platform::{self, Vault},
     service::{enable_inner, routing_settings, select_profiles_inner, set_enabled_inner},
     state::{err, AppState, CommandResult},
@@ -18,6 +19,7 @@ use tauri_plugin_autostart::ManagerExt;
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct Snapshot {
+    locale: Locale,
     profiles: Vec<Profile>,
     presets: Vec<Preset>,
     selected_profiles: Vec<String>,
@@ -47,6 +49,7 @@ pub(crate) async fn snapshot(
     }
     let store = s.store.lock().map_err(err)?;
     let result = Snapshot {
+        locale: Locale::read(&store).map_err(err)?,
         profiles: store.profiles().map_err(err)?,
         presets: presets(),
         selected_profiles: store.selected_profiles().map_err(err)?,
@@ -182,14 +185,6 @@ pub(crate) async fn delete_profile(s: State<'_, AppState>, id: String) -> Comman
         .map_err(err)
 }
 #[tauri::command]
-pub(crate) async fn recover_connection(s: State<'_, AppState>) -> CommandResult<()> {
-    let _op = s.operation.lock().await;
-    if !s.config.enabled().map_err(err)? {
-        return Err("配置已关闭，请先开启。".into());
-    }
-    enable_inner(&s).await
-}
-#[tauri::command]
 pub(crate) async fn restart_codex(s: State<'_, AppState>) -> CommandResult<()> {
     let _op = s.operation.lock().await;
     if s.config.enabled().map_err(err)? && s.runtime.lock().await.is_none() {
@@ -259,5 +254,39 @@ pub(crate) async fn quit(app: tauri::AppHandle, s: State<'_, AppState>) -> Comma
     s.config.disable(true).map_err(err)?;
     s.runtime.lock().await.take();
     app.exit(0);
+    Ok(())
+}
+
+/// Persist before reporting success so the panel and native menus share one preference.
+#[tauri::command]
+pub(crate) async fn set_locale(
+    app: tauri::AppHandle,
+    s: State<'_, AppState>,
+    locale: Locale,
+) -> CommandResult<()> {
+    let _op = s.operation.lock().await;
+    ensure_editable(s.config.enabled().map_err(err)?).map_err(err)?;
+    s.store
+        .lock()
+        .map_err(err)?
+        .set("locale", locale.code())
+        .map_err(err)?;
+    tray::sync(&app)?;
+    #[cfg(target_os = "macos")]
+    {
+        let (send, receive) = tokio::sync::oneshot::channel();
+        let handle = app.clone();
+        app.run_on_main_thread(move || {
+            let result = (|| -> CommandResult<()> {
+                handle
+                    .set_menu(crate::app_menu::build(&handle).map_err(err)?)
+                    .map_err(err)?;
+                crate::app_menu::configure_visibility().map_err(err)
+            })();
+            let _ = send.send(result);
+        })
+        .map_err(err)?;
+        receive.await.map_err(err)??;
+    }
     Ok(())
 }

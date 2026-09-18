@@ -1,44 +1,47 @@
 ---
-title: 千问、MiniMax、GLM、Kimi 与 DeepSeek
-description: 查看 Codex Switch 内置五家模型服务的默认模型和 API 地址，了解多模型配置、Coding Plan 套餐与密钥的区别。
+title: 连接模型服务
+description: 选择 Codex Switch 内置厂商、Coding Plan 套餐或自定义 API，正确填写服务地址、接口格式与密钥。
 ---
 
-预设参考了 CC Switch 固定版本，候选模型由本项目维护，只作为新建配置的初始值；不覆盖已保存的用户地址、协议或模型，也不代表账号拥有对应权限。
+**先选对厂商和套餐，再填对应的 Key。** 按量 API 与订阅套餐可能使用不同的密钥、地址和模型。
 
-| 服务     | 默认模型            | API 地址                                            | 接口      |
-| -------- | ------------------- | --------------------------------------------------- | --------- |
-| 千问     | `qwen3.8-max`       | `https://dashscope.aliyuncs.com/compatible-mode/v1` | Responses |
-| MiniMax  | `MiniMax-M3`        | `https://api.minimaxi.com/v1`                       | Responses |
-| 智谱 GLM | `glm-5.3`           | `https://open.bigmodel.cn/api/v1`                   | Responses |
-| Kimi     | `kimi-k3`           | `https://api.moonshot.cn/v1`                        | Responses |
-| DeepSeek | `deepseek-v4-flash` | `https://api.deepseek.com`                          | Responses |
+## 内置厂商与套餐
 
-「服务套餐」另提供 智谱 Coding Plan、MiniMax Token Plan、Kimi Coding 与千问 Token Plan。选择套餐会载入对应地址、模型和能力，并清空待填写的密钥。所有服务的 API 地址均可自行修改。
+点击「新增配置」，选择智谱 GLM、DeepSeek、Kimi、千问或 MiniMax，应用会填入地址和模型预设。
 
-上下文长度、思考档位和图像支持按模型预设载入，选中模型后，点击该模型行后的「编辑」修改；确认修改后还需保存配置，取消则丢弃本次编辑。未知型号采用 CC Switch 的模板和能力注册表；请按实际服务能力调整。
+[![新增配置中的五家厂商与自定义服务入口](/screenshots/providers.png)](/screenshots/providers.png)
 
-## 一个配置，多个模型
+_截图为应用浏览器预览，使用示例数据，连接状态为模拟。点击图片可放大。_
 
-新增配置时填写一个 API Key，并勾选 1–20 个模型。点击「保存配置」以一个具名配置保存并回到首页，不会自动发送测试请求。先关闭 Codex Switch 后，编辑时可以增删该配置的模型，地址与完整 URL 模式未变化时，留空 Key 即保留原密钥。
+使用智谱 Coding Plan、MiniMax Token Plan、Kimi Coding 或千问 Token Plan 时，在「服务套餐」中选择对应项，再填写套餐 Key。切换套餐会重新载入预设并清空待填写的 Key。
 
-首页可同时勾选多个厂商的配置并应用到 Codex，模型显示为 `配置名称-模型`。模型旁的「已配置」表示相同厂商、API 地址与接口下已有配置使用它；本次勾选只编辑当前配置，不会删除其他配置的模型。
+[![服务套餐选择：智谱 Coding Plan](/screenshots/coding-plan.png)](/screenshots/coding-plan.png)
 
-列表提供常用模型，也支持输入其他模型 ID。它不是账号授权清单；套餐和模型权限以服务商为准。
+预设不代表账号拥有模型权限。模型是否可用，以你的套餐为准；也可手动添加服务商提供的模型 ID。
 
-## 按量 API 与 Coding Plan
+## 自定义 API
 
-两类产品可能使用不同密钥、地址和可用模型。密钥格式相似不代表能够互用。出现 401、403 或 404 时，先在供应商控制台核对套餐，不要把同一个密钥发往不明第三方端点。
+没有对应预设时，选择「coding plan」，填写名称、HTTPS 地址、接口格式、Key 和模型 ID。
 
-## 官方入口
+[![自定义服务的完整 URL、接口和模型填写位置](/screenshots/custom-api.png)](/screenshots/custom-api.png)
 
-- [千问文档](https://help.aliyun.com/zh/model-studio/)
-- [MiniMax 文档](https://platform.minimaxi.com/docs/api-reference/text-openai-api)
-- [智谱文档](https://docs.bigmodel.cn/)
-- [Kimi 文档](https://platform.moonshot.cn/docs/)
-- [DeepSeek 文档](https://api-docs.deepseek.com/)
+图中的 `api.example.com` 和 `example-model` 仅为示例，请换成服务商提供的信息。
 
-## 验证代表什么
+## 地址怎么填
 
-点击「测试配置」后，应用逐个检查所选模型的基础文本响应，失败时显示对应模型。测试不会保存或启用配置，保存也不依赖测试通过。工具调用、多轮上下文、流式输出通过独立协议测试覆盖；特定供应商的实测结果应以测试回执为准，不能由连通状态推导完整 App 兼容性。
+| 提供的信息         | 填写方式                                                                                                   |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Responses 基础地址 | 填 `https://api.example.com/v1`，选择 Responses，关闭「完整 URL」。请求会追加 `/responses`。               |
+| Chat 基础地址      | 填 `https://api.example.com/v1`，选择 Chat Completions，关闭「完整 URL」。请求会追加 `/chat/completions`。 |
+| 完整请求端点       | 原样填写，开启「完整 URL」，选择服务支持的接口格式，不再追加请求路径。                                     |
 
-详细字段和继承关系见[配置字段与模型能力](/docs/configuration/)，远程压缩偏好见[通用设置](/docs/settings/)。
+只接受外部 HTTPS 地址。Key 填在单独的密钥字段，不放在 URL 中。接口格式以服务商说明为准，失败后不会自动换协议或切换服务。
+
+## 保存与检查
+
+- 一个配置共用一个 Key，需要不同 Key 时分别新增配置。
+- 编辑时 Key 留空可保留原密钥；更改地址或「完整 URL」模式后需重新填写。
+- 「测试配置」检查所选模型的基础文本响应，可能产生费用，不会保存或启用；通过不代表所有模型能力都可用。
+- 遇到 401 / 403，检查 Key 和套餐权限；遇到 404，检查地址、接口和模型 ID。
+
+模型能力的调整方式见[模型设置](/docs/configuration/)。

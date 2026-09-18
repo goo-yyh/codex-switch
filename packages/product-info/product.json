@@ -9,7 +9,7 @@
       "symbol": "⌘",
       "architecture": "Apple Silicon / Intel",
       "note": "需要分别构建对应架构。",
-      "guide": "/docs/install/#从源码构建",
+      "guide": "/docs/install/#macos",
       "url": "",
       "sha256": ""
     },

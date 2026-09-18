@@ -1,27 +1,43 @@
 use tauri::{
     menu::{Menu, PredefinedMenuItem, Submenu},
-    AppHandle, Wry,
+    AppHandle, Manager, Wry,
 };
 
 /// Editing actions are shortcut-only; configure_visibility removes their visible rows
 /// after Tauri installs the native menu, without breaking input keyboard shortcuts.
 pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
+    let locale = app
+        .try_state::<crate::state::AppState>()
+        .and_then(|state| {
+            state
+                .store
+                .lock()
+                .ok()
+                .and_then(|store| crate::locale::Locale::read(&store).ok())
+        })
+        .unwrap_or_default();
     let application = Submenu::with_items(
         app,
         "Codex Switch",
         true,
         &[
-            &PredefinedMenuItem::undo(app, Some("撤销"))?,
-            &PredefinedMenuItem::redo(app, Some("重做"))?,
-            &PredefinedMenuItem::cut(app, Some("剪切"))?,
-            &PredefinedMenuItem::copy(app, Some("复制"))?,
-            &PredefinedMenuItem::paste(app, Some("粘贴"))?,
-            &PredefinedMenuItem::select_all(app, Some("全选"))?,
-            &PredefinedMenuItem::hide(app, Some("隐藏 Codex Switch"))?,
-            &PredefinedMenuItem::hide_others(app, Some("隐藏其他应用"))?,
+            &PredefinedMenuItem::undo(app, Some(locale.text("撤销", "Undo")))?,
+            &PredefinedMenuItem::redo(app, Some(locale.text("重做", "Redo")))?,
+            &PredefinedMenuItem::cut(app, Some(locale.text("剪切", "Cut")))?,
+            &PredefinedMenuItem::copy(app, Some(locale.text("复制", "Copy")))?,
+            &PredefinedMenuItem::paste(app, Some(locale.text("粘贴", "Paste")))?,
+            &PredefinedMenuItem::select_all(app, Some(locale.text("全选", "Select All")))?,
+            &PredefinedMenuItem::hide(
+                app,
+                Some(locale.text("隐藏 Codex Switch", "Hide Codex Switch")),
+            )?,
+            &PredefinedMenuItem::hide_others(
+                app,
+                Some(locale.text("隐藏其他应用", "Hide Others")),
+            )?,
             &PredefinedMenuItem::separator(app)?,
             // Quit still goes through the app's existing ExitRequested guard.
-            &PredefinedMenuItem::quit(app, Some("退出应用"))?,
+            &PredefinedMenuItem::quit(app, Some(locale.text("退出应用", "Quit App")))?,
         ],
     )?;
     Menu::with_items(app, &[&application])

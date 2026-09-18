@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n';
 import { Picker } from '../../components/controls';
 import { RequestFields } from './RequestFields';
 import type { ModelOptions, Protocol } from '../../api/bridge';
@@ -22,6 +23,7 @@ export function ModelCapabilityFields({
   disabled: boolean;
   onChange: (change: Partial<ModelOptions>) => void;
 }) {
+  const { t, text } = useI18n();
   return (
     <div className="model-capability">
       <RequestFields
@@ -34,9 +36,9 @@ export function ModelCapabilityFields({
         onChange={onChange}
       />
       <label className="field">
-        上下文长度
+        {t('上下文长度')}
         <input
-          aria-label={`${model} 上下文长度`}
+          aria-label={t('{value0} 上下文长度', { value0: model })}
           type="number"
           className="input"
           min={4096}
@@ -51,14 +53,16 @@ export function ModelCapabilityFields({
         />
       </label>
       <p className="field-hint">
-        {spec.contextNote ?? '内置预设按官方上下文的 80% 设置，预留余量。'}
+        {spec.contextNote
+          ? text(spec.contextNote)
+          : t('内置预设按官方上下文的 80% 设置，预留余量。')}
       </p>
       <label className="field">
-        思考档位（逗号分隔）
+        {t('思考档位（逗号分隔）')}
         <input
-          aria-label={`${model} 思考档位（逗号分隔）`}
+          aria-label={t('{value0} 思考档位（逗号分隔）', { value0: model })}
           className="input"
-          placeholder="使用默认能力"
+          placeholder={t('使用默认能力')}
           value={spec.reasoningLevels?.join(',') ?? ''}
           onChange={(e) => {
             const values = e.target.value.split(',').map((v) => v.trim());
@@ -70,9 +74,9 @@ export function ModelCapabilityFields({
         />
       </label>
       <label className="field">
-        默认思考档位
+        {t('默认思考档位')}
         <Picker
-          label={`${model} 默认思考档位`}
+          label={t('{value0} 默认思考档位', { value0: model })}
           disabled={disabled}
           value={spec.defaultReasoningLevel ?? 'auto'}
           onChange={(value) =>
@@ -81,18 +85,18 @@ export function ModelCapabilityFields({
             })
           }
           options={[
-            { value: 'auto', label: '自动选择' },
+            { value: 'auto', label: t('自动选择') },
             ...(spec.reasoningLevels ?? [])
               .filter((v) => efforts.includes(v))
               .map((v) => ({ value: v, label: v })),
           ]}
         />
       </label>
-      {spec.reasoningNote && <p className="field-hint">{spec.reasoningNote}</p>}
+      {spec.reasoningNote && <p className="field-hint">{text(spec.reasoningNote)}</p>}
       <label className="field">
-        图像输入
+        {t('图像输入')}
         <Picker
-          label={`${model} 图像输入`}
+          label={t('{value0} 图像输入', { value0: model })}
           disabled={disabled}
           value={
             spec.inputModalities
@@ -108,16 +112,16 @@ export function ModelCapabilityFields({
             })
           }
           options={[
-            { value: 'auto', label: '按模型注册表判断' },
-            { value: 'text', label: '仅文本' },
-            { value: 'image', label: '文本和图像' },
+            { value: 'auto', label: t('按模型注册表判断') },
+            { value: 'text', label: t('仅文本') },
+            { value: 'image', label: t('文本和图像') },
           ]}
         />
       </label>
       <label className="field">
-        并行工具调用
+        {t('并行工具调用')}
         <Picker
-          label={`${model} 并行工具调用`}
+          label={t('{value0} 并行工具调用', { value0: model })}
           disabled={disabled}
           value={spec.parallelToolCalls === undefined ? 'auto' : String(spec.parallelToolCalls)}
           onChange={(v) =>
@@ -126,9 +130,9 @@ export function ModelCapabilityFields({
             })
           }
           options={[
-            { value: 'auto', label: '使用默认能力' },
-            { value: 'true', label: '支持' },
-            { value: 'false', label: '不支持' },
+            { value: 'auto', label: t('使用默认能力') },
+            { value: 'true', label: t('支持') },
+            { value: 'false', label: t('不支持') },
           ]}
         />
       </label>

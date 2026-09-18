@@ -1,41 +1,34 @@
 ---
-title: 三步为 Codex App 连接模型
-description: 跟随真实界面截图新增模型服务、填写 API Key、选择多个模型并开启 Codex Switch，快速完成 Codex App 连接配置。
+title: 三步连接
+description: 跟随界面截图添加 API Key、选择模型并开启 Codex Switch，了解如何在 Codex App 中使用模型和关闭服务。
 ---
 
-准备好已安装的 Codex App，以及服务商提供的 API Key、API 地址和可用模型。应用安装方式见[安装与下载](/docs/install/)。
+准备好 Codex App、模型服务的 API Key 和可用额度。还没安装？查看[安装与下载](/docs/install/)。
 
-> 以下为当前应用的真实界面截图，采集于浏览器预览，使用示例配置和虚构 Key。预览中的连接、备份与进程状态为模拟数据，不代表原生端或服务连通验证。点击截图可查看原图。
+**保存配置不会自动开启服务；开启后如需修改，先关闭服务。**
 
-## 1. 新增配置
+## 1. 添加服务和密钥
 
-在首页点击「新增配置」，选择厂商；使用智谱 Coding Plan、MiniMax Token Plan、Kimi Coding 或千问 Token Plan 时，再选择对应的「服务套餐」。自定义服务选择「coding plan」。新增、编辑和删除前需先关闭 Codex Switch 总开关。
+点击「新增配置」，选择厂商和对应套餐，填写配置名称与 API Key。普通服务保留预设地址；套餐或自定义地址的填写方式见[连接模型服务](/docs/providers/)。
 
-填写便于识别的配置名称，核对 API 地址与接口格式，向下滚动填写该服务的 API Key。通常可保留预设地址；完整端点的填写方式见[套餐与自定义接口](/docs/relay/)。
+[![新增配置：选择厂商、填写名称、地址与 API Key](/screenshots/connection.png)](/screenshots/connection.png)
 
-[![新增配置：选择 Kimi、填写名称、检查地址与 Responses 接口](/screenshots/connection.png)](/screenshots/connection.png)
+_截图为应用浏览器预览，使用示例数据，连接状态为模拟。点击图片可放大。_
 
 ## 2. 选择模型并保存
 
-勾选 1–20 个模型。列表没有的模型可输入准确 ID 后添加。点击「设为默认」调整默认模型；点击模型旁的「编辑」设置地址或能力，详见[配置字段与模型能力](/docs/configuration/)。
+勾选需要的模型，点击「保存配置」。列表没有的模型可输入准确 ID 添加；鼠标移到模型行后，可点击「设为默认」。一般保留预设能力即可。
 
-[![选择两个 Kimi 模型，默认模型与底部保存入口](/screenshots/models.png)](/screenshots/models.png)
+[![勾选多个模型后保存配置](/screenshots/models.png)](/screenshots/models.png)
 
-点击「保存配置」回到首页。**保存不会发送请求，也不会自动启用配置。**「测试配置」会逐个请求当前所选模型，仅检查基础文本连通；它不会替你保存。测试使用真实服务时可能产生 API 费用。
+「测试配置」是可选操作：会请求所选模型，可能产生 API 费用，但不会保存配置。
 
 ## 3. 勾选配置并开启
 
-首页可同时勾选多个配置，至少选中一个后，打开底部「Codex Switch」总开关。原生应用会先备份原配置，再把所选配置的模型写入 Codex 模型目录。
+首页勾选一个或多个配置，打开底部「Codex Switch」开关，再从系统中打开 Codex App。模型显示为 `配置名称-模型`。
 
-[![首页同时选择 Kimi 和 DeepSeek 配置，准备开启](/screenshots/selected.png)](/screenshots/selected.png)
+[![首页勾选配置并开启底部服务开关](/screenshots/selected.png)](/screenshots/selected.png)
 
-开启后会显示蒙层，只保留「关闭服务」操作；如需修改配置或设置，请先关闭服务。请从系统中打开 Codex；如果 Codex 已在运行且需要重新加载配置，先完成当前任务，再正常退出并重新打开。详见[打开与重启 Codex](/docs/launch/)。
+Codex 已在运行时，先完成当前任务，再正常退出并重新打开以加载模型。Codex Switch 不会自动重启 Codex。
 
-模型以 `配置名称-模型` 显示。例如，截图中的 Kimi 配置会提供 `Kimi 示例-kimi-k3` 和 `Kimi 示例-kimi-k2.7-code`。首次应用使用第一个选中配置的默认模型。
-
-## 接下来
-
-- 调整连接与模型参数：[配置字段与模型能力](/docs/configuration/)。
-- 管理压缩和启动开关：[通用设置](/docs/settings/)。
-- 切换服务、处理旧会话或恢复文件：[开启、关闭与恢复](/docs/switch/)。
-- 排查连接失败：[常见问题](/docs/troubleshooting/)与[兼容范围](/docs/compatibility/)。
+开启后会显示锁定蒙层。**关闭蒙层中的服务开关，即可恢复原配置并继续编辑。** 详见[开启与关闭](/docs/switch/)。

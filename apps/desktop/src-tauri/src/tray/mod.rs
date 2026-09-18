@@ -1,5 +1,6 @@
 use crate::{
-    service::{enable_inner, select_profiles_inner, set_enabled_inner},
+    locale::Locale,
+    service::{select_profiles_inner, set_enabled_inner},
     state::{err, AppState, CommandResult},
 };
 use codex_switch_core::profiles::Profile;
@@ -28,14 +29,12 @@ pub struct Feedback {
 enum Action {
     Enable(bool),
     ToggleSelection(String),
-    Recover,
 }
 impl Action {
     fn parse(id: &str) -> Option<Self> {
         match id {
             "enable" => Some(Self::Enable(true)),
             "disable" => Some(Self::Enable(false)),
-            "recover" => Some(Self::Recover),
             _ => id
                 .strip_prefix(PROFILE_PREFIX)
                 .filter(|id| !id.is_empty())
@@ -53,6 +52,7 @@ struct ProfileItem {
 
 #[derive(Clone)]
 struct LiveMenu {
+    locale: Locale,
     enabled: bool,
     profiles: Vec<(String, String)>,
     status: MenuItem<tauri::Wry>,
@@ -65,12 +65,17 @@ struct LiveMenu {
 struct MenuState(Mutex<Option<LiveMenu>>);
 
 // Keep the tray and homepage selection in sync, including while the service is off.
-fn profile_items(profiles: &[Profile], selected: &[String]) -> Vec<ProfileItem> {
+fn profile_items(profiles: &[Profile], selected: &[String], locale: Locale) -> Vec<ProfileItem> {
     profiles
         .iter()
         .map(|p| ProfileItem {
             id: format!("{PROFILE_PREFIX}{}", p.id),
-            label: format!("{} · {} 个模型", p.name, p.models.len()),
+            label: format!(
+                "{} · {} {}",
+                p.name,
+                p.models.len(),
+                locale.text("个模型", "models")
+            ),
             checked: selected.contains(&p.id),
         })
         .collect()
@@ -106,32 +111,41 @@ pub fn sync(app: &AppHandle) -> CommandResult<()> {
     };
     let s = app.state::<AppState>();
     let enabled = s.config.enabled().map_err(err)?;
-    let (profiles, selected) = {
+    let (profiles, selected, locale) = {
         let store = s.store.lock().map_err(err)?;
         (
             store.profiles().map_err(err)?,
             store.selected_profiles().map_err(err)?,
+            Locale::read(&store).map_err(err)?,
         )
     };
     let pending = *s.pending.lock().map_err(err)? && crate::platform::app_info().running;
     let status = if pending {
         if enabled {
-            "已开启 · 模型列表待刷新"
+            locale.text(
+                "已开启 · 模型列表待刷新",
+                "Enabled · Refresh the model list",
+            )
         } else {
-            "已关闭 · 需重新打开 Codex 生效"
+            locale.text(
+                "已关闭 · 需重新打开 Codex 生效",
+                "Disabled · Reopen Codex to apply",
+            )
         }
     } else if enabled {
-        "Codex Switch 已开启"
+        locale.text("Codex Switch 已开启", "Codex Switch enabled")
     } else {
-        "Codex Switch 已关闭"
+        locale.text("Codex Switch 已关闭", "Codex Switch disabled")
     };
-    let items = profile_items(&profiles, &selected);
+    let items = profile_items(&profiles, &selected, locale);
     let identity = items
         .iter()
         .map(|p| (p.id.clone(), p.label.clone()))
         .collect::<Vec<_>>();
     let cached = app.state::<MenuState>().0.lock().map_err(err)?.clone();
-    if let Some(cached) = cached.filter(|m| m.enabled == enabled && m.profiles == identity) {
+    if let Some(cached) =
+        cached.filter(|m| m.locale == locale && m.enabled == enabled && m.profiles == identity)
+    {
         let status_changed = cached.status.text().map_err(err)? != status;
         if status_changed {
             cached.status.set_text(status).map_err(err)?;
@@ -156,8 +170,12 @@ pub fn sync(app: &AppHandle) -> CommandResult<()> {
     let menu = Menu::new(app).map_err(err)?;
     let status_item = MenuItem::with_id(app, "status", status, false, None::<&str>).map_err(err)?;
     menu.append(&status_item).map_err(err)?;
-    let submenu =
-        Submenu::new(app, "选择配置（可多选）", !enabled && !profiles.is_empty()).map_err(err)?;
+    let submenu = Submenu::new(
+        app,
+        locale.text("选择配置（可多选）", "Select configurations (multiple)"),
+        !enabled && !profiles.is_empty(),
+    )
+    .map_err(err)?;
     let mut checks = Vec::with_capacity(items.len());
     for item in items {
         let can_toggle = !enabled;
@@ -178,9 +196,9 @@ pub fn sync(app: &AppHandle) -> CommandResult<()> {
         app,
         if enabled { "disable" } else { "enable" },
         if enabled {
-            "关闭并恢复原配置"
+            locale.text("关闭服务", "Disable service")
         } else {
-            "开启 Codex Switch"
+            locale.text("开启 Codex Switch", "Enable Codex Switch")
         },
         enabled || !selected.is_empty(),
         None::<&str>,
@@ -189,27 +207,49 @@ pub fn sync(app: &AppHandle) -> CommandResult<()> {
     menu.append(&toggle).map_err(err)?;
     if profiles.is_empty() {
         menu.append(
-            &MenuItem::with_id(app, "empty", "请先在主界面添加配置", false, None::<&str>)
-                .map_err(err)?,
-        )
-        .map_err(err)?;
-    }
-    if enabled {
-        menu.append(
-            &MenuItem::with_id(app, "recover", "恢复后台连接", true, None::<&str>).map_err(err)?,
+            &MenuItem::with_id(
+                app,
+                "empty",
+                locale.text(
+                    "请先在主界面添加配置",
+                    "Add configurations in the panel first",
+                ),
+                false,
+                None::<&str>,
+            )
+            .map_err(err)?,
         )
         .map_err(err)?;
     }
     menu.append(&PredefinedMenuItem::separator(app).map_err(err)?)
         .map_err(err)?;
-    menu.append(&MenuItem::with_id(app, "show", "打开面板", true, None::<&str>).map_err(err)?)
-        .map_err(err)?;
-    menu.append(&MenuItem::with_id(app, "quit", "退出应用", true, None::<&str>).map_err(err)?)
-        .map_err(err)?;
+    menu.append(
+        &MenuItem::with_id(
+            app,
+            "show",
+            locale.text("打开面板", "Open panel"),
+            true,
+            None::<&str>,
+        )
+        .map_err(err)?,
+    )
+    .map_err(err)?;
+    menu.append(
+        &MenuItem::with_id(
+            app,
+            "quit",
+            locale.text("退出应用", "Quit app"),
+            true,
+            None::<&str>,
+        )
+        .map_err(err)?,
+    )
+    .map_err(err)?;
     tray.set_menu(Some(menu)).map_err(err)?;
     #[cfg(target_os = "macos")]
     persistent_menu::sync(app, &tray, &identity)?;
     *app.state::<MenuState>().0.lock().map_err(err)? = Some(LiveMenu {
+        locale,
         enabled,
         profiles: identity,
         status: status_item,
@@ -314,13 +354,6 @@ async fn execute(s: &AppState, action: Action) -> CommandResult<String> {
             .into())
         }
         Action::ToggleSelection(id) => toggle_selection_inner(s, &id),
-        Action::Recover => {
-            if !s.config.enabled().map_err(err)? {
-                return Err("配置已关闭，请先开启。".into());
-            }
-            enable_inner(s).await?;
-            Ok("后台连接已恢复。".into())
-        }
     }
 }
 
@@ -419,7 +452,7 @@ mod tests {
         );
         assert_eq!(Action::parse("disable"), Some(Action::Enable(false)));
         assert_eq!(Action::parse("enable"), Some(Action::Enable(true)));
-        assert_eq!(Action::parse("recover"), Some(Action::Recover));
+        assert_eq!(Action::parse("recover"), None);
         assert_eq!(Action::parse("profile:"), None);
         assert_eq!(Action::parse("status"), None);
         assert_eq!(Action::parse("quit"), None);
@@ -431,12 +464,18 @@ mod tests {
     #[test]
     fn checks_all_selected_profiles_independently_of_applied_routes() {
         let profiles = vec![profile("a"), profile("b"), profile("c")];
-        let items = profile_items(&profiles, &["a".into(), "b".into()]);
+        let items = profile_items(&profiles, &["a".into(), "b".into()], Locale::Chinese);
         assert!(items[0].checked);
         assert!(items[1].checked);
         assert!(!items[2].checked);
         assert_eq!(items[0].label, "a · 2 个模型");
-        assert!(profile_items(&profiles, &[]).iter().all(|p| !p.checked));
+        assert_eq!(
+            profile_items(&profiles, &[], Locale::English)[0].label,
+            "a · 2 models"
+        );
+        assert!(profile_items(&profiles, &[], Locale::Chinese)
+            .iter()
+            .all(|p| !p.checked));
     }
 
     #[tokio::test]

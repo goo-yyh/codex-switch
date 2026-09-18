@@ -32,6 +32,7 @@ function setup(profiles: Profile[] = [profile()]) {
     autostart: false,
   };
   vi.mocked(call).mockImplementation(async (command, args) => {
+    if (command === 'set_locale') state.locale = args?.locale as Snapshot['locale'];
     if (command === 'snapshot') return structuredClone(state) as never;
     if (command === 'save_profile') {
       const p = { ...(args?.profile as Profile), id: (args?.profile as Profile).id || 'saved' };
@@ -71,6 +72,80 @@ async function addKimi() {
 }
 describe('configuration lifecycle', () => {
   beforeEach(() => vi.clearAllMocks());
+  it('switches the whole interface and docs language without changing saved user data', async () => {
+    const state = setup([profile('one', '我的工作账号')]);
+    const view = render(<App />);
+    const language = await screen.findByRole('button', { name: '切换到英文' });
+    const nav = screen.getByRole('navigation', { name: '应用导航' });
+    expect(within(nav).getAllByRole('button')[0]).toBe(language);
+    fireEvent.click(language);
+    await screen.findByRole('heading', { name: 'My configurations' });
+    expect(document.documentElement.lang).toBe('en');
+    expect(screen.getByText('我的工作账号')).toBeInTheDocument();
+    expect(state.profiles[0].models).toEqual(['kimi-k3', 'kimi-k2.7-code']);
+    fireEvent.click(screen.getByRole('button', { name: 'Documentation' }));
+    await waitFor(() =>
+      expect(call).toHaveBeenCalledWith('open_link', {
+        url: expect.stringContaining('/content/docs/en/docs/quickstart.md'),
+      }),
+    );
+    view.unmount();
+    render(<App />);
+    await screen.findByRole('heading', { name: 'My configurations' });
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to Chinese' }));
+    await screen.findByRole('heading', { name: '我的配置' });
+    expect(state.locale).toBe('zh-CN');
+    expect(call).not.toHaveBeenCalledWith('save_profile', expect.anything());
+    expect(call).not.toHaveBeenCalledWith('set_enabled', expect.anything());
+  });
+  it('preserves an unsaved form while translating providers, fields and model capabilities', async () => {
+    setup([]);
+    render(<App />);
+    fireEvent.click(await screen.findByRole('button', { name: '新增配置' }));
+    fireEvent.change(screen.getByLabelText('配置名称'), { target: { value: '保留这个名称' } });
+    fireEvent.change(screen.getByLabelText('API Key'), {
+      target: { value: 'example-not-a-real-key' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '切换到英文' }));
+    await screen.findByRole('heading', { name: 'Add configuration' });
+    expect(screen.getByLabelText('Configuration name')).toHaveValue('保留这个名称');
+    expect(screen.getByLabelText('API Key')).toHaveValue('example-not-a-real-key');
+    expect(screen.getByRole('button', { name: 'Zhipu GLM' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Qwen' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Edit glm-5.3 capabilities' }));
+    expect(
+      await screen.findByRole('dialog', { name: 'Edit glm-5.3 capabilities' }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText('glm-5.3 context window')).toBeInTheDocument();
+    expect(screen.getByText('Default reasoning level')).toBeInTheDocument();
+  });
+  it('translates settings and keeps language selection locked while enabled', async () => {
+    const state = setup();
+    state.locale = 'en';
+    state.selectedProfiles = ['one'];
+    render(<App />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Settings' }));
+    await screen.findByRole('heading', { name: 'General settings' });
+    expect(screen.getByRole('switch', { name: 'Remote context compaction' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    fireEvent.click(screen.getByRole('switch', { name: 'Enable Codex Switch' }));
+    await screen.findByRole('dialog', { name: 'Codex Switch is enabled' });
+    expect(screen.getByLabelText('Switch to Chinese')).toBeDisabled();
+    expect(screen.getByRole('switch', { name: 'Codex Switch service' })).toBeChecked();
+  });
+  it('keeps the current language when preference persistence fails', async () => {
+    setup();
+    const invoke = vi.mocked(call).getMockImplementation()!;
+    vi.mocked(call).mockImplementation(async (command, args) => {
+      if (command === 'set_locale') throw new Error('存储不可用。');
+      return invoke(command, args);
+    });
+    render(<App />);
+    fireEvent.click(await screen.findByRole('button', { name: '切换到英文' }));
+    await screen.findByRole('alert');
+    expect(screen.getByRole('heading', { name: '我的配置' })).toBeInTheDocument();
+  });
+
   it('refreshes selection and feedback after tray actions without applying again', async () => {
     const state = setup([profile(), profile('two', '工作账号')]);
     let notify = () => {};
@@ -122,7 +197,9 @@ describe('configuration lifecycle', () => {
     setup();
     render(<App />);
     await screen.findByRole('heading', { name: '我的配置' });
-    expect(vi.mocked(call).mock.calls.every(([c]) => c === 'snapshot')).toBe(true);
+    expect(
+      vi.mocked(call).mock.calls.every(([c]) => c === 'snapshot' || c === 'check_update'),
+    ).toBe(true);
   });
   it('lists profiles with multiple models and independently checks multiple providers', async () => {
     const state = setup([
@@ -399,8 +476,9 @@ describe('configuration lifecycle', () => {
     state.selectedProfiles = ['one'];
     render(<App />);
     const dialog = await screen.findByRole('dialog', { name: 'Codex Switch 已开启' });
-    expect(screen.getAllByRole('button')).toHaveLength(1);
-    const stop = within(dialog).getByRole('button', { name: '关闭服务' });
+    expect(screen.getAllByRole('switch')).toHaveLength(1);
+    const stop = within(dialog).getByRole('switch', { name: 'Codex Switch 服务' });
+    expect(stop).toBeChecked();
     expect(screen.queryByRole('button', { name: '设置' })).not.toBeInTheDocument();
     expect(screen.getByLabelText('选择 Kimi')).toBeDisabled();
     expect(screen.getByLabelText('选择 工作账号')).toBeDisabled();
@@ -446,14 +524,14 @@ describe('configuration lifecycle', () => {
       act(() => notify());
       await screen.findByRole('dialog', { name: 'Codex Switch 已开启' });
       expect(screen.getAllByRole('dialog')).toHaveLength(1);
-      expect(screen.getAllByRole('button')).toHaveLength(1);
+      expect(screen.getAllByRole('switch')).toHaveLength(1);
       if (page === 'settings') {
         expect(screen.getByLabelText('登录电脑时启动')).toBeDisabled();
         expect(screen.getByLabelText('远程上下文压缩')).toBeDisabled();
       }
       expect(call).not.toHaveBeenCalledWith('save_profile', expect.anything());
       expect(call).not.toHaveBeenCalledWith('set_autostart', expect.anything());
-      fireEvent.click(screen.getByRole('button', { name: '关闭服务' }));
+      fireEvent.click(screen.getByRole('switch', { name: 'Codex Switch 服务' }));
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
       if (page === 'settings')
         expect(screen.getByRole('switch', { name: '登录电脑时启动' })).toBeEnabled();
@@ -470,7 +548,7 @@ describe('configuration lifecycle', () => {
     await screen.findByRole('dialog', { name: 'Codex Switch 已开启' });
     expect(call).not.toHaveBeenCalledWith('open_codex');
     expect(call).not.toHaveBeenCalledWith('restart_codex');
-    fireEvent.click(screen.getByRole('button', { name: '关闭服务' }));
+    fireEvent.click(screen.getByRole('switch', { name: 'Codex Switch 服务' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     expect(screen.getByRole('switch', { name: '开启 Codex Switch' })).not.toBeChecked();
   });
@@ -484,12 +562,15 @@ describe('configuration lifecycle', () => {
       return originalCall(command, args);
     });
     render(<App />);
-    fireEvent.click(await screen.findByRole('button', { name: '关闭服务' }));
+    fireEvent.click(await screen.findByRole('switch', { name: 'Codex Switch 服务' }));
     const dialog = screen.getByRole('dialog', { name: 'Codex Switch 已开启' });
     expect(await within(dialog).findByRole('alert')).toHaveTextContent('恢复配置失败');
     expect(state.enabled).toBe(true);
-    await waitFor(() => expect(screen.getByRole('button', { name: '关闭服务' })).toBeEnabled());
-    fireEvent.click(screen.getByRole('button', { name: '关闭服务' }));
+    expect(within(dialog).getByRole('switch', { name: 'Codex Switch 服务' })).toBeChecked();
+    await waitFor(() =>
+      expect(screen.getByRole('switch', { name: 'Codex Switch 服务' })).toBeEnabled(),
+    );
+    fireEvent.click(screen.getByRole('switch', { name: 'Codex Switch 服务' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     expect(state.enabled).toBe(false);
   });

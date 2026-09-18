@@ -6,6 +6,48 @@
   "outputDirectory": "apps/website/dist",
   "routes": [
     {
+      "src": "^/docs/overview/?$",
+      "status": 308,
+      "headers": {
+        "Location": "/"
+      }
+    },
+    {
+      "src": "^/en/docs/overview/?$",
+      "status": 308,
+      "headers": {
+        "Location": "/en/"
+      }
+    },
+    {
+      "src": "^/docs/relay/?$",
+      "status": 308,
+      "headers": {
+        "Location": "/docs/providers/"
+      }
+    },
+    {
+      "src": "^/docs/launch/?$",
+      "status": 308,
+      "headers": {
+        "Location": "/docs/switch/"
+      }
+    },
+    {
+      "src": "^/en/docs/relay/?$",
+      "status": 308,
+      "headers": {
+        "Location": "/en/docs/providers/"
+      }
+    },
+    {
+      "src": "^/en/docs/launch/?$",
+      "status": 308,
+      "headers": {
+        "Location": "/en/docs/switch/"
+      }
+    },
+    {
       "src": "^/404(?:\\.html|/)?$",
       "status": 404,
       "dest": "/404.html"

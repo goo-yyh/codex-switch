@@ -2,30 +2,16 @@
 import Search from '@astrojs/starlight/components/Search.astro';
 import SiteTitle from '@astrojs/starlight/components/SiteTitle.astro';
 import SocialIcons from '@astrojs/starlight/components/SocialIcons.astro';
-import ThemeSelect from '@astrojs/starlight/components/ThemeSelect.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 import LanguageSwitch from '../LanguageSwitch.astro';
-import { localeFromPath, localizedPath } from '../../lib/i18n';
-const locale = localeFromPath(Astro.url.pathname);
-const en = locale === 'en';
-const link = (path: string) => localizedPath(path, locale);
-const isChangelog = Astro.url.pathname.replace(/\/$/, '').endsWith('/docs/changelog');
 ---
 
 <div class="docs-header">
   <div class="docs-header-brand"><SiteTitle /></div>
-  <nav class="docs-header-nav" aria-label={en ? 'Documentation navigation' : '文档导航'}>
-    <a href={link('/docs/overview/')} aria-current={!isChangelog ? 'true' : undefined}
-      >{en ? 'Documentation' : '使用文档'}</a
-    >
-    <a href={link('/docs/changelog/')} aria-current={isChangelog ? 'page' : undefined}
-      >{en ? 'Changelog' : '更新日志'}</a
-    >
-    <a href={link('/download/')}>{en ? 'Get the app' : '获取应用'}</a>
-  </nav>
   <div class="docs-header-actions">
     <Search />
     <LanguageSwitch />
-    <div class="docs-header-desktop"><ThemeSelect /><SocialIcons /></div>
+    <div class="docs-header-desktop"><ThemeToggle /><SocialIcons /></div>
   </div>
 </div>

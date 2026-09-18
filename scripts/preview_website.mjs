@@ -38,6 +38,9 @@ export function resolveRequest(path) {
       const file = builtFile(path);
       if (file) return { status: 200, file };
     } else if (new RegExp(`^(?:${route.src})$`).test(path)) {
+      if (route.headers?.Location) {
+        return { status: route.status, location: route.headers.Location };
+      }
       const file = fileAt(route.dest);
       if (!file) throw new Error(`Build the website first; missing ${route.dest}`);
       return { status: route.status, file };
@@ -54,7 +57,12 @@ export function createPreviewServer() {
     }
     try {
       const path = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-      const { file, status } = resolveRequest(path);
+      const { file, status, location } = resolveRequest(path);
+      if (location) {
+        res.writeHead(status, { Location: location });
+        res.end();
+        return;
+      }
       const headers = { 'Content-Type': types[extname(file)] || 'application/octet-stream' };
       if (status === 404) headers['X-Robots-Tag'] = 'noindex';
       res.writeHead(status, headers);

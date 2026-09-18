@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n';
 import * as Switch from '@radix-ui/react-switch';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import { call, type Snapshot } from '../../api/bridge';
@@ -14,15 +15,16 @@ export function SettingsPage({
   controller: AppController;
   onBack: () => void;
 }) {
+  const { t } = useI18n();
   const { busy, run } = controller;
   return (
     <section className="settings-page">
       <button className="text-button back" disabled={busy} onClick={() => onBack()}>
         <ArrowLeft size={15} />
-        返回
+        {t('返回')}
       </button>
-      <h1>通用设置</h1>
-      <h2 className="settings-section-title">应用设置</h2>
+      <h1>{t('通用设置')}</h1>
+      <h2 className="settings-section-title">{t('应用设置')}</h2>
       <div className="settings-group">
         <CompactionPreferences
           settings={
@@ -39,8 +41,8 @@ export function SettingsPage({
         />
         <div className="setting-row">
           <div>
-            <h3>登录电脑时启动</h3>
-            <p className="muted small">默认关闭，由你决定何时启动。</p>
+            <h3>{t('登录电脑时启动')}</h3>
+            <p className="muted small">{t('默认关闭，由你决定何时启动。')}</p>
           </div>
           <Switch.Root
             className="switch"
@@ -51,7 +53,7 @@ export function SettingsPage({
                 await call('set_autostart', { enabled });
               })
             }
-            aria-label="登录电脑时启动"
+            aria-label={t('登录电脑时启动')}
           >
             <Switch.Thumb className="switch-thumb" />
           </Switch.Root>
@@ -60,36 +62,36 @@ export function SettingsPage({
           <div>
             <h3>Codex App</h3>
             <p className="muted small">
-              {data.app.installed ? '已找到应用' : '未找到应用'} ·{' '}
-              {data.app.running ? '正在运行' : '未运行'}
+              {data.app.installed ? t('已找到应用') : t('未找到应用')} ·{' '}
+              {data.app.running ? t('正在运行') : t('未运行')}
             </p>
           </div>
           <button className="text-button" disabled={busy} onClick={() => run(async () => {})}>
-            重新检测
+            {t('重新检测')}
           </button>
         </div>
       </div>
-      <h2 className="settings-section-title">配置与恢复</h2>
+      <h2 className="settings-section-title">{t('配置与恢复')}</h2>
       <div className="settings-group">
         <div className="setting-row">
           <div>
-            <h3>配置位置</h3>
+            <h3>{t('配置位置')}</h3>
             <p className="muted small path">{data.configPath}</p>
           </div>
         </div>
         <div className="setting-row">
           <div>
-            <h3>恢复开启前的配置</h3>
-            <p className="muted small">关闭开关即可恢复。你的登录和会话保持原样。</p>
+            <h3>{t('恢复开启前的配置')}</h3>
+            <p className="muted small">{t('关闭开关即可恢复。你的登录和会话保持原样。')}</p>
           </div>
         </div>
       </div>
       <div className="settings-note">
         <ShieldCheck size={20} />
         <div>
-          <h3>数据留在你的设备</h3>
+          <h3>{t('数据留在你的设备')}</h3>
           <p className="muted small">
-            Key 存入系统凭据库。请求由本机发送到所选服务，我们不提供云端中转。
+            {t('Key 存入系统凭据库。请求由本机发送到所选服务，我们不提供云端中转。')}
           </p>
         </div>
       </div>
@@ -102,10 +104,13 @@ export function SettingsPage({
           })
         }
       >
-        完全退出 Codex Switch
+        {t('完全退出 Codex Switch')}
       </button>
-      <p className="form-footnote">关闭窗口会保留后台连接。完全退出前请先正常退出 Codex。</p>
-      <p className="about">Codex Switch {product.version} · 社区独立开源项目</p>
+      <p className="form-footnote">{t('关闭窗口会保留后台连接。完全退出前请先正常退出 Codex。')}</p>
+      <p className="about">
+        Codex Switch {product.version}
+        {t('· 社区独立开源项目')}
+      </p>
     </section>
   );
 }

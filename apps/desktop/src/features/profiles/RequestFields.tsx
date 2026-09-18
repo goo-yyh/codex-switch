@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n';
 import { useId } from 'react';
 import * as Switch from '@radix-ui/react-switch';
 import { Picker } from '../../components/controls';
@@ -20,6 +21,7 @@ export function RequestFields({
   disabled: boolean;
   onChange: (change: Partial<ModelOptions>) => void;
 }) {
+  const { t } = useI18n();
   const id = useId();
   const label = (text: string) => (model ? `${model} ${text}` : text);
   return (
@@ -27,13 +29,13 @@ export function RequestFields({
       <div className="request-address-row">
         <div className="field">
           <div className="request-address-label">
-            <label htmlFor={`${id}-endpoint`}>API 地址</label>
+            <label htmlFor={`${id}-endpoint`}>{t('API 地址')}</label>
             <div className="request-url-mode">
-              <label htmlFor={`${id}-full-url`}>完整 URL</label>
+              <label htmlFor={`${id}-full-url`}>{t('完整 URL')}</label>
               <Switch.Root
                 id={`${id}-full-url`}
                 className="switch switch-compact"
-                aria-label={label('完整 URL')}
+                aria-label={label(t('完整 URL'))}
                 checked={fullUrl}
                 disabled={disabled}
                 onCheckedChange={(value) => onChange({ fullUrl: value })}
@@ -46,7 +48,7 @@ export function RequestFields({
             id={`${id}-endpoint`}
             className="input"
             type="url"
-            aria-label={label('API 地址')}
+            aria-label={label(t('API 地址'))}
             required={!inherited}
             disabled={disabled}
             value={endpoint}
@@ -62,9 +64,9 @@ export function RequestFields({
           />
         </div>
         <label className="field">
-          接口格式
+          {t('接口格式')}
           <Picker
-            label={label('接口格式')}
+            label={label(t('接口格式'))}
             disabled={disabled}
             value={protocol ?? 'inherit'}
             onChange={(value) =>
@@ -75,7 +77,10 @@ export function RequestFields({
                 ? [
                     {
                       value: 'inherit',
-                      label: `继承（${inherited.protocol === 'responses' ? 'Responses' : 'Chat Completions'}）`,
+                      label: t('继承（{value0}）', {
+                        value0:
+                          inherited.protocol === 'responses' ? 'Responses' : 'Chat Completions',
+                      }),
                     },
                   ]
                 : []),
@@ -92,12 +97,12 @@ export function RequestFields({
           disabled={disabled}
           onClick={() => onChange({ endpoint: undefined, protocol: undefined, fullUrl: undefined })}
         >
-          继承外层设置
+          {t('继承外层设置')}
         </button>
       )}
       {(fullUrl || inherited) && (
         <p className="field-hint">
-          {fullUrl ? '直接请求填写的完整地址，不追加后缀。' : '地址留空时继承外层 API 地址。'}
+          {fullUrl ? t('直接请求填写的完整地址，不追加后缀。') : t('地址留空时继承外层 API 地址。')}
         </p>
       )}
     </div>

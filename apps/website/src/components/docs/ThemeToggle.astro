@@ -1,0 +1,127 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import { localeFromPath } from '../../lib/i18n';
+const en = localeFromPath(Astro.url.pathname) === 'en';
+const darkLabel = en ? 'Switch to dark mode' : '切换深色模式';
+const lightLabel = en ? 'Switch to light mode' : '切换浅色模式';
+---
+
+<docs-theme-toggle data-dark-label={darkLabel} data-light-label={lightLabel}>
+  <button type="button" aria-label={darkLabel} aria-pressed="false" title={darkLabel}>
+    <Icon name="sun" class="theme-sun" />
+    <Icon name="moon" class="theme-moon" />
+  </button>
+</docs-theme-toggle>
+
+<script>
+  // Reuse Starlight's persisted preference and initial theme to avoid a flash
+  // or a different mode when navigating between desktop and mobile docs.
+  const storageKey = 'starlight-theme';
+  const preference = () => {
+    try {
+      return localStorage.getItem(storageKey);
+    } catch {
+      return null;
+    }
+  };
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  system.addEventListener('change', () => {
+    const saved = preference();
+    if (saved !== 'dark' && saved !== 'light') {
+      document.documentElement.dataset.theme = system.matches ? 'dark' : 'light';
+    }
+  });
+
+  class DocsThemeToggle extends HTMLElement {
+    private observer?: MutationObserver;
+    private events?: AbortController;
+
+    connectedCallback() {
+      const button = this.querySelector('button');
+      if (!button) return;
+      const sync = () => {
+        const dark = document.documentElement.dataset.theme === 'dark';
+        const label = (dark ? this.dataset.lightLabel : this.dataset.darkLabel)!;
+        button.setAttribute('aria-label', label);
+        button.setAttribute('aria-pressed', String(dark));
+        button.title = label;
+      };
+      this.events = new AbortController();
+      button.addEventListener(
+        'click',
+        () => {
+          const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          document.documentElement.dataset.theme = next;
+          try {
+            localStorage.setItem(storageKey, next);
+          } catch {
+            // Switching still works when browser storage is unavailable.
+          }
+          sync();
+        },
+        { signal: this.events.signal },
+      );
+      this.observer = new MutationObserver(sync);
+      this.observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme'],
+      });
+      sync();
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect();
+      this.events?.abort();
+    }
+  }
+  customElements.define('docs-theme-toggle', DocsThemeToggle);
+</script>
+
+<style>
+  docs-theme-toggle {
+    display: inline-flex;
+  }
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: 0 0 2.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: var(--docs-muted);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease;
+  }
+  button:hover {
+    color: var(--docs-ink);
+    background: var(--docs-soft);
+  }
+  button:focus-visible {
+    outline: 2px solid var(--docs-muted);
+    outline-offset: 2px;
+  }
+  button :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  button :global(.theme-moon) {
+    display: none;
+  }
+  :global(html[data-theme='dark']) button :global(.theme-sun) {
+    display: none;
+  }
+  :global(html[data-theme='dark']) button :global(.theme-moon) {
+    display: block;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button {
+      transition: none;
+    }
+  }
+</style>

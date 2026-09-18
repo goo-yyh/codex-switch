@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n';
 import * as Select from '@radix-ui/react-select';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Check, ChevronDown, X } from 'lucide-react';
@@ -63,6 +64,7 @@ export function Modal({
   dismissible?: boolean;
   children: ReactNode;
 }) {
+  const { t, message } = useI18n();
   return (
     <Dialog.Root open={open} onOpenChange={(v) => !v && !busy && dismissible && onClose()}>
       <Dialog.Portal>
@@ -79,7 +81,7 @@ export function Modal({
           <div className="dialog-heading">
             <Dialog.Title>{title}</Dialog.Title>
             {dismissible && (
-              <Dialog.Close className="icon-button" aria-label="关闭" disabled={busy}>
+              <Dialog.Close className="icon-button" aria-label={t('关闭')} disabled={busy}>
                 <X size={19} />
               </Dialog.Close>
             )}
@@ -87,7 +89,7 @@ export function Modal({
           <Dialog.Description className="muted">{description}</Dialog.Description>
           {error && (
             <div className="feedback error" role="alert">
-              {error}
+              {message(error)}
             </div>
           )}
           {children}

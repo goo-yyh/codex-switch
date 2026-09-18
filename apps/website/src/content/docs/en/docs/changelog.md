@@ -1,37 +1,17 @@
 ---
-title: Changelog and preview release status
-description: Follow Codex Switch development, model connection features, compaction settings, bilingual documentation and outstanding release validation.
+title: Changelog
+description: Follow Codex Switch updates to language switching, model management, automatic recovery, tray controls and documentation.
 ---
 
-## 0.1.0 · Developer preview
+**Version 0.1.0 is in preview**, with no public installers released yet. Published versions and download files will appear on [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases).
 
-- A focused connection manager for Codex App.
-- Presets for five model providers and custom APIs.
-- A main switch, pre-activation backups, exact restoration and external-edit conflict protection.
-- Responses forwarding and Chat text, streaming and tool conversion.
-- System credential storage, model routing aliases, tray controls and startup preferences.
-- Normal launch and restart actions, plus manual recovery after an unexpected exit.
-- A standalone website, product docs, offline tests and explicit provider-test commands.
+## Unreleased
 
-### 2026-09-17 · Configuration and documentation
+- **Languages:** switch app and tray menus between Chinese and English; your choice persists after reopening.
+- **Models:** use multiple models, configurations and plan presets. Model lists expand in place with per-model capability settings.
+- **Service controls:** settings lock while enabled; disabling restores the original configuration. Saving or selecting does not enable the service.
+- **Tray controls:** select multiple configurations without closing the menu, toggle the service, open the panel or quit.
+- **Compaction:** preferences save automatically and remote compaction defaults to off. The fallback queue and separate route-save action have been removed.
+- **Guides:** bilingual screenshot walkthroughs, fewer duplicate pages and clearer connection and recovery steps.
 
-- Removed the fallback queue and routing save action; failed requests no longer automatically switch services.
-- Remote context compaction is off by default. Its toggle saves automatically, persists after reopening and applies at the next activation.
-- Connections support full URLs, with per-model URL, format and capability overrides.
-- Added a minimal ordinary-summary check: one request per provider default, without launching Codex.
-- Updated the README and website with actual interface screenshots, configuration details and CC Switch attribution.
-- Added Chinese and English website and documentation pages, equivalent-page language switching, localized SEO metadata, structured data and sitemap validation.
-
-The entries below describe historical changes. Current behavior is defined by the usage guides.
-
-### 2026-09-15 · Review fixes
-
-- Fixed old-key reuse across provider or plan URLs; changing keys creates a new routing revision and retains credentials for existing tasks at that revision.
-- Fixed streamed tool history completion, long namespace tool names and parallel tool argument conversion.
-- Fixed leaving the page during validation and cancellation races; validation-and-save no longer switches the default connection.
-- Added activation-failure compensation, distinct credential errors, connection-only recovery and obsolete catalog cleanup.
-- Centralized release information and supported a separate documentation URL.
-
-### Release checks still pending
-
-The developer’s active Codex App is not used for testing, so there is no real App end-to-end validation result. Windows hardware validation, signing, notarization and public installers remain release-stage work.
+New here? Read the [three-step quickstart](/en/docs/quickstart/). Check [installation](/en/docs/install/) for download availability.

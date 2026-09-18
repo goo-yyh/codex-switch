@@ -9,6 +9,8 @@ use codex_switch_core::{
 };
 use std::sync::Mutex;
 use tauri::{Listener, State};
+#[path = "../src/locale.rs"]
+mod locale;
 #[path = "../src/tray/mod.rs"]
 mod tray;
 pub(crate) type CommandResult<T> = Result<T, String>;
@@ -44,9 +46,6 @@ pub(crate) fn select_profiles_inner(s: &AppState, ids: &[String]) -> CommandResu
     println!("SELECTION {ids:?}");
     Ok(())
 }
-pub(crate) async fn enable_inner(_: &AppState) -> CommandResult<()> {
-    Err("隔离测试不启动服务。".into())
-}
 pub(crate) async fn set_enabled_inner(_: &AppState, _: bool) -> CommandResult<()> {
     Err("隔离测试不启动服务。".into())
 }
@@ -56,7 +55,7 @@ pub(crate) async fn quit(app: tauri::AppHandle, _: State<'_, AppState>) -> Comma
 }
 // Expose the same boundaries as production while deliberately stubbing activation.
 mod service {
-    pub(crate) use super::{enable_inner, select_profiles_inner, set_enabled_inner};
+    pub(crate) use super::{select_profiles_inner, set_enabled_inner};
 }
 mod state {
     pub(crate) use super::{err, AppState, CommandResult};
@@ -67,6 +66,7 @@ mod commands {
 fn main() {
     let temp = tempfile::tempdir().unwrap();
     let store = Store::memory().unwrap();
+    store.set("locale", locale::Locale::Chinese.code()).unwrap();
     for (id, name) in [
         ("a", "测试配置 A"),
         ("b", "测试配置 B"),

@@ -1,12 +1,15 @@
+import { LocaleContext, useI18n } from './i18n';
 import { useEffect, useRef, useState } from 'react';
-import { LoaderCircle, BookOpen } from 'lucide-react';
+import * as Switch from '@radix-ui/react-switch';
+import { LoaderCircle, BookOpen, Languages } from 'lucide-react';
 import { call, isPreview, type Profile } from './api/bridge';
 import { Modal } from './components/controls';
 import { ConnectionWorkspace } from './features/profiles/ConnectionWorkspace';
 import { nextProfileName } from './features/profiles/profileDraft';
 import { ProfileEditor } from './features/profiles/ProfileEditor';
 import { SettingsPage } from './features/settings/SettingsPage';
-import { useAppController } from './hooks/useAppController';
+import { UpdateButton } from './features/updates/UpdateButton';
+import { useAppController, type AppController } from './hooks/useAppController';
 import { documentationUrl } from './product';
 import brandIcon from '../../../packages/brand/mark.png';
 
@@ -21,6 +24,18 @@ const newConnection = (): Profile => ({
 });
 export default function App() {
   const controller = useAppController();
+  const locale = controller.data?.locale ?? 'zh-CN';
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+  return (
+    <LocaleContext.Provider value={locale}>
+      <AppContent controller={controller} />
+    </LocaleContext.Provider>
+  );
+}
+function AppContent({ controller }: { controller: AppController }) {
+  const { t, text, locale, message } = useI18n();
   const { data, busy, error, setError, setNotice, run } = controller;
   const mainRef = useRef<HTMLElement>(null);
   const [view, setView] = useState<'home' | 'form' | 'settings'>('home');
@@ -42,7 +57,11 @@ export default function App() {
     setForm({
       ...newConnection(),
       presetId: p?.id || 'custom',
-      name: nextProfileName(data?.profiles ?? [], p?.name || 'coding_plan', p?.id || 'custom'),
+      name: nextProfileName(
+        data?.profiles ?? [],
+        text(p?.name || 'coding_plan'),
+        p?.id || 'custom',
+      ),
       endpoint: p?.endpoint || '',
       models: p ? [p.model] : [],
       protocol: p?.protocol || 'responses',
@@ -65,7 +84,7 @@ export default function App() {
     return (
       <div className="loading">
         <LoaderCircle className="spin" />
-        <p>{error || '正在准备 Codex Switch…'}</p>
+        <p>{message(error) || t('正在准备 Codex Switch…')}</p>
       </div>
     );
   return (
@@ -74,7 +93,7 @@ export default function App() {
         <button
           className="brand"
           disabled={busy}
-          aria-label="回到首页"
+          aria-label={t('回到首页')}
           onClick={() => {
             setView('home');
 
@@ -85,25 +104,41 @@ export default function App() {
           <img className="brand-symbol" src={brandIcon} alt="" />
           <span>Codex Switch</span>
         </button>
-        <nav className="header-actions" aria-label="应用导航">
+        <nav className="header-actions" aria-label={t('应用导航')}>
+          <UpdateButton disabled={busy || data.enabled} run={run} />
+          <button
+            className="header-link"
+            disabled={busy || data.enabled}
+            aria-label={t(locale === 'zh-CN' ? '切换到英文' : '切换到中文')}
+            onClick={() =>
+              run(async () => {
+                await call('set_locale', { locale: locale === 'zh-CN' ? 'en' : 'zh-CN' });
+              })
+            }
+          >
+            <Languages size={16} aria-hidden="true" />
+            <span>{locale === 'zh-CN' ? 'English' : '简体中文'}</span>
+          </button>
           <button
             className="header-link"
             disabled={busy}
-            aria-label="使用文档"
+            aria-label={t('使用文档')}
             onClick={() =>
               run(async () => {
-                await call('open_link', { url: documentationUrl() });
+                await call('open_link', { url: documentationUrl(locale) });
               })
             }
           >
             <BookOpen size={16} />
-            <span>文档</span>
+            <span>{t('文档')}</span>
           </button>
         </nav>
       </header>
       <div className="app-content" inert={data.enabled}>
         {isPreview && (
-          <div className="preview-bar">交互预览 · 数据仅保存在本页，不会修改配置或调用服务</div>
+          <div className="preview-bar">
+            {t('交互预览 · 数据仅保存在本页，不会修改配置或调用服务')}
+          </div>
         )}
         <main ref={mainRef}>
           {view === 'home' && (
@@ -174,7 +209,7 @@ export default function App() {
           )}
           {view !== 'form' && error && !modal && !data.enabled && (
             <div className="feedback error" role="alert">
-              {error}
+              {message(error)}
             </div>
           )}
         </main>
@@ -183,29 +218,37 @@ export default function App() {
         open={data.enabled}
         onClose={() => {}}
         dismissible={false}
-        title="Codex Switch 已开启"
-        description="请先关闭服务，再修改配置或设置。"
-        error={error}
+        title={t('Codex Switch 已开启')}
+        description={t('请先关闭服务，再修改配置或设置。')}
+        error={message(error)}
         busy={busy}
       >
-        <div className="dialog-actions">
-          <button className="primary" disabled={busy} onClick={() => toggle(false)}>
-            {busy && <LoaderCircle className="spin" size={16} />}
-            {busy ? '正在关闭…' : '关闭服务'}
-          </button>
+        <div className="dialog-actions service-switch">
+          <span className="muted small" aria-live="polite">
+            {busy ? t('正在关闭…') : t('已开启')}
+          </span>
+          <Switch.Root
+            className="switch"
+            checked={data.enabled}
+            disabled={busy}
+            onCheckedChange={toggle}
+            aria-label={t('Codex Switch 服务')}
+          >
+            <Switch.Thumb className="switch-thumb" />
+          </Switch.Root>
         </div>
       </Modal>
       <Modal
-        error={error}
+        error={message(error)}
         busy={busy}
         open={!data.enabled && modal === 'restart'}
         onClose={() => setModal(null)}
-        title="重新打开 Codex"
-        description="Codex 正在运行。重启可能中断当前任务，请先完成任务再继续。"
+        title={t('重新打开 Codex')}
+        description={t('Codex 正在运行。重启可能中断当前任务，请先完成任务再继续。')}
       >
         <div className="dialog-actions">
           <button className="secondary" disabled={busy} onClick={() => setModal(null)}>
-            稍后
+            {t('稍后')}
           </button>
           <button
             className="primary"
@@ -217,21 +260,23 @@ export default function App() {
               })
             }
           >
-            正常重启并应用
+            {t('正常重启并应用')}
           </button>
         </div>
       </Modal>
       <Modal
-        error={error}
+        error={message(error)}
         busy={busy}
         open={!data.enabled && modal === 'delete'}
         onClose={() => setModal(null)}
-        title="删除这个配置？"
-        description="从列表移除此配置。重新开启后，旧会话的后续请求也将使用当前选中的配置。历史凭据不会自动清理。"
+        title={t('删除这个配置？')}
+        description={t(
+          '从列表移除此配置。重新开启后，旧会话的后续请求也将使用当前选中的配置。历史凭据不会自动清理。',
+        )}
       >
         <div className="dialog-actions">
           <button className="secondary" disabled={busy} onClick={() => setModal(null)}>
-            取消
+            {t('取消')}
           </button>
           <button
             className="primary"
@@ -243,7 +288,7 @@ export default function App() {
               })
             }
           >
-            删除配置
+            {t('删除配置')}
           </button>
         </div>
       </Modal>

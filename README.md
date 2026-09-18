@@ -1,30 +1,37 @@
 # Codex Switch
 
+**简体中文** · [English](README.en.md)
+
 让 Codex App 连接你选择的模型。**一个配置、一个 API Key、多个模型**，首页可同时启用多个配置；开启前备份，关闭后恢复原配置。
 
 支持 macOS / Windows，使用 Tauri 2、React 和 Rust 构建，配套 Astro + Starlight 文档站。当前为 **0.1.0 开发预览版**，尚未提供公开签名安装包，也未完成真实 Codex App 端到端验证。
 
-[快速开始](apps/website/src/content/docs/docs/quickstart.md) · [配置说明](apps/website/src/content/docs/docs/configuration.md) · [安装与构建](apps/website/src/content/docs/docs/install.md) · [兼容范围](apps/website/src/content/docs/docs/compatibility.md)
+[快速开始](apps/website/src/content/docs/docs/quickstart.md) · [配置说明](apps/website/src/content/docs/docs/configuration.md) · [安装与下载](apps/website/src/content/docs/docs/install.md)
 
-![Codex Switch 实际界面：多选配置并开启连接](apps/website/public/screenshots/enabled.png)
+![Codex Switch 实际界面：多选配置与底部服务开关](apps/website/public/screenshots/selected.png)
 
 _截图来自当前应用的浏览器预览，使用示例配置；原生连接、备份和进程状态为模拟数据。[截图记录](docs/design/screenshots.md)_
 
 ## 能做什么
 
-- **管理多个服务**：内置千问、MiniMax、智谱 GLM、Kimi、DeepSeek，提供 Kimi Coding 与千问 Token Plan 套餐选项，也可填写自定义 HTTPS 接口。
+- **管理多个服务**：内置智谱 GLM、DeepSeek、Kimi、千问、MiniMax，提供智谱 Coding Plan、MiniMax Token Plan、Kimi Coding 与千问 Token Plan 套餐选项，也可填写自定义 HTTPS 接口。
 - **按模型配置**：一个配置可选 1–20 个模型，指定默认模型，逐模型覆盖地址、接口格式、上下文长度、思考档位、图像与并行工具能力。
 - **兼容两种接口**：支持原生 Responses 转发，以及 Chat Completions 的本地协议转换。请求失败后不会自动切换服务或协议。
 - **可恢复的配置切换**：开启前保存原始 `config.toml`，关闭后按字节恢复；检测外部修改冲突，不改写 `auth.json` 或会话文件。
-- **在本机运行**：Key 存入系统凭据库，请求由本机直接发往选定服务；支持托盘、后台运行、可选登录启动与正常打开 / 重启 Codex。
+- **在本机运行**：Key 存入系统凭据库，请求由本机直接发往选定服务；支持托盘、后台运行与可选登录启动。
+- **中英文界面**：在「文档」左侧切换语言，页面、弹窗和托盘同步更新，下次打开保留选择。
 
 ## 三步连接
 
 1. **新增配置**：选择服务及套餐，填写配置名称、API 地址和对应的 Key。
 2. **选择模型并保存**：勾选模型，按需编辑能力。保存不会发请求；「测试配置」是独立、手动触发的连通检查。
-3. **勾选配置并开启**：首页至少选中一个配置，打开总开关，再点击「打开 Codex」。模型以 `配置名称-模型` 显示。
+3. **勾选配置并开启**：首页至少选中一个配置，打开总开关，再从系统中打开 Codex App。模型以 `配置名称-模型` 显示。
 
-新增、编辑和删除前需关闭总开关。开启期间可切换已保存的配置；关闭窗口仍在后台提供连接。完整步骤见[截图教程](apps/website/src/content/docs/docs/quickstart.md)，恢复行为见[开启、关闭与恢复](apps/website/src/content/docs/docs/switch.md)。
+开启期间界面被锁定；修改配置、选择或设置前需先关闭服务。关闭窗口仍在后台提供连接。Codex 已运行时，先完成当前任务，再正常退出并重新打开以加载配置。完整步骤见[截图教程](apps/website/src/content/docs/docs/quickstart.md)，恢复行为见[开启与关闭](apps/website/src/content/docs/docs/switch.md)。
+
+## 更新应用
+
+有新版本时，顶部会显示蓝色下载图标和版本号，点击直接下载适合当前系统和架构的安装包，由系统浏览器处理下载，无需进入发布页面。安装前先关闭服务，并正常退出 Codex 和 Codex Switch；不会自动安装或重启。
 
 ## 配置要点
 
@@ -37,7 +44,7 @@ _截图来自当前应用的浏览器预览，使用示例配置；原生连接�
 | 模型设置       | 默认继承外层地址与接口，可在模型行的「编辑」中覆盖；确认后还需保存整个配置。                             |
 | 远程上下文压缩 | 默认关闭，建议保持关闭；关闭时仍可通过普通模型请求生成摘要。开关自动保存，下次开启 Codex Switch 时生效。 |
 
-详细说明：[配置字段与模型能力](apps/website/src/content/docs/docs/configuration.md) · [套餐与自定义接口](apps/website/src/content/docs/docs/relay.md) · [通用设置](apps/website/src/content/docs/docs/settings.md)。能力声明不等于服务实测通过，远程压缩尤其需要上游支持。
+详细说明：[模型设置](apps/website/src/content/docs/docs/configuration.md) · [连接模型服务](apps/website/src/content/docs/docs/providers.md) · [通用设置](apps/website/src/content/docs/docs/settings.md)。能力声明不等于服务实测通过，远程压缩尤其需要上游支持。
 
 ## 开源致谢：CC Switch
 
@@ -82,7 +89,7 @@ pnpm --filter @codex-switch/desktop tauri build
 pnpm --filter @codex-switch/desktop tauri build --config src-tauri/tauri.windows.conf.json
 ```
 
-文档站可通过 `PUBLIC_SITE_URL` 设置部署地址；应用通过 `VITE_PUBLIC_DOCS_URL` 设置文档入口。详见[开发与测试](apps/website/src/content/docs/docs/development.md)。
+文档站可通过 `PUBLIC_SITE_URL` 设置部署地址；应用通过 `VITE_PUBLIC_DOCS_URL` 设置文档入口。
 
 ## 验证与限制
 
@@ -94,7 +101,7 @@ pnpm test:providers deepseek # 文本、流式、虚拟工具与结果回传
 cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke --all
 ```
 
-2026-09-17 的[最小摘要验证](docs/testing/provider-summary-smoke-2026-09-17.md)中，五家预设默认模型均返回完成状态和非空摘要。它只证明当次摘要生成成功，不代表摘要事实完整性、续接效果、远程压缩或 Codex App 端到端兼容。更多测试命令和范围见[开发文档](apps/website/src/content/docs/docs/development.md)。
+2026-09-17 的[最小摘要验证](docs/testing/provider-summary-smoke-2026-09-17.md)中，五家预设默认模型均返回完成状态和非空摘要。它只证明当次摘要生成成功，不代表摘要事实完整性、续接效果、远程压缩或 Codex App 端到端兼容。
 
 公开签名、公证与 Windows 实机验证仍待完成；CI 构建产物不等于正式发布。Codex 工具可能共用配置目录，本项目暂不为 CLI / IDE 扩展提供适配保证。
 
@@ -107,7 +114,7 @@ cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke -
 | `apps/desktop`           | React 界面与 Tauri 原生壳               |
 | `crates/core`            | 配置恢复事务、网关、兼容适配、存储      |
 | `crates/cc-switch-codex` | 固定版本的 CC Switch 模块、测试与许可证 |
-| `apps/website`           | 官网、使用文档和界面截图                |
+| `apps/website`           | 使用文档和界面截图                      |
 | `packages`               | 共享设计变量、服务与模型预设            |
 | `docs`                   | 技术方案、源码研究、测试记录            |
 
@@ -117,14 +124,14 @@ cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke -
 
 ## 中英文文档与 SEO
 
-网站默认显示中文，英文入口为 `/en/`，首页、下载页和使用文档可切换到对应语言页面。部署时设置 `PUBLIC_SITE_URL` 为正式 HTTPS 域名，用于 canonical、双向 hreflang、分享卡片与站点地图；预览部署设置 `PUBLIC_SITE_INDEXABLE=false`。本地未配置域名时默认不索引。
+网站默认显示中文，英文入口为 `/en/`，首页直接显示文档，语言切换会进入对应语言页面。部署时设置 `PUBLIC_SITE_URL` 为正式 HTTPS 域名，用于 canonical、双向 hreflang、分享卡片与站点地图；预览部署设置 `PUBLIC_SITE_INDEXABLE=false`。本地未配置域名时默认不索引。
 
-网站构建后运行 `pnpm check:links` 与 `pnpm check:seo`；正式部署配置使用 `pnpm check:seo -- --require-site` 检查。详细设置见[文档站部署](apps/website/src/content/docs/docs/development.md)。
+网站构建后运行 `pnpm check:links` 与 `pnpm check:seo`；正式部署配置使用 `pnpm check:seo -- --require-site` 检查。
 
 ## 部署到 Vercel
 
-导入仓库时 Root Directory 保持根目录 `.`，Framework Preset 选择 **Other**。根目录 `vercel.json` 已配置 `pnpm build:website` 和 `apps/website/dist`，只构建官网，不构建桌面应用。
+导入仓库时 Root Directory 保持根目录 `.`，Framework Preset 选择 **Other**。根目录 `vercel.json` 已配置 `pnpm build:website` 和 `apps/website/dist`，只构建文档站，不构建桌面应用。
 
 设置 `PUBLIC_SITE_URL` 为正式域名；未设置时可使用 Vercel 系统变量提供的稳定生产域名。Preview 自动禁止索引，中文与 `/en/` 英文路径分别返回对应语言的 HTTP 404。
 
-详见[中英文 Vercel 部署指南](apps/website/src/content/docs/docs/deployment.md)。本地运行 `pnpm build:website && pnpm check:deployment` 检查部署路由，`pnpm preview:website` 预览静态错误页行为。
+本地运行 `pnpm build:website && pnpm check:deployment` 检查部署路由，`pnpm preview:website` 预览静态错误页行为。

@@ -9,10 +9,12 @@ apps/
       App.tsx                  导航、全局锁定蒙层与确认弹窗
       api/                     IPC 类型、Tauri 通信、隔离的浏览器模拟
       hooks/                   状态刷新、操作互斥和错误反馈
+      i18n/                    中英文界面文案、插值与应用诊断翻译
       components/              无业务状态的基础控件与厂商标识
       features/
         profiles/              配置列表、编辑草稿、模型能力与凭据复用提示
         settings/              通用设置与远程压缩偏好
+        updates/               后台检查触发与新版本下载提示
     src-tauri/src/
       main.rs                  应用装配与事件注册
       state.rs                 共享状态与命令错误类型
@@ -21,10 +23,12 @@ apps/
       tray/                    托盘菜单与 macOS 连续多选
       platform.rs              系统凭据库和 Codex 应用操作
       app_menu.rs              macOS 应用菜单
+      locale.rs                语言偏好的读取、持久化值与原生菜单文案选择
+      updates.rs               GitHub 正式版本检查、版本比较与请求缓存
     src-tauri/examples/        不访问真实配置的原生托盘测试程序
   website/
-    src/pages/                 中英文网址入口
-    src/components/            共享网站、下载卡片与 SEO 组件
+    src/pages/                 robots.txt 等静态端点
+    src/components/            共享网站、主题切换与 SEO 组件
     src/content/docs/          中英文文档内容
 crates/
   core/src/
@@ -58,6 +62,7 @@ docs/                          开发说明、设计依据、研究与历史验�
 3. **选择配置**：页面或托盘 → `select_profiles_inner` → `Store::select_profiles`。只保存选择，不启动服务、不写 Codex 配置。
 4. **开启服务**：页面或托盘 → `set_enabled_inner` → `enable_inner` → `activate_with_options`。先准备路由与凭据，再按恢复事务提交配置和路由状态。
 5. **关闭服务**：先恢复原配置，保留外部修改的副本。正在运行的 Codex 可能仍使用旧的本地地址，因此网关按现有生命周期保留到客户端退出。
+6. **切换语言**：顶部语言按钮 → `set_locale` → SQLite `locale` 设置 → 刷新面板和原生菜单。默认中文，重开沿用上次选择；浏览器预览使用独立的 localStorage。只翻译展示文案，不改配置名称、模型 ID 或接口值，文档入口随语言选择对应路径。
 
 ## 不应破坏的约束
 
@@ -75,3 +80,13 @@ docs/                          开发说明、设计依据、研究与历史验�
 `pnpm check` 检查桌面 TypeScript 和 Astro；`pnpm test` 运行桌面 UI、核心、上游适配及原生协调测试。Rust 修改还需 `cargo fmt -p codex-switch-core -p codex-switch-desktop --check` 和 `cargo clippy --locked -p codex-switch-core -p codex-switch-desktop --all-targets --no-deps -- -D warnings`。
 
 `pnpm build` 后执行链接、SEO、部署路由和凭据扫描检查。浏览器模拟、离线测试、原生托盘测试和真实供应商测试是不同验证层次，不能互相替代。离线验证不启动真实 Codex，也不读取模型密钥发请求。
+
+## 更新提示与发布约定
+
+应用启动、回到前台和定时触发 `check_update`，原生端成功结果缓存 6 小时，失败后至少间隔 15 分钟重试。检查独立于服务操作锁，只请求公开 GitHub Release 元数据，不读取 API Key，不影响启停和配置编辑。
+
+发布者需在 `goo-yyh/codex-switch` 发布语义化版本标签（例如 `v0.2.0`）的正式 Release，并上传 macOS `.dmg` 或 Windows `.exe` 安装包。仅显示比当前原生版本更新、且当前系统与架构已有非空安装包的版本；草稿、预发布、源码归档和未完成的附件不触发提示。请同步更新 Cargo 工作区、Tauri 配置和产品元数据版本。现有 CI 仍只上传构建产物，不会自动发布 Release。
+
+安装包名称需保留 Tauri 的架构标识，例如 `_aarch64.dmg`、`_x64.dmg`、`_x64-setup.exe` 或 `_arm64-setup.exe`；macOS 也支持 `_universal.dmg`，优先选择原生架构包。架构不明或不匹配时不提示更新。
+
+按钮直接打开本仓库 `releases/download/<tag>/<asset>` 的安装包链接，由系统默认浏览器下载，不进入 Release 页面，不执行安装或重启。浏览器预览默认无更新；使用 `?previewUpdate=available` 可展示 0.2.0 的模拟提示，不请求 GitHub，也不表示该版本已发布。

@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n';
 import { useEffect, useState } from 'react';
 import { ArrowLeft, ArrowUpRight, Check, Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import { call, type Snapshot, type Profile, type ModelOptions } from '../../api/bridge';
@@ -22,6 +23,7 @@ export function ProfileEditor({
   initialProfile: Profile;
   onBack: () => void;
 }) {
+  const { t, text, message } = useI18n();
   const { busy, busyRef, phase, setPhase, error, setError, notice, setNotice, run } = controller;
   const [form, setForm] = useState<Profile>(initialProfile);
   const [editingModel, setEditingModel] = useState<string | null>(null);
@@ -49,7 +51,7 @@ export function ProfileEditor({
       presetId: id,
       name: nameEdited
         ? f.name
-        : nextProfileName(data.profiles, p?.name || 'coding_plan', id, form.id),
+        : nextProfileName(data.profiles, text(p?.name || 'coding_plan'), id, form.id),
       endpoint: p?.endpoint || '',
       models: p ? [p.model] : [],
       protocol: p?.protocol || 'responses',
@@ -126,9 +128,9 @@ export function ProfileEditor({
     ),
   );
   const phaseLabel = {
-    idle: '保存配置',
-    working: '处理中…',
-    testing: '保存配置',
+    idle: t('保存配置'),
+    working: t('处理中…'),
+    testing: t('保存配置'),
   }[phase];
   return (
     <>
@@ -144,9 +146,9 @@ export function ProfileEditor({
             }}
           >
             <ArrowLeft size={15} />
-            返回
+            {t('返回')}
           </button>
-          <h1>{form.id ? '编辑配置' : '新增配置'}</h1>
+          <h1>{form.id ? t('编辑配置') : t('新增配置')}</h1>
         </div>
         <form
           onSubmit={(e) => {
@@ -156,22 +158,25 @@ export function ProfileEditor({
         >
           {data.enabled && (
             <p className="inline-note" role="status">
-              Codex Switch 已开启，请先关闭后再保存或编辑配置。
+              {t('Codex Switch 已开启，请先关闭后再保存或编辑配置。')}
             </p>
           )}
           <fieldset className="form-fields" disabled={busy || data.enabled}>
             <section className="form-card" aria-labelledby="connection-card-title">
               <div className="form-card-heading">
-                <h2 id="connection-card-title">连接信息</h2>
+                <h2 id="connection-card-title">{t('连接信息')}</h2>
                 {form.id && (
-                  <div className="provider-identity" aria-label="模型厂商">
-                    <ServiceMark name={preset?.name || 'coding plan'} presetId={form.presetId} />
-                    <strong>{preset?.name || 'coding plan'}</strong>
+                  <div className="provider-identity" aria-label={t('模型厂商')}>
+                    <ServiceMark
+                      name={text(preset?.name || 'coding plan')}
+                      presetId={form.presetId}
+                    />
+                    <strong>{text(preset?.name || 'coding plan')}</strong>
                   </div>
                 )}
               </div>
               {!form.id && (
-                <div className="provider-options" role="group" aria-label="服务">
+                <div className="provider-options" role="group" aria-label={t('服务')}>
                   {[...data.presets, { id: 'custom', name: 'coding plan' }].map((p) => (
                     <button
                       className={`provider-option ${form.presetId === p.id ? 'selected' : ''}`}
@@ -182,7 +187,7 @@ export function ProfileEditor({
                       key={p.id}
                     >
                       <ServiceMark name={p.name} presetId={p.id} />
-                      <span>{p.name}</span>
+                      <span>{text(p.name)}</span>
                       {form.presetId === p.id && <Check size={13} />}
                     </button>
                   ))}
@@ -190,15 +195,15 @@ export function ProfileEditor({
               )}
               {preset?.variants && preset.variants.length > 1 && (
                 <label className="field">
-                  服务套餐
+                  {t('服务套餐')}
                   <Picker
-                    label="服务套餐"
+                    label={t('服务套餐')}
                     disabled={busy || data.enabled}
                     value={variantIndex < 0 ? '' : String(variantIndex)}
-                    placeholder="选择套餐"
+                    placeholder={t('选择套餐')}
                     options={preset.variants.map((v, i) => ({
                       value: String(i),
-                      label: v.name,
+                      label: text(v.name),
                     }))}
                     onChange={(value) => {
                       const v = preset.variants?.[Number(value)];
@@ -220,7 +225,7 @@ export function ProfileEditor({
               <div className="connection-fields">
                 {
                   <label className="field">
-                    配置名称
+                    {t('配置名称')}
                     <input
                       className="input"
                       maxLength={120}
@@ -232,13 +237,13 @@ export function ProfileEditor({
                       aria-invalid={nameConflict}
                       aria-describedby={nameConflict ? 'name-error' : undefined}
                       required
-                      placeholder="例如：coding_plan"
+                      placeholder={t('例如：coding_plan')}
                     />
                   </label>
                 }
                 {nameConflict && (
                   <p className="field-hint" id="name-error" role="alert">
-                    配置名称已存在，请换一个名称。
+                    {t('配置名称已存在，请换一个名称。')}
                   </p>
                 )}
                 <RequestFields
@@ -268,7 +273,7 @@ export function ProfileEditor({
                         className="text-button small"
                         onClick={() => call('open_link', { url: preset.keyUrl })}
                       >
-                        获取密钥
+                        {t('获取密钥')}
                         <ArrowUpRight size={13} />
                       </button>
                     )}
@@ -280,7 +285,9 @@ export function ProfileEditor({
                       type={showKey ? 'text' : 'password'}
                       value={key}
                       onChange={(e) => setKey(e.target.value)}
-                      placeholder={canReuseKey ? '已保存，留空保留原密钥' : '粘贴当前服务的密钥'}
+                      placeholder={
+                        canReuseKey ? t('已保存，留空保留原密钥') : t('粘贴当前服务的密钥')
+                      }
                       autoComplete="off"
                       spellCheck={false}
                       required={!canReuseKey}
@@ -289,14 +296,14 @@ export function ProfileEditor({
                       type="button"
                       className="icon-button"
                       onClick={() => setShowKey(!showKey)}
-                      aria-label={showKey ? '隐藏密钥' : '显示密钥'}
+                      aria-label={showKey ? t('隐藏密钥') : t('显示密钥')}
                     >
                       {showKey ? <EyeOff size={17} /> : <Eye size={17} />}
                     </button>
                   </div>
                 </div>
                 {original && !canReuseKey && (
-                  <p className="field-hint">地址已改变，请填写当前服务的 Key。</p>
+                  <p className="field-hint">{t('地址已改变，请填写当前服务的 Key。')}</p>
                 )}
               </div>
             </section>
@@ -327,7 +334,7 @@ export function ProfileEditor({
               )) && (
               <section className="form-card" aria-labelledby="advanced-card-title">
                 <div className="form-card-heading">
-                  <h2 id="advanced-card-title">高级设置</h2>
+                  <h2 id="advanced-card-title">{t('高级设置')}</h2>
                 </div>
                 <CompatibilityFields
                   form={form}
@@ -340,12 +347,12 @@ export function ProfileEditor({
           <footer className="form-footer">
             {error && (
               <div className="feedback error" role="alert">
-                {error}
+                {message(error)}
               </div>
             )}
             {notice && (
               <div className="feedback success" role="status">
-                {notice}
+                {message(notice)}
               </div>
             )}
             <div className="form-actions">
@@ -359,7 +366,7 @@ export function ProfileEditor({
                     );
                   }}
                 >
-                  取消测试
+                  {t('取消测试')}
                 </button>
               )}
               <button
@@ -371,7 +378,7 @@ export function ProfileEditor({
                 }}
               >
                 {phase === 'testing' && <LoaderCircle className="spin" size={17} />}
-                {phase === 'testing' ? '测试中…' : '测试配置'}
+                {phase === 'testing' ? t('测试中…') : t('测试配置')}
               </button>
               <button
                 className="primary"
@@ -392,8 +399,10 @@ export function ProfileEditor({
       <Modal
         open={!data.enabled && editingModel !== null}
         onClose={() => setEditingModel(null)}
-        title={`编辑 ${editingModel ?? ''} 能力`}
-        description="修改仅用于当前配置的这个模型，保存配置后生效。地址和接口默认继承外层配置，能力留空时使用默认值。"
+        title={t('编辑 {value0} 能力', { value0: editingModel ?? '' })}
+        description={t(
+          '修改仅用于当前配置的这个模型，保存配置后生效。地址和接口默认继承外层配置，能力留空时使用默认值。',
+        )}
         busy={busy}
       >
         <form
@@ -433,10 +442,10 @@ export function ProfileEditor({
               disabled={busy}
               onClick={() => setEditingModel(null)}
             >
-              取消
+              {t('取消')}
             </button>
             <button className="primary" type="submit" disabled={busy || data?.enabled}>
-              确认修改
+              {t('确认修改')}
             </button>
           </div>
         </form>

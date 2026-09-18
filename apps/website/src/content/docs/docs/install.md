@@ -1,41 +1,53 @@
 ---
-title: 安装与源码构建
-description: 了解 Codex Switch 的 macOS 与 Windows 构建依赖、安装步骤、更新和卸载方式，以及当前公开安装包的发布状态。
+title: 安装与下载
+description: 查看 Codex Switch 安装包的发布状态，了解 macOS、Windows 的下载安装、首次打开、更新和卸载步骤。
 ---
 
-当前版本提供源代码构建，公开安装包尚未发布。下载入口以[下载页](/download/)为准。
+## 下载应用
 
-## 准备
+Codex Switch 的安装包将通过 [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases) 发布。**目前尚未发布公开安装包。** 发布后，请从该页面选择适合你系统的版本，具体支持范围以对应版本说明为准。
 
-- 安装官方 [Codex App](https://chatgpt.com/download/)。
-- 准备模型服务商提供的 API Key 和可用额度。
-- 使用源代码构建时，需要 Node.js 22.12+、pnpm 10、Rust stable，以及平台编译工具。
+| 系统    | 如何选择                                                                       |
+| ------- | ------------------------------------------------------------------------------ |
+| macOS   | 在苹果菜单的「关于本机」中查看芯片，选择 Apple Silicon 或 Intel 对应的安装包。 |
+| Windows | 在「设置 → 系统 → 系统信息」中查看系统类型，选择对应架构的安装程序。           |
 
-## 从源码构建
+版本变化见[更新日志](/docs/changelog/)。下面是安装包发布后的使用步骤。
 
-```sh
-git clone https://github.com/goo-yyh/codex-switch.git
-cd codex-switch
-pnpm install --frozen-lockfile
-pnpm --filter @codex-switch/desktop tauri build
-```
+## 安装应用
 
-macOS 需要 Xcode Command Line Tools。构建产物位于 `target/release/bundle/`，包含 `.app` 和 `.dmg`。当前命令为本机构架生成安装包；Intel 与 Apple Silicon 需要对应构建环境或显式目标。
+### macOS
 
-本地预览构建未经 Apple 公证。正式分发需要维护者完成签名、公证和发布验证；不要通过关闭系统整体安全设置来安装。
+1. 下载与你的 Mac 芯片匹配的 `.dmg` 安装包。
+2. 打开安装包，将 Codex Switch 拖入「应用程序」。
+3. 从「应用程序」中打开 Codex Switch。
 
-## Windows
+### Windows
 
-需要 Microsoft C++ Build Tools 与 WebView2。使用以下命令生成 NSIS 安装程序：
+1. 下载与你的系统匹配的安装程序。
+2. 双击运行，按安装向导完成安装。
+3. 从开始菜单打开 Codex Switch。
 
-```sh
-pnpm --filter @codex-switch/desktop tauri build --config src-tauri/tauri.windows.conf.json
-```
+## 首次打开
 
-Windows 构建由 CI 提供检查入口，当前本地 macOS 验证不能证明 Windows 实机可用。
+使用前，准备好已安装的 [Codex App](https://chatgpt.com/download/)，以及模型服务商提供的 API Key 和可用额度。
 
-## 更新与卸载
+打开 Codex Switch 后，会看到下面的空配置页。点击中央「新增配置」，跟随[三步连接](/docs/quickstart/)完成设置。保存配置后，需要手动勾选配置并开启服务。
 
-第一版不自动更新。升级前正常退出 Codex，再完全退出 Codex Switch；安装新版即可保留本地连接元数据。
+[![首次打开 Codex Switch：中央新增配置按钮与底部未开启的服务开关](/screenshots/first-launch.png)](/screenshots/first-launch.png)
 
-卸载前请先关闭总开关，确认原配置恢复，然后正常退出 Codex 与 Codex Switch。仅删除应用不会自动执行恢复。系统凭据库与应用数据可能仍然保留，应在卸载前通过应用删除不再需要的连接。
+_截图来自当前应用的真实界面预览，使用示例数据；不代表真实连接或配置恢复结果。点击图片可查看原图。_
+
+应用默认显示中文。顶部「文档」左侧的语言按钮可以切换中英文，下次打开会沿用你的选择。
+
+## 更新应用
+
+应用会在后台检查正式版本。有新版本时，顶部语言按钮旁会显示蓝色下载图标和版本号；点击即可通过系统浏览器下载对应系统和架构的安装包，无需进入发布页面。不会自动安装或重启。
+
+安装前先关闭服务，再正常退出 Codex 和 Codex Switch，按上述步骤安装新版。已有配置保留在本机，无需重新创建。
+
+## 卸载应用
+
+卸载前先关闭服务，恢复原有配置，再正常退出 Codex 和 Codex Switch。随后从「应用程序」或 Windows 的「已安装的应用」中卸载。
+
+仅删除应用不会自动恢复配置，也不会清除系统凭据库和本地数据。

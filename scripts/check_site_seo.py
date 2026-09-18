@@ -17,6 +17,7 @@ class Page(HTMLParser):
         self.lang = ''
         self.titles = []
         self.meta = {}
+        self.refresh = None
         self.links = []
         self.anchors = []
         self.h1 = 0
@@ -28,6 +29,7 @@ class Page(HTMLParser):
         a = dict(attrs)
         if tag == 'html': self.lang = a.get('lang', '')
         if tag == 'meta': self.meta.setdefault(a.get('name', a.get('property', '')), []).append(a.get('content', ''))
+        if tag == 'meta' and a.get('http-equiv', '').lower() == 'refresh': self.refresh = a.get('content', '')
         if tag == 'link': self.links.append(a)
         if tag == 'a': self.anchors.append(a)
         if tag == 'h1': self.h1 += 1
@@ -45,13 +47,30 @@ class Page(HTMLParser):
 files = list(ROOT.rglob('*.html'))
 if not files: sys.exit('Build the website before checking SEO.')
 pages = {}
+redirects = {}
 for file in files:
     name = file.relative_to(ROOT).as_posix()
     path = '/' + (name[:-10] if name.endswith('index.html') else name)
-    pages[path] = Page(file)
+    page = Page(file)
+    if page.refresh is not None:
+        redirects[path] = page
+    else:
+        pages[path] = page
 errors = []
 def check(ok, message):
     if not ok: errors.append(message)
+
+# Astro emits HTML redirect fallbacks; Vercel serves matching HTTP 308 routes.
+expected_redirects = {
+    '/docs/overview/': '/', '/en/docs/overview/': '/en/',
+    '/docs/relay/': '/docs/providers/', '/en/docs/relay/': '/en/docs/providers/',
+    '/docs/launch/': '/docs/switch/', '/en/docs/launch/': '/en/docs/switch/',
+}
+check(set(redirects) == set(expected_redirects), 'unexpected or missing documentation redirects')
+for path, page in redirects.items():
+    target = expected_redirects.get(path)
+    check(target is not None and page.refresh == f'0;url={target}', f'{path}: incorrect redirect target')
+    check(target in pages, f'{path}: missing redirect destination')
 
 def is404(path):
     return path in ('/404.html', '/404/', '/en/404.html', '/en/404/')

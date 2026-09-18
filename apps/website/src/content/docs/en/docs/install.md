@@ -1,41 +1,53 @@
 ---
-title: Install and build Codex Switch
-description: Build Codex Switch from source for macOS or Windows, check platform prerequisites, and safely update or uninstall the app.
+title: Installation and downloads
+description: Check Codex Switch installer availability and learn how to install, open, update and uninstall the app on macOS and Windows.
 ---
 
-Source builds are currently available; public installers have not been released. The [download page](/en/download/) is the source of release availability.
+## Download the app
 
-## Prerequisites
+Codex Switch installers will be published on [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases). **No public installers have been released yet.** Once available, choose the package for your system and check that version’s release notes for supported platforms.
 
-- Install the official [Codex App](https://chatgpt.com/download/).
-- Have a provider API key and available credits.
-- Source builds require Node.js 22.12+, pnpm 10, stable Rust and platform build tools.
+| System  | Choose your package                                                                                               |
+| ------- | ----------------------------------------------------------------------------------------------------------------- |
+| macOS   | Open **About This Mac** in the Apple menu and check the chip. Choose the matching Apple Silicon or Intel package. |
+| Windows | Open **Settings → System → About** and check the system type. Choose an installer for that architecture.          |
 
-## Build from source
+See the [changelog](/en/docs/changelog/) for updates. The steps below apply once installers are available.
 
-```sh
-git clone https://github.com/goo-yyh/codex-switch.git
-cd codex-switch
-pnpm install --frozen-lockfile
-pnpm --filter @codex-switch/desktop tauri build
-```
+## Install the app
 
-macOS requires Xcode Command Line Tools. Outputs in `target/release/bundle/` include `.app` and `.dmg` files. The command builds for the local architecture; Intel and Apple Silicon need the corresponding environment or an explicit target.
+### macOS
 
-Local preview builds are not notarized by Apple. Public distribution still requires signing, notarization and release validation. Do not disable system-wide security protections to install the app.
+1. Download the `.dmg` package matching your Mac’s chip.
+2. Open it and drag Codex Switch into **Applications**.
+3. Open Codex Switch from **Applications**.
 
-## Windows
+### Windows
 
-Microsoft C++ Build Tools and WebView2 are required. Build an NSIS installer with:
+1. Download the installer matching your system.
+2. Run it and follow the installation wizard.
+3. Open Codex Switch from the Start menu.
 
-```sh
-pnpm --filter @codex-switch/desktop tauri build --config src-tauri/tauri.windows.conf.json
-```
+## First launch
 
-CI includes Windows build checks. Local macOS validation does not establish compatibility on a real Windows device.
+Have [Codex App](https://chatgpt.com/download/) installed, plus a model provider API key and available credits.
 
-## Update and uninstall
+On first launch, the empty workspace looks like this. Click **新增配置 (Add configuration)** in the center, then follow the [three-step quickstart](/en/docs/quickstart/). After saving, select the configuration and enable the service manually.
 
-The first version does not update automatically. Quit Codex normally, then fully quit Codex Switch before upgrading. Installing a newer build preserves local connection metadata.
+[![First launch: Add configuration in the center and the disabled service switch below](/screenshots/first-launch.png)](/screenshots/first-launch.png)
 
-Before uninstalling, turn off the main switch and confirm that the original configuration has been restored, then quit both apps normally. Deleting the app alone does not restore settings. Credentials and app data may remain; remove unneeded connections in the app before uninstalling. See [data deletion limits](/en/docs/privacy/#delete-local-data).
+_Captured from the current app UI in browser preview with example data; connection and recovery states are simulated. Click an image for the original._
+
+The app starts in Chinese by default. Use the language button to the left of **Docs** to switch to English. Your choice is remembered the next time you open the app.
+
+## Update the app
+
+The app checks for stable releases in the background. When a newer version is available, a blue download icon and version number appear beside the language button. Click to download the matching installer directly through your default browser, without visiting the release page. Installation and restarting remain manual.
+
+Before installing, disable the service and quit Codex and Codex Switch normally, then follow the installation steps above. Existing configurations stay on your device, so you do not need to recreate them.
+
+## Uninstall the app
+
+Disable the service to restore your original configuration, then quit Codex and Codex Switch normally. Remove the app from **Applications** on macOS or **Installed apps** on Windows.
+
+Deleting the app alone does not restore configuration or remove credentials and local app data.

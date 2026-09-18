@@ -9,6 +9,14 @@ const { site } = siteConfig;
 export default defineConfig({
   ...(site ? { site } : {}),
   trailingSlash: 'always',
+  redirects: {
+    '/docs/overview/': { destination: '/', status: 308 },
+    '/en/docs/overview/': { destination: '/en/', status: 308 },
+    '/docs/relay/': { destination: '/docs/providers/', status: 308 },
+    '/en/docs/relay/': { destination: '/en/docs/providers/', status: 308 },
+    '/docs/launch/': { destination: '/docs/switch/', status: 308 },
+    '/en/docs/launch/': { destination: '/en/docs/switch/', status: 308 },
+  },
   integrations: [
     starlight({
       title: 'Codex Switch',
@@ -23,80 +31,50 @@ export default defineConfig({
         Header: './src/components/docs/Header.astro',
         Head: './src/components/docs/Head.astro',
         LanguageSelect: './src/components/LanguageSwitch.astro',
+        ThemeSelect: './src/components/docs/ThemeToggle.astro',
       },
       sidebar: [
+        { label: '概览', translations: { en: 'Overview' }, slug: 'index' },
         {
           label: '开始使用',
           translations: { en: 'Get started' },
           items: [
-            { label: '产品介绍', translations: { en: 'Overview' }, slug: 'docs/overview' },
-            { label: '安装与下载', translations: { en: 'Installation' }, slug: 'docs/install' },
             { label: '三步连接', translations: { en: 'Quickstart' }, slug: 'docs/quickstart' },
+            { label: '安装与下载', translations: { en: 'Installation' }, slug: 'docs/install' },
           ],
         },
         {
-          label: '管理连接',
-          translations: { en: 'Connections' },
+          label: '功能说明',
+          translations: { en: 'Features' },
           items: [
             {
-              label: '开启、关闭与恢复',
-              translations: { en: 'Switching and recovery' },
+              label: '开启与关闭',
+              translations: { en: 'Enable and disable' },
               slug: 'docs/switch',
             },
-            { label: '国内模型', translations: { en: 'Model providers' }, slug: 'docs/providers' },
             {
-              label: '套餐与自定义接口',
-              translations: { en: 'Plans and custom APIs' },
-              slug: 'docs/relay',
+              label: '连接模型服务',
+              translations: { en: 'Connect providers' },
+              slug: 'docs/providers',
             },
             {
-              label: '配置字段与模型能力',
-              translations: { en: 'Configuration and capabilities' },
+              label: '模型设置',
+              translations: { en: 'Model settings' },
               slug: 'docs/configuration',
             },
             { label: '通用设置', translations: { en: 'Settings' }, slug: 'docs/settings' },
-            {
-              label: '打开与重启 Codex',
-              translations: { en: 'Launch and restart Codex' },
-              slug: 'docs/launch',
-            },
           ],
         },
         {
-          label: '支持与说明',
-          translations: { en: 'Help and reference' },
+          label: '发布',
+          translations: { en: 'Releases' },
           items: [
-            {
-              label: 'Vercel 部署',
-              translations: { en: 'Deploy to Vercel' },
-              slug: 'docs/deployment',
-            },
-            {
-              label: '兼容范围',
-              translations: { en: 'Compatibility' },
-              slug: 'docs/compatibility',
-            },
-            {
-              label: '常见问题',
-              translations: { en: 'Troubleshooting' },
-              slug: 'docs/troubleshooting',
-            },
-            {
-              label: '隐私与密钥',
-              translations: { en: 'Privacy and API keys' },
-              slug: 'docs/privacy',
-            },
-            {
-              label: '开发与测试',
-              translations: { en: 'Development and testing' },
-              slug: 'docs/development',
-            },
+            { label: '更新日志', translations: { en: 'Changelog' }, slug: 'docs/changelog' },
             {
               label: '开源致谢',
               translations: { en: 'Open-source credits' },
               slug: 'docs/open-source',
             },
-            { label: '更新日志', translations: { en: 'Changelog' }, slug: 'docs/changelog' },
           ],
         },
       ],

@@ -14,8 +14,8 @@ const en = locale === 'en';
 const indexable = siteConfig.indexable && !is404;
 const absolute = (value: string) => (Astro.site ? new URL(value, Astro.site).href : undefined);
 const canonical = is404 ? undefined : absolute(path);
-const image = absolute('/screenshots/enabled.png');
-const isDoc = basePath(path).startsWith('/docs/');
+const image = absolute('/screenshots/selected.png');
+const isDoc = !is404;
 const home = localizedPath('/', locale);
 const page = {
   '@context': 'https://schema.org',
@@ -38,7 +38,6 @@ const software = {
   softwareVersion: product.version,
   license: `${product.repository}/blob/main/LICENSE`,
   url: absolute(home),
-  downloadUrl: absolute(localizedPath('/download/', locale)),
   featureList: en
     ? [
         'Connect multiple model providers to Codex App',
@@ -102,8 +101,8 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
   image && (
     <>
       <meta property="og:image" content={image} />
-      <meta property="og:image:width" content="1280" />
-      <meta property="og:image:height" content="720" />
+      <meta property="og:image:width" content="1100" />
+      <meta property="og:image:height" content="850" />
       <meta
         property="og:image:alt"
         content={

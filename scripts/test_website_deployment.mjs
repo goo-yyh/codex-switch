@@ -78,13 +78,27 @@ test('preview, development, custom and unclassified Vercel builds cannot be made
     false,
   );
 });
+for (const [path, destination] of [
+  ['/docs/overview/', '/'],
+  ['/en/docs/overview/', '/en/'],
+  ['/docs/relay/', '/docs/providers/'],
+  ['/en/docs/relay/', '/en/docs/providers/'],
+  ['/docs/launch/', '/docs/switch/'],
+  ['/en/docs/launch/', '/en/docs/switch/'],
+]) {
+  test(`old documentation redirects to its replacement: ${path}`, async () => {
+    const response = await fetch(origin + path, { redirect: 'manual' });
+    assert.equal(response.status, 308);
+    assert.equal(response.headers.get('location'), destination);
+  });
+}
 for (const path of [
   '/',
   '/en/',
   '/docs/quickstart/',
   '/en/docs/quickstart/',
-  '/download/',
-  '/en/download/',
+  '/docs/changelog/',
+  '/en/docs/changelog/',
   '/mark.png',
   '/robots.txt',
 ]) {
@@ -97,10 +111,17 @@ for (const path of [
         body,
         path.startsWith('/en/') ? /<html[^>]+lang="en"/ : /<html[^>]+lang="zh-CN"/,
       );
+      if (path === '/' || path === '/en/') {
+        assert.match(body, /class="docs-header"/);
+        assert.match(body, /<docs-theme-toggle/);
+        assert.doesNotMatch(body, /class="hero section-wrap"/);
+      }
     }
   });
 }
 for (const [path, language] of [
+  ['/download/', 'zh-CN'],
+  ['/en/download/', 'en'],
   ['/missing', 'zh-CN'],
   ['/docs/missing/nested/', 'zh-CN'],
   ['/missing.png', 'zh-CN'],

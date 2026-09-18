@@ -55,10 +55,10 @@
   outline-offset: 3px;
 }
 
-/* Header uses the built-in search and theme controls, including their keyboard behavior. */
+/* Keep Starlight search; use a compact theme toggle inspired by codex_doc_cn. */
 .docs-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   height: 100%;
   gap: 1.5rem;
@@ -76,33 +76,6 @@
 .site-title img {
   height: 1.65rem;
   width: 1.65rem;
-}
-.docs-header-nav {
-  display: flex;
-  align-self: stretch;
-  align-items: stretch;
-  gap: 1.75rem;
-}
-.docs-header-nav a {
-  display: flex;
-  align-items: center;
-  position: relative;
-  color: var(--docs-muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-  white-space: nowrap;
-}
-.docs-header-nav a:hover,
-.docs-header-nav a[aria-current] {
-  color: var(--docs-ink);
-}
-.docs-header-nav a[aria-current]::after {
-  position: absolute;
-  content: '';
-  height: 2px;
-  bottom: calc(-1 * var(--sl-nav-pad-y));
-  inset-inline: 0;
-  background: var(--docs-ink);
 }
 .docs-header-actions,
 .docs-header-desktop {
@@ -147,6 +120,10 @@
 .sidebar-content .top-level > li + li {
   margin-top: 1.5rem;
 }
+.sidebar-content .top-level > li > a {
+  font-weight: 600;
+  color: var(--docs-ink);
+}
 .sidebar-content summary {
   padding: 0.3rem 0.6rem 0.6rem;
 }
@@ -158,6 +135,9 @@
   border: 0;
   padding: 0;
   margin: 0;
+}
+.sidebar-content .top-level > li > details > ul {
+  padding-inline-start: 0.65rem;
 }
 .sidebar-content a {
   font-size: 0.9rem;
@@ -388,10 +368,8 @@ h1#_top {
     --sl-content-pad-x: 1.25rem;
   }
   .docs-header {
-    grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.75rem;
   }
-  .docs-header-nav,
   .docs-header-desktop {
     display: none;
   }
@@ -432,11 +410,6 @@ h1#_top {
 
 @media (min-width: 50rem) and (max-width: 68rem) {
   .docs-header {
-    gap: 1rem;
-    grid-template-columns: auto 1fr auto;
-  }
-  .docs-header-nav {
-    justify-content: center;
     gap: 1rem;
   }
   .docs-header-desktop .social-icons {

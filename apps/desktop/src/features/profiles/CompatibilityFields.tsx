@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n';
 import { Picker } from '../../components/controls';
 import type { Profile } from '../../api/bridge';
 export function CompatibilityFields({
@@ -9,6 +10,7 @@ export function CompatibilityFields({
   onChange: (p: Profile) => void;
   disabled: boolean;
 }) {
+  const { t } = useI18n();
   const options = form.options ?? {};
   const hasChat = form.models.some(
     (model) => (options.modelOverrides?.[model]?.protocol ?? form.protocol) === 'chat',
@@ -17,18 +19,18 @@ export function CompatibilityFields({
   return (
     <div className="compatibility-fields">
       <details>
-        <summary>Chat 思考参数</summary>
-        <p className="field-hint">思考参数以当前服务的接口文档为准。</p>
+        <summary>{t('Chat 思考参数')}</summary>
+        <p className="field-hint">{t('思考参数以当前服务的接口文档为准。')}</p>
         <label className="field">
-          参数方案
+          {t('参数方案')}
           <Picker
-            label="Chat 思考参数方案"
+            label={t('Chat 思考参数方案')}
             disabled={disabled}
             value={options.chatReasoning?.thinkingParam ?? 'auto'}
             options={[
-              { value: 'auto', label: '不注入专用参数' },
+              { value: 'auto', label: t('不注入专用参数') },
               { value: 'thinking', label: 'thinking（DeepSeek / Kimi / GLM）' },
-              { value: 'enable_thinking', label: 'enable_thinking（千问）' },
+              { value: 'enable_thinking', label: t('enable_thinking（千问）') },
               { value: 'reasoning_split', label: 'reasoning_split（MiniMax）' },
             ]}
             onChange={(v) =>
@@ -53,9 +55,9 @@ export function CompatibilityFields({
         </label>
         {options.chatReasoning && (
           <label className="field">
-            推理强度参数
+            {t('推理强度参数')}
             <Picker
-              label="推理强度参数"
+              label={t('推理强度参数')}
               disabled={disabled}
               value={
                 options.chatReasoning.supportsEffort
@@ -63,9 +65,9 @@ export function CompatibilityFields({
                   : 'none'
               }
               options={[
-                { value: 'none', label: '不发送 effort' },
-                { value: 'passthrough', label: 'reasoning_effort 原值' },
-                { value: 'deepseek', label: 'DeepSeek 档位映射' },
+                { value: 'none', label: t('不发送 effort') },
+                { value: 'passthrough', label: t('reasoning_effort 原值') },
+                { value: 'deepseek', label: t('DeepSeek 档位映射') },
               ]}
               onChange={(v) =>
                 onChange({

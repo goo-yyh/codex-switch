@@ -1,4 +1,8 @@
 export type Protocol = 'chat' | 'responses';
+export interface AvailableUpdate {
+  version: string;
+  url: string;
+}
 export interface ModelOptions {
   endpoint?: string;
   protocol?: Protocol;
@@ -60,6 +64,7 @@ export interface Preset {
   options?: ConnectionOptions;
 }
 export interface Snapshot {
+  locale?: import('../i18n').Locale;
   profiles: Profile[];
   presets: Preset[];
   selectedProfiles: string[];

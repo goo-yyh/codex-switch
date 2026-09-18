@@ -154,6 +154,20 @@ h3 {
   color: var(--ink);
   background: var(--soft);
 }
+.update-download {
+  white-space: nowrap;
+}
+.update-download-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  color: #fff;
+}
 
 .icon-button {
   display: inline-flex;
@@ -651,6 +665,9 @@ main > * {
   justify-content: flex-end;
   gap: 9px;
   margin-top: 25px;
+}
+.service-switch {
+  align-items: center;
 }
 .loading {
   min-height: 100vh;
