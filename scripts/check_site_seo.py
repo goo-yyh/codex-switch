@@ -119,6 +119,9 @@ for path, page in pages.items():
         if locale == 'en' and (href.startswith('/docs/') or href == '/' or href == '/download/'):
             errors.append(f'{path}: English navigation points to Chinese page {href}')
     check(len(page.schemas) == 2, f'{path}: missing page/product/breadcrumb structured data')
+    expected_type = 'WebPage' if base == '/' else 'TechArticle'
+    check(page.meta.get('og:type') == ['website' if base == '/' else 'article'], f'{path}: incorrect Open Graph page type')
+    check(bool(page.schemas) and page.schemas[0].get('@type') == expected_type, f'{path}: incorrect structured page type')
     for schema in page.schemas:
         check(schema.get('@context') == 'https://schema.org', f'{path}: invalid JSON-LD context')
     if canonical:

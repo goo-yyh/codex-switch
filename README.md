@@ -128,6 +128,21 @@ cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke -
 
 网站构建后运行 `pnpm check:links` 与 `pnpm check:seo`；正式部署配置使用 `pnpm check:seo -- --require-site` 检查。
 
+### Bing IndexNow
+
+正式主域名为 `https://www.codex-switch.com`（裸域名重定向至 www）。公开验证文件位于 `/dad1031515d24f07b720781d510fe122.txt`，应长期保留。
+
+```sh
+PUBLIC_SITE_URL=https://www.codex-switch.com pnpm build:website
+pnpm indexnow:submit --dry-run
+# 网站部署成功后再提交；默认使用构建产物中的全部 canonical 页面
+pnpm indexnow:submit
+# 也可只提交本次更新的站点地图页面
+pnpm indexnow:submit /docs/providers/ /en/docs/providers/
+```
+
+脚本提交前核对线上密钥、robots、站点地图、页面 HTTP 状态、canonical 和索引许可；预览构建或未上线页面会拒绝提交。每批最多 10,000 个 URL。本机 Node TLS 连接异常时，可用 `INDEXNOW_USE_CURL=1 pnpm indexnow:submit` 切换至系统 curl（需要支持 `%header{}` 的 curl 版本）。HTTP 200 表示已接收通知，202 表示密钥验证待完成，都不代表已经收录或排名改善。实际收录请在 Bing Webmaster Tools 中检查，站点地图地址为 `https://www.codex-switch.com/sitemap-index.xml`。
+
 ## 部署到 Vercel
 
 导入仓库时 Root Directory 保持根目录 `.`，Framework Preset 选择 **Other**。根目录 `vercel.json` 已配置 `pnpm build:website` 和 `apps/website/dist`，只构建文档站，不构建桌面应用。

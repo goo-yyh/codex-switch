@@ -15,7 +15,7 @@ const indexable = siteConfig.indexable && !is404;
 const absolute = (value: string) => (Astro.site ? new URL(value, Astro.site).href : undefined);
 const canonical = is404 ? undefined : absolute(path);
 const image = absolute('/screenshots/selected.png');
-const isDoc = !is404;
+const isDoc = !is404 && basePath(path) !== '/';
 const home = localizedPath('/', locale);
 const page = {
   '@context': 'https://schema.org',
