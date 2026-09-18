@@ -67,6 +67,7 @@ export interface Snapshot {
   locale?: import('../i18n').Locale;
   profiles: Profile[];
   presets: Preset[];
+  modelCandidates?: Record<string, string[]>;
   selectedProfiles: string[];
   enabled: boolean;
   routing: boolean;

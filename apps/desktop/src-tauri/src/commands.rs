@@ -1,6 +1,7 @@
 //! Tauri IPC boundary: validate input and hold the operation lock before mutations.
 use crate::{
     locale::Locale,
+    model_registry::RegistryState,
     platform::{self, Vault},
     service::{enable_inner, routing_settings, select_profiles_inner, set_enabled_inner},
     state::{err, AppState, CommandResult},
@@ -10,7 +11,7 @@ use codex_switch_core::{
     connections::persist_connection,
     gateway::{probe, Gateway},
     profiles::{ensure_editable, prepare_profile, Profile},
-    providers::{presets, Preset, RoutingSettings},
+    providers::{Preset, RoutingSettings},
 };
 use serde::Serialize;
 use tauri::State;
@@ -22,6 +23,7 @@ pub(crate) struct Snapshot {
     locale: Locale,
     profiles: Vec<Profile>,
     presets: Vec<Preset>,
+    model_candidates: std::collections::BTreeMap<String, Vec<String>>,
     selected_profiles: Vec<String>,
     enabled: bool,
     routing: bool,
@@ -37,6 +39,7 @@ pub(crate) struct Snapshot {
 pub(crate) async fn snapshot(
     app: tauri::AppHandle,
     s: State<'_, AppState>,
+    registry: State<'_, RegistryState>,
 ) -> CommandResult<Snapshot> {
     let mut runtime = s.runtime.lock().await;
     let app_info = platform::app_info();
@@ -48,10 +51,12 @@ pub(crate) async fn snapshot(
         let _ = s.config.prune_catalogs();
     }
     let store = s.store.lock().map_err(err)?;
+    let catalog = registry.0.lock().map_err(err)?.clone();
     let result = Snapshot {
         locale: Locale::read(&store).map_err(err)?,
         profiles: store.profiles().map_err(err)?,
-        presets: presets(),
+        presets: catalog.presets,
+        model_candidates: catalog.candidates,
         selected_profiles: store.selected_profiles().map_err(err)?,
         enabled: s.config.enabled().map_err(err)?,
         routing: runtime.is_some(),

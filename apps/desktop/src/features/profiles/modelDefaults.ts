@@ -1,5 +1,25 @@
 import type { ModelOptions, Preset, Profile } from '../../api/bridge';
 
+// Copy defaults only when a user selects a model with no local settings. Refreshing
+// the catalog never rewrites saved profiles or an editor's in-progress draft.
+export function selectModels(profile: Profile, models: string[], preset?: Preset): Profile {
+  const variant = preset?.variants?.find(
+    (v) => v.endpoint === profile.endpoint && v.protocol === profile.protocol,
+  );
+  const defaults =
+    variant?.options?.modelOverrides ??
+    (preset?.endpoint === profile.endpoint && preset?.protocol === profile.protocol
+      ? preset.options?.modelOverrides
+      : undefined);
+  const overrides = { ...profile.options?.modelOverrides };
+  for (const model of models) {
+    if (!profile.models.includes(model) && !Object.hasOwn(overrides, model) && defaults?.[model]) {
+      overrides[model] = structuredClone(defaults[model]);
+    }
+  }
+  return { ...profile, models, options: { ...profile.options, modelOverrides: overrides } };
+}
+
 // Fill missing reasoning fields only. Never replace saved connection settings or
 // explicit model customizations when the bundled presets change.
 export function withReasoningDefaults(

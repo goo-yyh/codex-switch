@@ -2,12 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent, act, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
-import { call, subscribeToTray, type Snapshot, type Profile, type Preset } from './api/bridge';
+import {
+  call,
+  subscribeToAppChanges,
+  type Snapshot,
+  type Profile,
+  type Preset,
+} from './api/bridge';
 import registry from '../../../packages/provider-registry/providers.json';
 vi.mock('./api/bridge', () => ({
   isPreview: true,
   call: vi.fn(),
-  subscribeToTray: vi.fn(async () => () => {}),
+  subscribeToAppChanges: vi.fn(async () => () => {}),
 }));
 const profile = (id = 'one', name = 'Kimi'): Profile => ({
   id,
@@ -71,6 +77,41 @@ async function addKimi() {
   fireEvent.click(screen.getByRole('button', { name: 'Kimi' }));
 }
 describe('configuration lifecycle', () => {
+  it('refreshes remote candidates without replacing an unsaved form and saves defaults only on selection', async () => {
+    const state = setup([]);
+    state.presets = structuredClone(state.presets);
+    let notify = () => {};
+    vi.mocked(subscribeToAppChanges).mockImplementationOnce(async (cb) => {
+      notify = cb;
+      return () => {};
+    });
+    render(<App />);
+    fireEvent.click(await screen.findByRole('button', { name: '新增配置' }));
+    fireEvent.change(screen.getByLabelText('配置名称'), { target: { value: '我的草稿' } });
+    fireEvent.change(screen.getByLabelText('API Key'), { target: { value: 'example-only' } });
+    const preset = state.presets[0];
+    const defaults = {
+      contextWindow: 131072,
+      reasoningLevels: ['high'],
+      defaultReasoningLevel: 'high',
+    };
+    preset.options!.modelOverrides!['test-remote-new'] = defaults;
+    preset.variants![0].options!.modelOverrides!['test-remote-new'] = defaults;
+    state.modelCandidates = { [preset.id]: ['test-remote-new', preset.model] };
+    act(() => notify());
+    const choice = await screen.findByRole('checkbox', { name: 'test-remote-new' });
+    expect(choice).not.toBeChecked();
+    expect(screen.getByLabelText('配置名称')).toHaveValue('我的草稿');
+    expect(screen.getByLabelText('API Key')).toHaveValue('example-only');
+    expect(call).not.toHaveBeenCalledWith('save_profile', expect.anything());
+    fireEvent.click(choice);
+    fireEvent.click(screen.getByRole('button', { name: '保存配置' }));
+    await screen.findByRole('heading', { name: '我的配置' });
+    expect(state.profiles[0].options?.modelOverrides?.['test-remote-new']).toEqual(defaults);
+    expect(state.profiles[0].models[0]).toBe(preset.model);
+    expect(state.enabled).toBe(false);
+  });
+
   beforeEach(() => vi.clearAllMocks());
   it('switches the whole interface and docs language without changing saved user data', async () => {
     const state = setup([profile('one', '我的工作账号')]);
@@ -150,7 +191,7 @@ describe('configuration lifecycle', () => {
     const state = setup([profile(), profile('two', '工作账号')]);
     let notify = () => {};
     const stop = vi.fn();
-    vi.mocked(subscribeToTray).mockImplementationOnce(async (cb) => {
+    vi.mocked(subscribeToAppChanges).mockImplementationOnce(async (cb) => {
       notify = cb;
       return stop;
     });
@@ -504,7 +545,7 @@ describe('configuration lifecycle', () => {
     async (page) => {
       const state = setup();
       let notify = () => {};
-      vi.mocked(subscribeToTray).mockImplementationOnce(async (cb) => {
+      vi.mocked(subscribeToAppChanges).mockImplementationOnce(async (cb) => {
         notify = cb;
         return () => {};
       });

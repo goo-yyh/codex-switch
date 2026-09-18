@@ -138,4 +138,4 @@ cargo run -p codex-switch-core --bin provider-compact-check -- --summary-smoke -
 
 本地运行 `pnpm build:website && pnpm check:deployment` 检查部署路由，`pnpm preview:website` 预览静态错误页行为。
 
-网站构建会自动生成 `/registry/models-v1.json`，部署后可通过 `https://你的域名/registry/models-v1.json` 访问。数据来自 `packages/provider-registry/models.json`（候选列表）与 `providers.json`（连接和模型能力预设），包含格式版本和内容哈希，不包含用户配置或 API Key。以后修改源文件并部署网站即可更新 CDN 上的目录，无需手动上传或维护副本。模型核对及排除规则见 [预设维护说明](packages/provider-registry/README.md)。桌面应用目前仍使用内置预设，启动时下载和合并远程目录尚未接入。
+网站构建会自动生成 `/registry/models-v1.json`，部署后可通过 `https://你的域名/registry/models-v1.json` 访问。数据来自 `packages/provider-registry/models.json`（候选列表）与 `providers.json`（连接和模型能力预设），包含格式版本、数据版本和内容哈希，不包含用户配置或 API Key。本地与网站共用 `packages/provider-registry/version.json`，初始数据版本为 `1`。以后修改模型源文件、递增其中的 `version` 并部署网站即可更新 CDN 上的目录，无需手动上传或维护副本。模型核对及排除规则见 [预设维护说明](packages/provider-registry/README.md)。桌面应用每次启动时后台读取 `https://www.codex-switch.com/registry/models-v1.json`，按 `version` 比较数据版本；远程版本相同或更低则不合并、不写缓存，首次两端均为 `1` 时也直接跳过。远程版本更高时只补充新模型及其默认能力，不覆盖已有模型参数、用户配置或密钥，也不自动勾选和启用模型。内置预设与本地缓存保证断网可用；普通服务和套餐独立维护，推荐候选各最多 5 个，旧配置继续保留。

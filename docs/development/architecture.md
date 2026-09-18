@@ -25,6 +25,7 @@ apps/
       app_menu.rs              macOS 应用菜单
       locale.rs                语言偏好的读取、持久化值与原生菜单文案选择
       updates.rs               GitHub 正式版本检查、版本比较与请求缓存
+      model_registry.rs        公共模型目录读取、增量合并与 SQLite 缓存
     src-tauri/examples/        不访问真实配置的原生托盘测试程序
   website/
     src/pages/                 robots.txt 等静态端点
@@ -90,3 +91,16 @@ docs/                          开发说明、设计依据、研究与历史验�
 安装包名称需保留 Tauri 的架构标识，例如 `_aarch64.dmg`、`_x64.dmg`、`_x64-setup.exe` 或 `_arm64-setup.exe`；macOS 也支持 `_universal.dmg`，优先选择原生架构包。架构不明或不匹配时不提示更新。
 
 按钮直接打开本仓库 `releases/download/<tag>/<asset>` 的安装包链接，由系统默认浏览器下载，不进入 Release 页面，不执行安装或重启。浏览器预览默认无更新；使用 `?previewUpdate=available` 可展示 0.2.0 的模拟提示，不请求 GitHub，也不表示该版本已发布。
+
+
+## 远程模型目录
+
+网站从公共预设生成 `/registry/models-v1.json`。`schemaVersion` 是格式版本（目前为 1），`version` 是数据版本，桌面和网站共同读取 `packages/provider-registry/version.json`，初始为 `1`；`revision` 仅用于内容哈希追踪，不参与更新判断。发布模型数据时手动递增 `version`，不要用格式版本判断数据是否更新。
+
+原生启动先加载内置预设及 SQLite `model_registry_v1` 缓存，再后台请求固定 HTTPS 地址 `https://www.codex-switch.com/registry/models-v1.json`。每次进程启动检查一次，不占用服务操作锁；请求超时 10 秒、响应上限 1 MiB，禁止重定向。远程版本相同或更低则跳过合并和写入，首次两端均为 `1` 时无需建立缓存。只有远程版本更高才合并；缺少 `version` 的旧接口和请求失败均保留本地数据，不弹出错误。
+
+版本变化后，按厂商与已有地址/协议识别服务范围，只追加不存在的模型能力，已有默认值保持不变。普通 API 与套餐的推荐候选分别最多 5 个；移出推荐列表的模型元数据仍保留在缓存中。不会导入新厂商、接口地址、协议或指令覆盖；这些改动仍需应用更新。排除名单继续生效。
+
+后台更新只写模型缓存，不写用户配置、默认模型、勾选状态、凭据或 Codex 配置。保存缓存成功后发出 `model-registry-updated`，界面通过 snapshot 刷新候选，保留未保存的编辑草稿。用户主动勾选一个新模型且本地没有其设置时，才复制对应服务范围的完整默认能力；已有自定义值（包括显式空配置）不覆盖。上下文已是预留 20% 后的值，不再重复乘 80%。
+
+离线单元测试覆盖版本跳过、合并优先级、套餐隔离、缓存重开、失败回退和编辑草稿；`cargo test --locked -p codex-switch-desktop live_public_registry_can_be_downloaded_and_merged -- --ignored` 仅显式读取公开 CDN，不调用模型供应商，也不启动 Codex。

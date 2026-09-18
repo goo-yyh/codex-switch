@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import registry from '../../../../../packages/provider-registry/providers.json';
 import models from '../../../../../packages/provider-registry/models.json';
 import type { Preset, Profile } from '../../api/bridge';
-import { withReasoningDefaults } from './modelDefaults';
+import { selectModels, withReasoningDefaults } from './modelDefaults';
 
 const presets = registry as Preset[];
 const profile = (preset: Preset): Profile => ({
@@ -89,6 +89,47 @@ describe('official reasoning defaults', () => {
     ).toBeUndefined();
     expect(
       withReasoningDefaults(saved, 'qwen3.6-max-preview', preset).defaultReasoningLevel,
+    ).toBeUndefined();
+  });
+});
+
+describe('remote model selection', () => {
+  it('copies new model defaults without scaling context or changing selected/local model settings', () => {
+    const preset = structuredClone(presets[0]);
+    const next = {
+      contextWindow: 131072,
+      reasoningLevels: ['high'],
+      defaultReasoningLevel: 'high',
+    };
+    preset.options!.modelOverrides!['test-new'] = next;
+    preset.variants![0].options!.modelOverrides!['test-new'] = next;
+    const saved = profile(preset);
+    saved.options = {
+      modelOverrides: { [preset.model]: { contextWindow: 65536 }, 'test-custom': {} },
+    };
+    const selected = selectModels(saved, [...saved.models, 'test-new', 'test-custom'], preset);
+    expect(selected.models[0]).toBe(saved.models[0]);
+    expect(selected.options!.modelOverrides!['test-new']).toEqual(next);
+    expect(selected.options!.modelOverrides![preset.model]).toEqual({ contextWindow: 65536 });
+    expect(selected.options!.modelOverrides!['test-custom']).toEqual({});
+    expect(saved.options.modelOverrides!['test-new']).toBeUndefined();
+    next.contextWindow = 4096;
+    expect(selected.options!.modelOverrides!['test-new']!.contextWindow).toBe(131072);
+  });
+  it('does not overwrite settings for a manually added model or apply defaults to another endpoint', () => {
+    const preset = structuredClone(presets[0]);
+    preset.options!.modelOverrides!['test-new'] = { contextWindow: 131072 };
+    const saved = profile(preset);
+    saved.models.push('test-new');
+    expect(
+      selectModels(saved, saved.models, preset).options?.modelOverrides?.['test-new'],
+    ).toBeUndefined();
+    saved.models = [preset.model];
+    saved.endpoint = 'https://custom.example/v1';
+    expect(
+      selectModels(saved, [...saved.models, 'test-new'], preset).options?.modelOverrides?.[
+        'test-new'
+      ],
     ).toBeUndefined();
   });
 });

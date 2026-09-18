@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { call, subscribeToTray, type Snapshot } from '../api/bridge';
+import { call, subscribeToAppChanges, type Snapshot } from '../api/bridge';
 
 // Serialize user actions across pages; refresh again after failures because native
 // recovery may have restored files before returning an error.
@@ -26,10 +26,14 @@ export function useAppController() {
     window.addEventListener('focus', onFocus);
     let disposed = false;
     let unsubscribe: (() => void) | undefined;
-    subscribeToTray(onFocus)
+    subscribeToAppChanges(onFocus)
       .then((stop) => {
         if (disposed) stop();
-        else unsubscribe = stop;
+        else {
+          unsubscribe = stop;
+          // Catch a startup registry update that finished before listeners were ready.
+          onFocus();
+        }
       })
       .catch((e) => setError(String(e)));
     return () => {

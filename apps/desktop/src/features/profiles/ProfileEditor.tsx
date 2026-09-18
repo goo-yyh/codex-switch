@@ -10,7 +10,7 @@ import { ModelSelection } from './ModelSelection';
 import { RequestFields } from './RequestFields';
 import { ModelCapabilityFields } from './ModelCapabilityFields';
 import { canReuseCredential, nextProfileName } from './profileDraft';
-import { withReasoningDefaults } from './modelDefaults';
+import { selectModels, withReasoningDefaults } from './modelDefaults';
 
 export function ProfileEditor({
   data,
@@ -119,7 +119,7 @@ export function ProfileEditor({
     ) ?? -1;
   const packageVariant = preset?.variants
     ?.slice(1)
-    .find((variant) => variant.endpoint === form.endpoint);
+    .find((variant) => variant.endpoint === form.endpoint && variant.protocol === form.protocol);
   const original = data?.profiles.find((c) => c.id === form.id);
   const canReuseKey = canReuseCredential(form, original);
   const nameConflict = Boolean(
@@ -312,9 +312,12 @@ export function ProfileEditor({
                 key={`${form.presetId}:${form.id}`}
                 provider={form.presetId}
                 availableModels={
-                  packageVariant?.options?.modelOverrides
+                  data.modelCandidates?.[
+                    packageVariant ? `${form.presetId}:${variantIndex}` : form.presetId
+                  ] ??
+                  (packageVariant?.options?.modelOverrides
                     ? Object.keys(packageVariant.options.modelOverrides)
-                    : undefined
+                    : undefined)
                 }
                 multiple
                 models={models}
@@ -324,7 +327,7 @@ export function ProfileEditor({
                   setEditingModel(model);
                 }}
                 onChange={(values) => {
-                  setForm({ ...form, models: values });
+                  setForm(selectModels(form, values, preset));
                 }}
               />
             </section>

@@ -21,6 +21,11 @@ test('model registry serves JSON with matching candidates, capabilities and cont
   assert.match(response.headers.get('content-type'), /^application\/json/);
   const { revision, ...content } = await response.json();
   assert.equal(content.schemaVersion, 1);
+  const { version } = JSON.parse(
+    readFileSync(new URL('../packages/provider-registry/version.json', import.meta.url), 'utf8'),
+  );
+  assert.ok(Number.isInteger(version) && version > 0 && version <= 0xffffffff);
+  assert.equal(content.version, version);
   for (const name of ['models', 'providers']) {
     const source = JSON.parse(
       readFileSync(new URL(`../packages/provider-registry/${name}.json`, import.meta.url), 'utf8'),

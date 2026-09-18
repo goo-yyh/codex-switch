@@ -3,6 +3,7 @@
 mod app_menu;
 mod commands;
 mod locale;
+mod model_registry;
 mod platform;
 mod service;
 mod state;
@@ -33,6 +34,9 @@ fn main() {
             let config = ConfigManager::new(home, data.clone());
             let was_enabled = config.enabled().unwrap_or(false);
             let store = Store::open(&data.join("connections.db"))?;
+            app.manage(model_registry::RegistryState(Mutex::new(
+                model_registry::Catalog::load(&store),
+            )));
             app.manage(AppState {
                 store: Mutex::new(store),
                 config,
@@ -48,6 +52,7 @@ fn main() {
                 app_menu::configure_visibility()?;
             }
             tray::install(app.handle())?;
+            model_registry::refresh_on_startup(app.handle().clone());
             Ok(())
         })
         .on_window_event(|window, event| {
