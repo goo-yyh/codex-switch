@@ -14,6 +14,19 @@ before(async () => {
 });
 after(() => new Promise((resolve) => server.close(resolve)));
 
+test('CDN installers are served directly and match the pinned release checksums', async () => {
+  const release = JSON.parse(
+    readFileSync(new URL('../packages/product-info/downloads.json', import.meta.url), 'utf8'),
+  );
+  for (const [name, sha256] of Object.entries(release.assets)) {
+    const response = await fetch(`${origin}/downloads/v${release.version}/${name}`);
+    assert.equal(response.status, 200, name);
+    assert.equal(response.redirected, false, name);
+    const bytes = Buffer.from(await response.arrayBuffer());
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), sha256, name);
+  }
+});
+
 test('model registry serves JSON with matching candidates, capabilities and content revision', async () => {
   const response = await fetch(origin + '/registry/models-v1.json');
   assert.equal(response.status, 200);

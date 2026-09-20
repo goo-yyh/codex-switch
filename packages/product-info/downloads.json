@@ -1,0 +1,9 @@
+{
+  "version": "0.2.0",
+  "assets": {
+    "Codex-Switch_aarch64.dmg": "273ab9836a90b09fc5f84cf2ed92171c7854ee76f7380e5a30233ed9115e9b5c",
+    "Codex-Switch_x64-setup.exe": "74530673efea8c5e736a01629503d28e7d788a92993529abb4b0f005fa95fa7a",
+    "Codex-Switch_x64.dmg": "ee5da140ee628f2c2be4474fe448d4f767e69253681642c7090238506421f9a8",
+    "SHA256SUMS.txt": "c8c490d70fc72ddc22169fd2925f2c506f54edb931efe476e32648d86451ee23"
+  }
+}

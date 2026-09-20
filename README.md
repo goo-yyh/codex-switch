@@ -208,3 +208,9 @@ pnpm indexnow:submit /docs/providers/ /en/docs/providers/
 本地运行 `pnpm build:website && pnpm check:deployment` 检查部署路由，`pnpm preview:website` 预览静态错误页行为。
 
 网站构建会自动生成 `/registry/models-v1.json`，部署后可通过 `https://你的域名/registry/models-v1.json` 访问。数据来自 `packages/provider-registry/models.json`（候选列表）与 `providers.json`（连接和模型能力预设），包含格式版本、数据版本和内容哈希，不包含用户配置或 API Key。本地与网站共用 `packages/provider-registry/version.json`，初始数据版本为 `1`。以后修改模型源文件、递增其中的 `version` 并部署网站即可更新 CDN 上的目录，无需手动上传或维护副本。模型核对及排除规则见 [预设维护说明](packages/provider-registry/README.md)。桌面应用每次启动时后台读取 `https://www.codex-switch.com/registry/models-v1.json`，按 `version` 比较数据版本；远程版本相同或更低则不合并、不写缓存，首次两端均为 `1` 时也直接跳过。远程版本更高时只补充新模型及其默认能力，不覆盖已有模型参数、用户配置或密钥，也不自动勾选和启用模型。内置预设与本地缓存保证断网可用；普通服务和套餐独立维护，推荐候选各最多 5 个，旧配置继续保留。
+
+### 文档站安装包 CDN
+
+文档站通过 `/downloads/v0.2.0/` 直接提供安装包和 `SHA256SUMS.txt`，用户下载不跳转 GitHub。`packages/product-info/downloads.json` 固定已发布版本及每个文件的 SHA-256；网站构建先运行 `scripts/prepare_downloads.mjs`，从对应 GitHub Release 下载并校验后复制到静态输出，由 Vercel CDN 提供。下载失败或哈希不符会中止构建，避免发布缺失或错误文件。
+
+新版本须先完成 GitHub Release，再更新下载清单中的版本和全部哈希、安装说明并部署网站。已校验的本地缓存可以复用，安装包不提交到 Git；仅提高应用版本不会提前切换站点下载版本。

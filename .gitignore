@@ -26,3 +26,6 @@ output/playwright/
 # Release staging artifacts
 release-assets/
 __pycache__/
+
+# Verified release files fetched during website builds
+apps/website/public/downloads/
