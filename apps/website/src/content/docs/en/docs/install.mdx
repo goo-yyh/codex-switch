@@ -3,18 +3,40 @@ title: Installation and downloads
 description: Check Codex Switch installer availability and learn how to install, open, update and uninstall the app on macOS and Windows.
 ---
 
-## Download the app
+import DownloadMenu from '../../../../components/docs/DownloadMenu.astro';
 
-Codex Switch installers will be published on [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases). **No public installers have been released yet.** Once available, choose the package for your system and check that version’s release notes for supported platforms.
+## Download Codex Switch
 
-| System  | Choose your package                                                                                               |
-| ------- | ----------------------------------------------------------------------------------------------------------------- |
-| macOS   | Open **About This Mac** in the Apple menu and check the chip. Choose the matching Apple Silicon or Intel package. |
-| Windows | Open **Settings → System → About** and check the system type. Choose an installer for that architecture.          |
+[v0.1.0](https://github.com/goo-yyh/codex-switch/releases/tag/v0.1.0) was published on September 18, 2026. Choose your platform below; Codex Switch downloads always point to the latest stable release.
 
-See the [changelog](/en/docs/changelog/) for updates. The steps below apply once installers are available.
+<div className="download-actions not-content">
+  <DownloadMenu lang="en" />
+  <DownloadMenu product="codex" lang="en" />
+</div>
+
+On macOS, check **About This Mac** for Apple Silicon (M1 or later) or Intel. The Windows installer is for **x64**. This release has no Linux or Windows ARM64 installer.
+
+Codex App downloads come from OpenAI. The [official guide](https://learn.chatgpt.com/docs/app) now calls it the **ChatGPT desktop app**, where you can choose Codex after signing in. Install both apps to follow this guide.
+
+### Verify your download
+
+Download [SHA256SUMS.txt](https://github.com/goo-yyh/codex-switch/releases/latest/download/SHA256SUMS.txt) from the same release as your installer and compare the matching filename’s hash:
+
+```sh
+# macOS: replace the filename for an Intel Mac
+shasum -a 256 ~/Downloads/Codex-Switch_aarch64.dmg
+```
+
+```powershell
+# Windows PowerShell
+Get-FileHash "$HOME/Downloads/Codex-Switch_x64-setup.exe" -Algorithm SHA256
+```
+
+> These Codex Switch installers are not publisher-signed, and the macOS apps are not notarized by Apple. Gatekeeper or SmartScreen may warn or block installation. Verify the source and checksum first; managed devices may prohibit installation.
 
 ## Install the app
+
+If upgrading, disable the Codex Switch service and quit the app before installing.
 
 ### macOS
 
@@ -30,7 +52,7 @@ See the [changelog](/en/docs/changelog/) for updates. The steps below apply once
 
 ## First launch
 
-Have [Codex App](https://chatgpt.com/download/) installed, plus a model provider API key and available credits.
+Have [Codex App](https://learn.chatgpt.com/docs/app) installed, plus a model provider API key and available credits.
 
 On first launch, the empty workspace looks like this. Click **新增配置 (Add configuration)** in the center, then follow the [three-step quickstart](/en/docs/quickstart/). After saving, select the configuration and enable the service manually.
 

@@ -3,7 +3,14 @@ title: Overview
 description: 'Connect Codex App to your model providers with Codex Switch: multiple configurations, local key storage, automatic recovery and a bilingual interface.'
 ---
 
+import DownloadMenu from '../../../components/docs/DownloadMenu.astro';
+
 Codex Switch lets you **use your own model providers in Codex App**. Add an API key and models, select configurations, then enable the service. Turn it off to restore your original settings.
+
+<div className="download-actions not-content">
+  <DownloadMenu lang="en" />
+  <DownloadMenu product="codex" lang="en" />
+</div>
 
 **[Three-step quickstart](/en/docs/quickstart/)** · [Installation](/en/docs/install/) · [Changelog](/en/docs/changelog/)
 
@@ -21,6 +28,6 @@ _Screenshots show the Chinese app in browser preview with example data and simul
 
 ## Before you start
 
-Version 0.1.0 is in preview; public installers are not yet available. The app targets Codex App. CLI and IDE extension compatibility is not guaranteed.
+v0.1.0 is available for macOS (Apple Silicon and Intel) and Windows x64. See [installation](/en/docs/install/) for setup and unsigned installer notes. The app targets Codex App. CLI and IDE extension compatibility is not guaranteed.
 
 The project references and reuses parts of CC Switch. See [open-source credits](/en/docs/open-source/). Codex Switch is an independent community project, unaffiliated with OpenAI.

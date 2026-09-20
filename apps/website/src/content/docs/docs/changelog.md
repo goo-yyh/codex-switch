@@ -3,9 +3,14 @@ title: 更新日志
 description: 查看 Codex Switch 的中英文切换、多模型管理、自动恢复、托盘操作和文档更新。
 ---
 
-当前为 **0.1.0 预览阶段**，公开安装包尚未发布。版本发布与下载文件见 [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases)。
+已发布版本和安装包见 [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases)。
 
-## 未发布更新
+## v0.1.0 · 2026 年 9 月 18 日
+
+[发布说明](https://github.com/goo-yyh/codex-switch/releases/tag/v0.1.0) · [下载与安装](/docs/install/)
+
+- **公开安装包**：提供 macOS Apple Silicon、macOS Intel 和 Windows x64 安装包及 SHA-256 校验文件。安装包未签名，macOS 应用未经公证。
+- **更新提示**：后台检查正式版本，提供下载入口，安装由用户手动完成。
 
 - **中英文切换**：应用界面和托盘同步切换，重新打开保留语言选择。
 - **模型配置**：支持多模型、多配置和套餐预设；模型列表直接展开，可分别调整能力。

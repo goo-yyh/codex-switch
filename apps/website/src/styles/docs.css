@@ -429,3 +429,14 @@ h1#_top {
     display: none;
   }
 }
+
+.download-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block: 1.5rem;
+}
+.sl-markdown-content .download-actions > * {
+  margin: 0;
+}

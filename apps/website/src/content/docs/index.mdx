@@ -3,7 +3,14 @@ title: 概览
 description: 使用 Codex Switch 为 Codex App 连接多个模型服务，一键开启、关闭恢复，支持本地密钥保存和中英文界面。
 ---
 
+import DownloadMenu from '../../components/docs/DownloadMenu.astro';
+
 Codex Switch 帮你在 **Codex App 中使用自己的模型服务**。添加 API Key 和模型，勾选配置后开启；用完关闭服务，即可恢复原有配置。
+
+<div className="download-actions not-content">
+  <DownloadMenu lang="zh" />
+  <DownloadMenu product="codex" lang="zh" />
+</div>
 
 **[三步连接](/docs/quickstart/)** · [安装与下载](/docs/install/) · [更新日志](/docs/changelog/)
 
@@ -21,6 +28,6 @@ _截图为应用浏览器预览，使用示例数据，连接状态为模拟。�
 
 ## 使用前了解
 
-目前处于 0.1.0 预览阶段，公开安装包尚未发布。主要面向 Codex App，不保证 CLI 或 IDE 扩展兼容性。
+v0.1.0 已发布，提供 macOS（Apple Silicon、Intel）和 Windows x64 安装包。安装步骤及未签名说明见[安装与下载](/docs/install/)。主要面向 Codex App，不保证 CLI 或 IDE 扩展兼容性。
 
 本项目参考并复用 CC Switch 的部分开源代码，详见[开源致谢](/docs/open-source/)。Codex Switch 是社区独立项目，与 OpenAI 无隶属关系。

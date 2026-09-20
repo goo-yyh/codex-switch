@@ -3,9 +3,14 @@ title: Changelog
 description: Follow Codex Switch updates to language switching, model management, automatic recovery, tray controls and documentation.
 ---
 
-**Version 0.1.0 is in preview**, with no public installers released yet. Published versions and download files will appear on [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases).
+Published versions and assets are available on [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases).
 
-## Unreleased
+## v0.1.0 · September 18, 2026
+
+[Release notes](https://github.com/goo-yyh/codex-switch/releases/tag/v0.1.0) · [Download and install](/en/docs/install/)
+
+- **Public installers:** macOS Apple Silicon, macOS Intel and Windows x64, with SHA-256 checksums. Installers are unsigned; macOS apps are not notarized.
+- **Update notifications:** stable release checks offer a download; installation remains manual.
 
 - **Languages:** switch app and tray menus between Chinese and English; your choice persists after reopening.
 - **Models:** use multiple models, configurations and plan presets. Model lists expand in place with per-model capability settings.
