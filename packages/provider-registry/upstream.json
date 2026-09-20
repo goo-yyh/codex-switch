@@ -13,7 +13,7 @@
     "DeepSeek"
   ],
   "note": "Originally selected upstream endpoint, protocol, model and capability fields. Local provider IDs and key/docs links retained. Local revisions below are maintained by Codex Switch and are not claimed to match the pinned upstream. No provider verification is inherited.",
-  "registrySha256": "9cc31df6dd86db21a6b53328ef7fc355a37ec24364f69214db8382982726a12a",
+  "registrySha256": "f92c3c79f2400ab1e8ca7f0c4f825afb0e0d00340b930123aa27a6159f09a464",
   "localRevisions": [
     {
       "date": "2026-09-17",
@@ -27,6 +27,17 @@
         "README.md",
         "../../docs/testing/model-reasoning-defaults-2026-09-17.md",
         "../../docs/testing/model-context-windows-2026-09-17.md"
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "changes": [
+        "Publish registry data version 2 with Qwen qwen3.8-omni-flash and GLM glm-5.3-flashx capability defaults.",
+        "Use deepseek-flash as the new-configuration default; preserve historical alias capabilities and existing user settings."
+      ],
+      "evidence": [
+        "README.md",
+        "../../docs/testing/provider-registry-v2-text-2026-09-20.md"
       ]
     }
   ]
