@@ -18,12 +18,14 @@ test('CDN installers are served directly and match the pinned release checksums'
   const release = JSON.parse(
     readFileSync(new URL('../packages/product-info/downloads.json', import.meta.url), 'utf8'),
   );
-  for (const [name, sha256] of Object.entries(release.assets)) {
-    const response = await fetch(`${origin}/downloads/v${release.version}/${name}`);
-    assert.equal(response.status, 200, name);
-    assert.equal(response.redirected, false, name);
-    const bytes = Buffer.from(await response.arrayBuffer());
-    assert.equal(createHash('sha256').update(bytes).digest('hex'), sha256, name);
+  for (const item of [release, ...(release.previous ?? [])]) {
+    for (const [name, sha256] of Object.entries(item.assets)) {
+      const response = await fetch(`${origin}/downloads/v${item.version}/${name}`);
+      assert.equal(response.status, 200, name);
+      assert.equal(response.redirected, false, name);
+      const bytes = Buffer.from(await response.arrayBuffer());
+      assert.equal(createHash('sha256').update(bytes).digest('hex'), sha256, name);
+    }
   }
 });
 

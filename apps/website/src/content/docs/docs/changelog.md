@@ -5,6 +5,14 @@ description: 查看 Codex Switch 的中英文切换、多模型管理、自动�
 
 已发布版本和安装包见 [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases)。
 
+## v0.3.0 · 2026 年 9 月 20 日
+
+[发布说明](https://github.com/goo-yyh/codex-switch/releases/tag/v0.3.0) · [下载与安装](/docs/install/)
+
+- **Windows 弹窗修复**：后台运行进程检查和 PowerShell 命令时不再创建控制台窗口。
+- **状态刷新**：启动时读取一次状态，取消窗口获得焦点时的重复检测；操作和托盘等状态变化仍会更新界面，避免弹窗与焦点互相触发。
+- **CDN 下载**：三平台安装包和 SHA-256 校验文件由文档站 Vercel CDN 直接提供，无需跳转 GitHub。
+
 ## v0.2.0 · 2026 年 9 月 20 日
 
 [发布说明](https://github.com/goo-yyh/codex-switch/releases/tag/v0.2.0) · [下载与安装](/docs/install/)

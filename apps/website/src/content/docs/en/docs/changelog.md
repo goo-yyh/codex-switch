@@ -5,6 +5,14 @@ description: Follow Codex Switch updates to language switching, model management
 
 Published versions and assets are available on [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases).
 
+## v0.3.0 · September 20, 2026
+
+[Release notes](https://github.com/goo-yyh/codex-switch/releases/tag/v0.3.0) · [Download and install](/en/docs/install/)
+
+- **Windows console fix:** background process checks and PowerShell commands no longer create console windows.
+- **State refresh:** reads state once at startup and removes checks triggered by window focus. Actions and app events still update the interface, preventing a console/focus feedback loop.
+- **CDN downloads:** installers for all three platforms and SHA-256 checksums are served directly by the documentation site's Vercel CDN, without redirecting to GitHub.
+
 ## v0.2.0 · September 20, 2026
 
 [Release notes](https://github.com/goo-yyh/codex-switch/releases/tag/v0.2.0) · [Download and install](/en/docs/install/)

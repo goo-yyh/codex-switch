@@ -1,9 +1,20 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "assets": {
-    "Codex-Switch_aarch64.dmg": "273ab9836a90b09fc5f84cf2ed92171c7854ee76f7380e5a30233ed9115e9b5c",
-    "Codex-Switch_x64-setup.exe": "74530673efea8c5e736a01629503d28e7d788a92993529abb4b0f005fa95fa7a",
-    "Codex-Switch_x64.dmg": "ee5da140ee628f2c2be4474fe448d4f767e69253681642c7090238506421f9a8",
-    "SHA256SUMS.txt": "c8c490d70fc72ddc22169fd2925f2c506f54edb931efe476e32648d86451ee23"
-  }
+    "Codex-Switch_aarch64.dmg": "454db1d6f3c7d8f7db729088ac9c8207734bc3aa6f07698aab821b1ec20fbc60",
+    "Codex-Switch_x64-setup.exe": "0deda5e8371ffc8c96f894017cb03f12e0d81bdc94c87a79c32472af5d03a4ff",
+    "Codex-Switch_x64.dmg": "5c22434bb704ee40576047c2a545e0339f5e60eac83e343367984eb6118fbdfe",
+    "SHA256SUMS.txt": "b1f47b50ebf393caa6cc34ce87fbd26d38e054da076c129d0341f0fca98bf9e9"
+  },
+  "previous": [
+    {
+      "version": "0.2.0",
+      "assets": {
+        "Codex-Switch_aarch64.dmg": "273ab9836a90b09fc5f84cf2ed92171c7854ee76f7380e5a30233ed9115e9b5c",
+        "Codex-Switch_x64-setup.exe": "74530673efea8c5e736a01629503d28e7d788a92993529abb4b0f005fa95fa7a",
+        "Codex-Switch_x64.dmg": "ee5da140ee628f2c2be4474fe448d4f767e69253681642c7090238506421f9a8",
+        "SHA256SUMS.txt": "c8c490d70fc72ddc22169fd2925f2c506f54edb931efe476e32648d86451ee23"
+      }
+    }
+  ]
 }
