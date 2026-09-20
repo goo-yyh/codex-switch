@@ -1,6 +1,5 @@
 import { LocaleContext, useI18n } from './i18n';
 import { useEffect, useRef, useState } from 'react';
-import * as Switch from '@radix-ui/react-switch';
 import { LoaderCircle, BookOpen, Languages } from 'lucide-react';
 import { call, isPreview, type Profile } from './api/bridge';
 import { Modal } from './components/controls';
@@ -43,7 +42,10 @@ function AppContent({ controller }: { controller: AppController }) {
   const [modal, setModal] = useState<'restart' | 'delete' | null>(null);
   const [deleteId, setDeleteId] = useState('');
   useEffect(() => {
-    if (data?.enabled) setModal(null);
+    if (data?.enabled) {
+      setModal(null);
+      setView('home');
+    }
   }, [data?.enabled]);
   useEffect(() => {
     if (mainRef.current) mainRef.current.scrollTop = 0;
@@ -79,6 +81,21 @@ function AppContent({ controller }: { controller: AppController }) {
         enabled: value,
       });
     });
+  }
+  function openCodex() {
+    if (!data) return;
+    if (data.pendingReload) {
+      setError('');
+      setModal('restart');
+    } else {
+      run(async () => {
+        if (!data.app.installed) {
+          await call('open_link', { url: 'https://chatgpt.com/download/' });
+          return;
+        }
+        await call('open_codex');
+      });
+    }
   }
   if (!data)
     return (
@@ -134,7 +151,7 @@ function AppContent({ controller }: { controller: AppController }) {
           </button>
         </nav>
       </header>
-      <div className="app-content" inert={data.enabled}>
+      <div className="app-content">
         {isPreview && (
           <div className="preview-bar">
             {t('交互预览 · 数据仅保存在本页，不会修改配置或调用服务')}
@@ -145,6 +162,7 @@ function AppContent({ controller }: { controller: AppController }) {
             <ConnectionWorkspace
               data={data}
               busy={busy}
+              error={message(error)}
               onAdd={() => add()}
               onSelect={(ids) =>
                 run(async () => {
@@ -181,19 +199,7 @@ function AppContent({ controller }: { controller: AppController }) {
                 setError('');
                 setNotice('');
               }}
-              onOpen={() => {
-                if (data.pendingReload) {
-                  setError('');
-                  setModal('restart');
-                } else
-                  run(async () => {
-                    if (!data.app.installed) {
-                      await call('open_link', { url: 'https://chatgpt.com/download/' });
-                      return;
-                    }
-                    await call('open_codex');
-                  });
-              }}
+              onOpen={openCodex}
             />
           )}
           {view === 'form' && (
@@ -214,34 +220,11 @@ function AppContent({ controller }: { controller: AppController }) {
           )}
         </main>
       </div>
-      <Modal
-        open={data.enabled}
-        onClose={() => {}}
-        dismissible={false}
-        title={t('Codex Switch 已开启')}
-        description={t('请先关闭服务，再修改配置或设置。')}
-        error={message(error)}
-        busy={busy}
-      >
-        <div className="dialog-actions service-switch">
-          <span className="muted small" aria-live="polite">
-            {busy ? t('正在关闭…') : t('已开启')}
-          </span>
-          <Switch.Root
-            className="switch"
-            checked={data.enabled}
-            disabled={busy}
-            onCheckedChange={toggle}
-            aria-label={t('Codex Switch 服务')}
-          >
-            <Switch.Thumb className="switch-thumb" />
-          </Switch.Root>
-        </div>
-      </Modal>
+      {data.enabled && <div className="service-lock-overlay" aria-hidden="true" />}
       <Modal
         error={message(error)}
         busy={busy}
-        open={!data.enabled && modal === 'restart'}
+        open={modal === 'restart'}
         onClose={() => setModal(null)}
         title={t('重新打开 Codex')}
         description={t('Codex 正在运行。重启可能中断当前任务，请先完成任务再继续。')}

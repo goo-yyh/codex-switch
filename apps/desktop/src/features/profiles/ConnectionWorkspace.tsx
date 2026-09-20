@@ -16,6 +16,7 @@ import { ServiceMark } from '../../components/ServiceMark';
 export function ConnectionWorkspace({
   data,
   busy,
+  error,
   onAdd,
   onSelect,
   onEdit,
@@ -26,6 +27,7 @@ export function ConnectionWorkspace({
 }: {
   data: Snapshot;
   busy: boolean;
+  error?: string;
   onAdd: () => void;
   onSelect: (ids: string[]) => void;
   onEdit: (p: Profile) => void;
@@ -41,7 +43,7 @@ export function ConnectionWorkspace({
   const stateLabel = data.enabled ? (data.routing ? t('已开启') : t('连接待恢复')) : t('未开启');
   return (
     <section className="connection-workspace" aria-labelledby="workspace-title">
-      <div className="workspace-heading">
+      <div className="workspace-heading" inert={data.enabled}>
         <div>
           <div className="workspace-title">
             <h1 id="workspace-title">{t('我的配置')}</h1>
@@ -62,7 +64,7 @@ export function ConnectionWorkspace({
         )}
       </div>
 
-      <div className={`configuration-area ${hasProfiles ? '' : 'is-empty'}`}>
+      <div className={`configuration-area ${hasProfiles ? '' : 'is-empty'}`} inert={data.enabled}>
         {!hasProfiles ? (
           <div className="configuration-empty">
             <span className="empty-symbol" aria-hidden="true">
@@ -160,7 +162,10 @@ export function ConnectionWorkspace({
         )}
       </div>
 
-      <section className="connection-controls" aria-label={t('连接控制')}>
+      <section
+        className={`connection-controls ${data.enabled ? 'is-service-active' : ''}`}
+        aria-label={t('连接控制')}
+      >
         <div className="connection-control-row">
           <div className="connection-toggle">
             <Switch.Root
@@ -216,6 +221,11 @@ export function ConnectionWorkspace({
             </button>
           </div>
         </div>
+        {data.enabled && error && (
+          <div className="feedback error" role="alert">
+            {error}
+          </div>
+        )}
         {data.pendingReload && (
           <p className="connection-reload-note">
             {data.enabled

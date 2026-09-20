@@ -170,9 +170,9 @@ describe('configuration lifecycle', () => {
     expect(screen.getByRole('switch', { name: 'Remote context compaction' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
     fireEvent.click(screen.getByRole('switch', { name: 'Enable Codex Switch' }));
-    await screen.findByRole('dialog', { name: 'Codex Switch is enabled' });
+    await screen.findByRole('region', { name: 'Connection controls' });
     expect(screen.getByLabelText('Switch to Chinese')).toBeDisabled();
-    expect(screen.getByRole('switch', { name: 'Codex Switch service' })).toBeChecked();
+    expect(screen.getByRole('switch', { name: 'Enable Codex Switch' })).toBeChecked();
   });
   it('keeps the current language when preference persistence fails', async () => {
     setup();
@@ -201,7 +201,7 @@ describe('configuration lifecycle', () => {
     state.enabled = state.routing = true;
     state.trayFeedback = { message: '已从托盘切换到工作账号。', isError: false };
     act(() => notify());
-    await screen.findByRole('dialog', { name: 'Codex Switch 已开启' });
+    await screen.findByRole('region', { name: '连接控制' });
     expect(screen.queryByText('已从托盘切换到工作账号。')).not.toBeInTheDocument();
     expect(screen.getByLabelText('选择 工作账号')).toBeChecked();
     expect(screen.getByLabelText('选择 Kimi')).not.toBeChecked();
@@ -510,31 +510,33 @@ describe('configuration lifecycle', () => {
     expect(call).not.toHaveBeenCalledWith('probe_endpoint', expect.anything());
     expect(call).not.toHaveBeenCalledWith('open_codex');
   });
-  it('locks the entire enabled screen with a single non-dismissible shutdown action', async () => {
+  it('locks configuration while keeping launch and shutdown actions available', async () => {
     const user = userEvent.setup();
     const state = setup([profile(), profile('two', '工作账号')]);
     state.enabled = state.routing = true;
     state.selectedProfiles = ['one'];
     render(<App />);
-    const dialog = await screen.findByRole('dialog', { name: 'Codex Switch 已开启' });
+    const dialog = await screen.findByRole('region', { name: '连接控制' });
     expect(screen.getAllByRole('switch')).toHaveLength(1);
-    const stop = within(dialog).getByRole('switch', { name: 'Codex Switch 服务' });
+    const stop = within(dialog).getByRole('switch', { name: '开启 Codex Switch' });
     expect(stop).toBeChecked();
-    expect(screen.queryByRole('button', { name: '设置' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '设置' })).toBeDisabled();
     expect(screen.getByLabelText('选择 Kimi')).toBeDisabled();
     expect(screen.getByLabelText('选择 工作账号')).toBeDisabled();
     await user.keyboard('{Escape}');
     expect(dialog).toBeVisible();
-    fireEvent.pointerDown(document.querySelector('.overlay')!);
-    fireEvent.click(document.querySelector('.overlay')!);
+    fireEvent.pointerDown(document.querySelector('.service-lock-overlay')!);
+    fireEvent.click(document.querySelector('.service-lock-overlay')!);
     expect(dialog).toBeVisible();
     stop.focus();
     await user.tab();
-    expect(stop).toHaveFocus();
+    expect(within(dialog).getByRole('button', { name: '打开 Codex' })).toHaveFocus();
     expect(state.selectedProfiles).toEqual(['one']);
     expect(call).not.toHaveBeenCalledWith('select_profiles', expect.anything());
     await user.click(stop);
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(document.querySelector('.service-lock-overlay')).not.toBeInTheDocument(),
+    );
     expect(call).toHaveBeenCalledWith('set_enabled', { enabled: false });
     expect(screen.getByRole('button', { name: '设置' })).toBeEnabled();
     fireEvent.click(screen.getByRole('checkbox', { name: '选择 工作账号' }));
@@ -563,34 +565,66 @@ describe('configuration lifecycle', () => {
       state.enabled = true;
       state.selectedProfiles = ['one'];
       act(() => notify());
-      await screen.findByRole('dialog', { name: 'Codex Switch 已开启' });
-      expect(screen.getAllByRole('dialog')).toHaveLength(1);
+      await screen.findByRole('region', { name: '连接控制' });
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       expect(screen.getAllByRole('switch')).toHaveLength(1);
-      if (page === 'settings') {
-        expect(screen.getByLabelText('登录电脑时启动')).toBeDisabled();
-        expect(screen.getByLabelText('远程上下文压缩')).toBeDisabled();
-      }
       expect(call).not.toHaveBeenCalledWith('save_profile', expect.anything());
       expect(call).not.toHaveBeenCalledWith('set_autostart', expect.anything());
-      fireEvent.click(screen.getByRole('switch', { name: 'Codex Switch 服务' }));
-      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
-      if (page === 'settings')
-        expect(screen.getByRole('switch', { name: '登录电脑时启动' })).toBeEnabled();
-      else if (page !== 'delete')
-        expect(screen.getByRole('button', { name: '保存配置' })).toBeEnabled();
+      fireEvent.click(screen.getByRole('switch', { name: '开启 Codex Switch' }));
+      await waitFor(() =>
+        expect(document.querySelector('.service-lock-overlay')).not.toBeInTheDocument(),
+      );
+      await waitFor(() => expect(screen.getByRole('button', { name: '设置' })).toBeEnabled());
     },
   );
+  it('opens Codex from the enabled control bar without unlocking configuration', async () => {
+    const state = setup();
+    state.enabled = state.routing = true;
+    render(<App />);
+    const dialog = await screen.findByRole('region', { name: '连接控制' });
+    await userEvent.click(within(dialog).getByRole('button', { name: '打开 Codex' }));
+    await waitFor(() => expect(call).toHaveBeenCalledWith('open_codex'));
+    expect(dialog).toBeVisible();
+    expect(document.querySelector('.configuration-area')).toHaveAttribute('inert');
+    expect(call).not.toHaveBeenCalledWith('set_enabled', expect.anything());
+  });
+  it('confirms restart while enabled and returns to the locked control bar on cancel or success', async () => {
+    const state = setup();
+    state.enabled = state.routing = state.pendingReload = state.app.running = true;
+    const original = vi.mocked(call).getMockImplementation()!;
+    vi.mocked(call).mockImplementation(async (command, args) => {
+      if (command === 'restart_codex') state.pendingReload = false;
+      return original(command, args);
+    });
+    render(<App />);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: '重新打开 Codex' }));
+    expect(screen.getAllByRole('dialog')).toHaveLength(1);
+    expect(document.querySelector('.configuration-area')).toHaveAttribute('inert');
+    expect(call).not.toHaveBeenCalledWith('restart_codex');
+    await user.click(screen.getByRole('button', { name: '稍后' }));
+    await screen.findByRole('region', { name: '连接控制' });
+    await user.click(screen.getByRole('button', { name: '重新打开 Codex' }));
+    await user.click(screen.getByRole('button', { name: '正常重启并应用' }));
+    await screen.findByRole('region', { name: '连接控制' });
+    expect(call).toHaveBeenCalledWith('restart_codex');
+    expect(screen.getByRole('button', { name: '打开 Codex' })).toBeEnabled();
+    expect(state.enabled).toBe(true);
+    expect(call).not.toHaveBeenCalledWith('set_enabled', expect.anything());
+  });
   it('shows the lock after enabling without opening or restarting Codex', async () => {
     const state = setup();
     state.selectedProfiles = ['one'];
     state.app.running = true;
     render(<App />);
     fireEvent.click(await screen.findByRole('switch', { name: '开启 Codex Switch' }));
-    await screen.findByRole('dialog', { name: 'Codex Switch 已开启' });
+    await screen.findByRole('region', { name: '连接控制' });
     expect(call).not.toHaveBeenCalledWith('open_codex');
     expect(call).not.toHaveBeenCalledWith('restart_codex');
-    fireEvent.click(screen.getByRole('switch', { name: 'Codex Switch 服务' }));
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    fireEvent.click(screen.getByRole('switch', { name: '开启 Codex Switch' }));
+    await waitFor(() =>
+      expect(document.querySelector('.service-lock-overlay')).not.toBeInTheDocument(),
+    );
     expect(screen.getByRole('switch', { name: '开启 Codex Switch' })).not.toBeChecked();
   });
   it('keeps the lock on restoration failure and allows retry without another confirmation', async () => {
@@ -603,16 +637,18 @@ describe('configuration lifecycle', () => {
       return originalCall(command, args);
     });
     render(<App />);
-    fireEvent.click(await screen.findByRole('switch', { name: 'Codex Switch 服务' }));
-    const dialog = screen.getByRole('dialog', { name: 'Codex Switch 已开启' });
+    fireEvent.click(await screen.findByRole('switch', { name: '开启 Codex Switch' }));
+    const dialog = screen.getByRole('region', { name: '连接控制' });
     expect(await within(dialog).findByRole('alert')).toHaveTextContent('恢复配置失败');
     expect(state.enabled).toBe(true);
-    expect(within(dialog).getByRole('switch', { name: 'Codex Switch 服务' })).toBeChecked();
+    expect(within(dialog).getByRole('switch', { name: '开启 Codex Switch' })).toBeChecked();
     await waitFor(() =>
-      expect(screen.getByRole('switch', { name: 'Codex Switch 服务' })).toBeEnabled(),
+      expect(screen.getByRole('switch', { name: '开启 Codex Switch' })).toBeEnabled(),
     );
-    fireEvent.click(screen.getByRole('switch', { name: 'Codex Switch 服务' }));
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    fireEvent.click(screen.getByRole('switch', { name: '开启 Codex Switch' }));
+    await waitFor(() =>
+      expect(document.querySelector('.service-lock-overlay')).not.toBeInTheDocument(),
+    );
     expect(state.enabled).toBe(false);
   });
   it('deletes one configuration without touching another or silently applying', async () => {
