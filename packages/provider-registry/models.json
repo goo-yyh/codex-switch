@@ -1,5 +1,11 @@
 {
-  "qianwen": ["qwen3.8-max", "qwen3.8-flash", "qwen3.8-2.4t-a95b", "qwen3.8-27b", "qwen3.7-max"],
+  "qianwen": [
+    "qwen3.8-max",
+    "qwen3.8-flash",
+    "qwen3.8-omni-flash",
+    "qwen3.8-2.4t-a95b",
+    "qwen3.8-27b"
+  ],
   "minimax": [
     "MiniMax-M3",
     "MiniMax-M2.7",
@@ -7,12 +13,7 @@
     "MiniMax-M2.5",
     "MiniMax-M2.5-highspeed"
   ],
-  "zhipu": ["glm-5.3", "glm-5.3-flash", "glm-5.2", "glm-5.1", "glm-5"],
+  "zhipu": ["glm-5.3", "glm-5.3-flash", "glm-5.3-flashx", "glm-5.2", "glm-5.1"],
   "kimi": ["kimi-k3", "kimi-k2.7-code", "kimi-k2.7-code-highspeed", "kimi-k2.6"],
-  "deepseek": [
-    "deepseek-flash",
-    "deepseek-v4-flash",
-    "deepseek-v4-flash-vision-exp",
-    "deepseek-v4-pro"
-  ]
+  "deepseek": ["deepseek-flash", "deepseek-v4-pro"]
 }

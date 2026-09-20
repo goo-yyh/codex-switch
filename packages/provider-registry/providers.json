@@ -112,6 +112,19 @@
           "defaultReasoningLevel": "high",
           "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
           "contextWindow": 163840
+        },
+        "glm-5.3-flashx": {
+          "contextWindow": 800000,
+          "reasoningLevels": [
+            "low",
+            "high",
+            "max"
+          ],
+          "defaultReasoningLevel": "max",
+          "inputModalities": [
+            "text",
+            "image"
+          ]
         }
       }
     },
@@ -225,6 +238,19 @@
               "defaultReasoningLevel": "high",
               "reasoningNote": "官方仅提供思考开关，默认开启；none / high 为 Codex 的关闭 / 开启表示，不代表原生强度档位。",
               "contextWindow": 163840
+            },
+            "glm-5.3-flashx": {
+              "contextWindow": 800000,
+              "reasoningLevels": [
+                "low",
+                "high",
+                "max"
+              ],
+              "defaultReasoningLevel": "max",
+              "inputModalities": [
+                "text",
+                "image"
+              ]
             }
           }
         }
@@ -277,7 +303,7 @@
     "id": "deepseek",
     "name": "DeepSeek",
     "endpoint": "https://api.deepseek.com",
-    "model": "deepseek-v4-flash",
+    "model": "deepseek-flash",
     "protocol": "responses",
     "keyUrl": "https://platform.deepseek.com/api_keys",
     "docsUrl": "https://api-docs.deepseek.com/",
@@ -335,7 +361,7 @@
       {
         "name": "DeepSeek",
         "endpoint": "https://api.deepseek.com",
-        "model": "deepseek-v4-flash",
+        "model": "deepseek-flash",
         "protocol": "responses",
         "contextWindow": 838860,
         "options": {
@@ -678,6 +704,21 @@
           ],
           "defaultReasoningLevel": "medium",
           "contextWindow": 800000
+        },
+        "qwen3.8-omni-flash": {
+          "contextWindow": 800000,
+          "reasoningLevels": [
+            "none",
+            "low",
+            "medium",
+            "xhigh"
+          ],
+          "defaultReasoningLevel": "xhigh",
+          "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。",
+          "inputModalities": [
+            "text",
+            "image"
+          ]
         }
       }
     },
@@ -804,6 +845,21 @@
               ],
               "defaultReasoningLevel": "medium",
               "contextWindow": 800000
+            },
+            "qwen3.8-omni-flash": {
+              "contextWindow": 800000,
+              "reasoningLevels": [
+                "none",
+                "low",
+                "medium",
+                "xhigh"
+              ],
+              "defaultReasoningLevel": "xhigh",
+              "reasoningNote": "官方默认 xhigh；high 和 max 会映射为 xhigh。",
+              "inputModalities": [
+                "text",
+                "image"
+              ]
             }
           }
         }

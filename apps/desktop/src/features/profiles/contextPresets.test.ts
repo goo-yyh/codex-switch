@@ -11,6 +11,7 @@ const capacities: Record<string, Record<string, number>> = {
   zhipu: {
     'glm-5.3': 1_000_000,
     'glm-5.3-flash': 1_000_000,
+    'glm-5.3-flashx': 1_000_000,
     'glm-5.2': 1_000_000,
     'glm-5.1': 204_800,
     'glm-5': 204_800,
@@ -35,6 +36,7 @@ const capacities: Record<string, Record<string, number>> = {
   qianwen: {
     'qwen3.8-max': 1_000_000,
     'qwen3.8-flash': 1_000_000,
+    'qwen3.8-omni-flash': 1_000_000,
     'qwen3.8-2.4t-a95b': 1_000_000,
     'qwen3.8-27b': 1_000_000,
     'qwen3.7-max': 1_000_000,
