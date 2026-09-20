@@ -22,6 +22,18 @@
 
 以上链接在首次正式 Release 发布成功后生效，后续自动指向最新正式版，无需修改 README。预览版请从“所有版本”下载。安装包未使用发布者证书签名，macOS 未经 Apple 公证；系统可能提示或阻止运行，请先阅读对应 Release 的安装说明。
 
+打开 Beta 版时，macOS 可能显示下图中的“已损坏，无法打开”提示。仅凭该提示不能判断下载文件是否损坏，请按下方步骤核对并打开。
+
+![macOS 提示：Codex Switch 已损坏，无法打开，你应该将它移到废纸篓](apps/website/public/screenshots/macos-beta-warning.png)
+
+**当前为 Beta 测试版，尚未使用正式的发布者证书签名，macOS 版本也未经 Apple 公证。**确认安装包来自本项目 GitHub Release 且 SHA-256 校验一致后，先将 Codex Switch 拖入「应用程序」，再打开「终端」，粘贴以下命令并按回车：
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Codex Switch.app"
+```
+
+执行后，从「应用程序」重新打开 Codex Switch。若出现“已损坏，无法打开”提示，可按此步骤处理。该命令仅移除 Codex Switch 的下载隔离标记，不会关闭系统全局安全保护，也不能修复真正损坏的文件。若仍无法打开，请保留报错信息并反馈。
+
 ![Codex Switch 实际界面：多选配置与底部服务开关](apps/website/public/screenshots/selected.png)
 
 _截图来自当前应用的浏览器预览，使用示例配置；原生连接、备份和进程状态为模拟数据。[截图记录](docs/design/screenshots.md)_

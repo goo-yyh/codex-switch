@@ -22,6 +22,18 @@ Built for macOS / Windows with Tauri 2, React and Rust, with an Astro + Starligh
 
 These links become available after the first stable release and follow the latest stable version automatically. For previews, use “All releases.” Installers are not publisher-signed, and macOS apps are not notarized by Apple. Your system may warn or block installation; read the release instructions first.
 
+macOS may display the warning below when opening the Beta app. The screenshot alone does not establish whether the download is damaged; follow the verification and opening steps below.
+
+![macOS warning: Codex Switch is damaged and cannot be opened (Chinese dialog)](apps/website/public/screenshots/macos-beta-warning.png)
+
+**This is a Beta release. The installers are not yet publisher-signed, and the macOS app is not notarized by Apple.** After confirming the installer comes from this project’s GitHub Release and its SHA-256 checksum matches, drag Codex Switch into **Applications**, open **Terminal**, paste the following command, and press Return:
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Codex Switch.app"
+```
+
+Then reopen Codex Switch from **Applications**. Use these steps if macOS reports that the app “is damaged and can’t be opened.” This command only removes the download quarantine attribute from Codex Switch; it does not disable system-wide security or repair damaged files. If the app still cannot open, report the error message.
+
 ![Codex Switch interface with multiple selected configurations and the service toggle](apps/website/public/screenshots/selected.png)
 
 _The screenshot shows the Chinese app in browser preview with example configurations. Native connection, backup and process states are simulated. [Screenshot notes (Chinese)](docs/design/screenshots.md)_

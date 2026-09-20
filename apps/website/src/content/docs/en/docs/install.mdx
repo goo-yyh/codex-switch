@@ -18,22 +18,6 @@ On macOS, check **About This Mac** for Apple Silicon (M1 or later) or Intel. The
 
 Codex App downloads come from OpenAI. The [official guide](https://learn.chatgpt.com/docs/app) now calls it the **ChatGPT desktop app**, where you can choose Codex after signing in. Install both apps to follow this guide.
 
-### Verify your download
-
-Download [SHA256SUMS.txt](https://github.com/goo-yyh/codex-switch/releases/latest/download/SHA256SUMS.txt) from the same release as your installer and compare the matching filename’s hash:
-
-```sh
-# macOS: replace the filename for an Intel Mac
-shasum -a 256 ~/Downloads/Codex-Switch_aarch64.dmg
-```
-
-```powershell
-# Windows PowerShell
-Get-FileHash "$HOME/Downloads/Codex-Switch_x64-setup.exe" -Algorithm SHA256
-```
-
-> These Codex Switch installers are not publisher-signed, and the macOS apps are not notarized by Apple. Gatekeeper or SmartScreen may warn or block installation. Verify the source and checksum first; managed devices may prohibit installation.
-
 ## Install the app
 
 If upgrading, disable the Codex Switch service and quit the app before installing.
@@ -42,7 +26,9 @@ If upgrading, disable the Codex Switch service and quit the app before installin
 
 1. Download the `.dmg` package matching your Mac’s chip.
 2. Open it and drag Codex Switch into **Applications**.
-3. Open Codex Switch from **Applications**.
+3. Open Codex Switch from **Applications**. If macOS blocks it, see the QA below.
+
+> **macOS first launch:** The unsigned Beta may show “damaged and can’t be opened.” See [QA: how to open the app](/en/docs/qa/#macos-first-open) for verification and opening steps.
 
 ### Windows
 

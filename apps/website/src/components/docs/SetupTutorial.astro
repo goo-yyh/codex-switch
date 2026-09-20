@@ -1,0 +1,298 @@
+---
+interface Props {
+  lang?: 'zh' | 'en';
+}
+const { lang = 'zh' } = Astro.props;
+const en = lang === 'en';
+const steps = en
+  ? [
+      {
+        title: 'Add a configuration',
+        label: 'Add',
+        detail: 'Click “Add configuration” on the Codex Switch home screen to get started.',
+      },
+      {
+        title: 'Choose your provider',
+        label: 'Provider',
+        detail: 'Choose a provider and the service or plan that matches your API key.',
+      },
+      {
+        title: 'Enter your key and select models',
+        label: 'Models',
+        detail:
+          'Enter your API key, select the models you want to use, then test and save the configuration.',
+      },
+      {
+        title: 'Enable the service and open Codex',
+        label: 'Enable',
+        detail:
+          'Make sure your configuration is selected, turn on Codex Switch, then click “Open Codex”.',
+      },
+      {
+        title: 'Start a conversation in Codex',
+        label: 'Chat',
+        detail: 'Choose your configured model in Codex and send a message to start using it.',
+      },
+    ]
+  : [
+      {
+        title: '新增配置',
+        label: '新增配置',
+        detail: '打开 Codex Switch，在首页点击「新增配置」，开始连接你的模型服务。',
+      },
+      {
+        title: '选择模型厂商',
+        label: '选择厂商',
+        detail: '选择你要使用的厂商，再选择与 API Key 对应的普通服务或套餐。',
+      },
+      {
+        title: '填写密钥，选择并保存模型',
+        label: '配置模型',
+        detail: '填入 API Key，勾选需要使用的模型，然后测试配置并保存。',
+      },
+      {
+        title: '开启服务，打开 Codex',
+        label: '开启服务',
+        detail: '确认已勾选保存的配置，打开 Codex Switch 开关，再点击「打开 Codex」。',
+      },
+      {
+        title: '在 Codex 中开始对话',
+        label: '开始对话',
+        detail: '在 Codex 的模型选择器中选择刚刚配置的模型，发送消息，开始使用。',
+      },
+    ];
+---
+
+<setup-tutorial
+  class="not-content"
+  role="region"
+  aria-label={en ? 'Setup walkthrough' : '上手教程'}
+  aria-roledescription={en ? 'carousel' : '轮播图'}
+>
+  <div class="step-picker" aria-label={en ? 'Choose a tutorial page' : '选择教程页'} hidden>
+    {
+      steps.map((step, i) => (
+        <button type="button" data-step={i} aria-current={i === 0 ? 'step' : undefined}>
+          <span>{i + 1}</span>
+          {step.label}
+        </button>
+      ))
+    }
+  </div>
+  <div class="slides">
+    {
+      steps.map((step, i) => (
+        <figure
+          data-slide
+          role="group"
+          aria-roledescription={en ? 'slide' : '幻灯片'}
+          aria-label={`${i + 1} / ${steps.length}`}
+        >
+          <figcaption>
+            <strong>{step.title}</strong>
+            <p>{step.detail}</p>
+          </figcaption>
+          <a
+            href={`/screenshots/tutorial/step-${i + 1}.png`}
+            aria-label={`${step.title} — ${en ? 'Enlarge image' : '放大图片'}`}
+          >
+            <img
+              src={`/screenshots/tutorial/step-${i + 1}.png`}
+              alt={step.title}
+              width={i === 4 ? 2180 : 1600}
+              height={i === 4 ? 1520 : 1480}
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
+        </figure>
+      ))
+    }
+  </div>
+  <div class="controls" hidden>
+    <button type="button" data-prev disabled>{en ? '← Previous' : '← 上一步'}</button>
+    <span data-counter aria-live="polite" aria-atomic="true">1 / {steps.length}</span>
+    <button type="button" data-next>{en ? 'Next →' : '下一步 →'}</button>
+  </div>
+  <p class="hint">
+    {
+      en
+        ? 'Click an image to enlarge. Screenshots show the Chinese interface.'
+        : '点击图片可放大查看。'
+    }
+  </p>
+</setup-tutorial>
+
+<script>
+  class SetupTutorial extends HTMLElement {
+    private events?: AbortController;
+    connectedCallback() {
+      this.events?.abort();
+      this.events = new AbortController();
+      const { signal } = this.events;
+      const slides = Array.from(this.querySelectorAll<HTMLElement>('[data-slide]'));
+      const buttons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-step]'));
+      const prev = this.querySelector<HTMLButtonElement>('[data-prev]')!;
+      const next = this.querySelector<HTMLButtonElement>('[data-next]')!;
+      const counter = this.querySelector<HTMLElement>('[data-counter]')!;
+      let current = 0;
+      const show = (index: number) => {
+        current = Math.max(0, Math.min(slides.length - 1, index));
+        slides.forEach((slide, i) => {
+          slide.hidden = i !== current;
+        });
+        buttons.forEach((button, i) => {
+          if (i === current) button.setAttribute('aria-current', 'step');
+          else button.removeAttribute('aria-current');
+        });
+        prev.disabled = current === 0;
+        next.disabled = current === slides.length - 1;
+        counter.textContent = `${current + 1} / ${slides.length}`;
+      };
+      buttons.forEach((button, i) => button.addEventListener('click', () => show(i), { signal }));
+      prev.addEventListener('click', () => show(current - 1), { signal });
+      next.addEventListener('click', () => show(current + 1), { signal });
+      this.querySelectorAll<HTMLElement>('.step-picker, .controls').forEach((el) => {
+        el.hidden = false;
+      });
+      show(0);
+    }
+    disconnectedCallback() {
+      this.events?.abort();
+    }
+  }
+  if (!customElements.get('setup-tutorial')) customElements.define('setup-tutorial', SetupTutorial);
+</script>
+
+<style>
+  setup-tutorial {
+    display: block;
+    margin-block: 1.5rem;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  .step-picker {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  button {
+    font: inherit;
+    cursor: pointer;
+    color: var(--docs-text);
+    background: var(--docs-surface);
+    border: 1px solid var(--docs-border);
+    border-radius: 0.65rem;
+    padding: 0.55rem 0.75rem;
+  }
+  button:hover:not(:disabled) {
+    background: var(--docs-soft);
+    color: var(--docs-ink);
+  }
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--docs-focus);
+    outline-offset: 3px;
+  }
+  .step-picker button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.65rem 0.3rem;
+    font-size: 0.8rem;
+  }
+  .step-picker span {
+    display: grid;
+    place-items: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    background: var(--docs-soft);
+    flex-shrink: 0;
+  }
+  .step-picker [aria-current] {
+    border-color: var(--docs-focus);
+    color: var(--docs-focus);
+    background: color-mix(in srgb, var(--docs-focus) 7%, var(--docs-surface));
+  }
+  .step-picker [aria-current] span {
+    background: var(--docs-focus);
+    color: var(--docs-surface);
+  }
+  figure {
+    margin: 0;
+    border: 1px solid var(--docs-border);
+    border-radius: 0.85rem;
+    overflow: hidden;
+  }
+  figure + figure {
+    margin-top: 1rem;
+  }
+  figure:not([hidden]) {
+    margin-top: 0;
+  }
+  figcaption {
+    padding: 1rem 1.2rem;
+  }
+  strong {
+    font-size: 1.05rem;
+    color: var(--docs-ink);
+  }
+  figcaption p {
+    margin: 0.4rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--docs-muted);
+    min-height: 3.4em;
+  }
+  figure a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1600 / 1480;
+    background: var(--docs-soft);
+    cursor: zoom-in;
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin: 0;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .controls span {
+    color: var(--docs-muted);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+  }
+  button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .hint {
+    margin: 0.75rem 0 0;
+    color: var(--docs-muted);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+  @media (max-width: 30rem) {
+    .step-picker button {
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.7rem;
+    }
+    figcaption {
+      padding: 0.9rem;
+    }
+  }
+</style>

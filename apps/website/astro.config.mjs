@@ -71,6 +71,11 @@ export default defineConfig({
           label: '发布',
           translations: { en: 'Releases' },
           items: [
+            {
+              label: '问题说明（QA）',
+              translations: { en: 'Troubleshooting (QA)' },
+              slug: 'docs/qa',
+            },
             { label: '更新日志', translations: { en: 'Changelog' }, slug: 'docs/changelog' },
             {
               label: '开源致谢',

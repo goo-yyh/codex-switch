@@ -18,22 +18,6 @@ macOS 用户可在「关于本机」中查看芯片：M1 及更新芯片选择 A
 
 Codex App 按钮链接到 OpenAI 官方下载源。[官方指南](https://learn.chatgpt.com/docs/app)现称其为 **ChatGPT 桌面应用**，登录后可选择 Codex。按本教程使用时，请同时安装两个应用。
 
-### 校验安装包
-
-下载与安装包同一版本的 [SHA256SUMS.txt](https://github.com/goo-yyh/codex-switch/releases/latest/download/SHA256SUMS.txt)，将计算结果与文件中对应名称的校验值比较：
-
-```sh
-# macOS：Intel 用户请替换为对应文件名
-shasum -a 256 ~/Downloads/Codex-Switch_aarch64.dmg
-```
-
-```powershell
-# Windows PowerShell
-Get-FileHash "$HOME/Downloads/Codex-Switch_x64-setup.exe" -Algorithm SHA256
-```
-
-> 本次 Codex Switch 安装包没有发布者签名，macOS 应用未经 Apple 公证。Gatekeeper 或 SmartScreen 可能提示或阻止运行。请先确认下载来源并核对校验值；组织管理的设备可能不允许安装。
-
 ## 安装应用
 
 若已安装旧版，先关闭 Codex Switch 服务，再正常退出应用。
@@ -42,7 +26,9 @@ Get-FileHash "$HOME/Downloads/Codex-Switch_x64-setup.exe" -Algorithm SHA256
 
 1. 下载与你的 Mac 芯片匹配的 `.dmg` 安装包。
 2. 打开安装包，将 Codex Switch 拖入「应用程序」。
-3. 从「应用程序」中打开 Codex Switch。
+3. 从「应用程序」打开 Codex Switch；如遇报错，查看下方 QA。
+
+> **macOS 首次打开提示：** Beta 版尚未签名，可能出现「已损坏，无法打开」。请先核对下载来源，详见 [QA：macOS 打开报错的处理方法](/docs/qa/#macos-first-open)。
 
 ### Windows
 

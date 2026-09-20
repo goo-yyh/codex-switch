@@ -1,0 +1,204 @@
+---
+import { Code } from '@astrojs/starlight/components';
+interface Props {
+  lang?: 'zh' | 'en';
+}
+const { lang = 'zh' } = Astro.props;
+const en = lang === 'en';
+---
+
+<aside
+  class="mac-help not-content"
+  aria-label={en ? 'Help opening the macOS Beta' : 'macOS Beta 首次打开说明'}
+>
+  <div class="intro">
+    <div>
+      <span class="badge">macOS · Beta</span>
+      <h3>{en ? 'Why this happens' : '为什么会出现这个提示？'}</h3>
+      <p>
+        {
+          en
+            ? 'The Beta app is not publisher-signed or notarized by Apple. macOS may block it on first launch; this warning alone does not mean the file is damaged.'
+            : 'Beta 版尚未使用正式发布者证书签名，也未经 Apple 公证。macOS 首次打开时可能拦截；仅凭这条提示，不能判断文件是否损坏。'
+        }
+      </p>
+    </div>
+    <a
+      class="warning-image"
+      href="/screenshots/macos-beta-warning.png"
+      aria-label={en ? 'Enlarge the macOS warning screenshot' : '放大 macOS 报错截图'}
+    >
+      <img
+        src="/screenshots/macos-beta-warning.png"
+        alt={en
+          ? 'macOS reports that Codex Switch is damaged (Chinese dialog)'
+          : 'macOS 提示 Codex Switch 已损坏，无法打开'}
+        loading="lazy"
+      />
+      <span>{en ? 'View screenshot ↗' : '查看报错截图 ↗'}</span>
+    </a>
+  </div>
+  <ol>
+    <li>
+      <strong>{en ? 'Verify the download' : '确认下载来源'}</strong><p>
+        {
+          en
+            ? 'Use the installer from this project’s GitHub Release and confirm that its SHA-256 matches the published checksum.'
+            : '确认安装包来自本项目 GitHub Release，并核对 SHA-256 与发布的校验值一致。'
+        }
+      </p>
+    </li>
+    <li>
+      <strong>{en ? 'Move the app to Applications' : '移入「应用程序」'}</strong><p>
+        {
+          en
+            ? 'Open the DMG and drag Codex Switch into Applications.'
+            : '打开 DMG，将 Codex Switch 拖入「应用程序」。'
+        }
+      </p>
+    </li>
+    <li>
+      <strong>{en ? 'Run this command in Terminal' : '在「终端」执行命令'}</strong><p>
+        {
+          en
+            ? 'Paste the command below and press Return.'
+            : '复制下方命令，粘贴到「终端」并按回车。'
+        }
+      </p><Code
+        code={'xattr -dr com.apple.quarantine "/Applications/Codex Switch.app"'}
+        lang="bash"
+        title={en ? 'Terminal' : '终端'}
+      />
+    </li>
+    <li>
+      <strong>{en ? 'Open Codex Switch again' : '重新打开应用'}</strong><p>
+        {
+          en
+            ? 'Launch Codex Switch from Applications. If it still fails, keep the error message and report it.'
+            : '从「应用程序」打开 Codex Switch。若仍无法打开，请保留报错信息并反馈。'
+        }
+      </p>
+    </li>
+  </ol>
+  <p class="footnote">
+    {
+      en
+        ? 'This command only removes the app’s download quarantine attribute. It does not disable system-wide security or repair a damaged file.'
+        : '此命令仅移除该应用的下载隔离标记，不会关闭系统全局安全保护，也不能修复真正损坏的文件。'
+    }
+  </p>
+</aside>
+<style>
+  .mac-help {
+    margin-block: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--docs-border);
+    border-radius: 1rem;
+    background: var(--docs-surface);
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--docs-border);
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 0.35rem;
+    background: var(--docs-soft);
+    color: var(--docs-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  h3 {
+    margin: 0.65rem 0 0.5rem;
+    font-size: 1.15rem;
+    color: var(--docs-ink);
+    line-height: 1.5;
+  }
+  p {
+    margin: 0.35rem 0 0;
+    color: var(--docs-muted);
+    font-size: 0.9rem;
+    line-height: 1.75;
+  }
+  .warning-image {
+    display: block;
+    text-align: center;
+    color: var(--docs-muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    cursor: zoom-in;
+  }
+  .mac-help .warning-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 180px;
+    margin: 0 auto 0.4rem;
+    border: 1px solid var(--docs-border);
+    border-radius: 0.6rem;
+  }
+  ol {
+    list-style: none;
+    counter-reset: steps;
+    padding: 0;
+    margin: 1.25rem 0;
+  }
+  li {
+    position: relative;
+    counter-increment: steps;
+    padding-left: 2.4rem;
+  }
+  li + li {
+    margin-top: 1.15rem;
+  }
+  li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 0;
+    top: 0.05rem;
+    display: grid;
+    place-items: center;
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 50%;
+    background: var(--docs-soft);
+    color: var(--docs-ink);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  strong {
+    color: var(--docs-ink);
+    font-size: 0.95rem;
+  }
+  .mac-help :global(.expressive-code) {
+    margin-block: 0.75rem 0;
+  }
+  .footnote {
+    padding-top: 1rem;
+    border-top: 1px solid var(--docs-border);
+    font-size: 0.8rem;
+  }
+  @media (max-width: 40rem) {
+    .mac-help {
+      padding: 1rem;
+    }
+    .intro {
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+    .warning-image {
+      justify-self: start;
+    }
+    .mac-help .warning-image img {
+      max-width: 150px;
+    }
+    li {
+      padding-left: 2rem;
+    }
+  }
+</style>

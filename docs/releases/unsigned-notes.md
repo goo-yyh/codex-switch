@@ -13,6 +13,24 @@ These installers are not publisher-signed. The macOS apps are not notarized by A
 
 Before installing, disable the Codex Switch service and quit the app. Drag the macOS app into Applications or run the Windows installer. Gatekeeper / SmartScreen may warn or block unsigned software. Verify the download source and checksum; managed devices may prohibit installation.
 
+### macOS 首次打开 / First launch
+
+**当前为 Beta 测试版，尚未使用正式的发布者证书签名，macOS 版本也未经 Apple 公证。**确认安装包来自本项目 GitHub Release 且 SHA-256 校验一致后，先将 Codex Switch 拖入「应用程序」，再打开「终端」，粘贴以下命令并按回车：
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Codex Switch.app"
+```
+
+执行后，从「应用程序」重新打开 Codex Switch。若出现“已损坏，无法打开”提示，可按此步骤处理。该命令仅移除 Codex Switch 的下载隔离标记，不会关闭系统全局安全保护，也不能修复真正损坏的文件。若仍无法打开，请保留报错信息并反馈。
+
+**This is a Beta release. The installers are not yet publisher-signed, and the macOS app is not notarized by Apple.** After confirming the installer comes from this project’s GitHub Release and its SHA-256 checksum matches, drag Codex Switch into **Applications**, open **Terminal**, paste the following command, and press Return:
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Codex Switch.app"
+```
+
+Then reopen Codex Switch from **Applications**. Use these steps if macOS reports that the app “is damaged and can’t be opened.” This command only removes the download quarantine attribute from Codex Switch; it does not disable system-wide security or repair damaged files. If the app still cannot open, report the error message.
+
 macOS 校验 / Verify on macOS: `shasum -a 256 <installer.dmg>`
 Windows 校验 / Verify on Windows: `Get-FileHash <installer.exe> -Algorithm SHA256`
 
