@@ -22,12 +22,13 @@ export default function DownloadDropdown({ product, lang }: Props) {
   const en = lang === 'en';
   const isSwitch = product === 'switch';
   const label = `${en ? 'Download' : '下载'} ${isSwitch ? 'Codex Switch' : 'Codex App'}`;
-  const base = 'https://github.com/goo-yyh/codex-switch/releases/latest';
+  const base = 'https://github.com/goo-yyh/codex-switch/releases';
+  const releaseTag = 'v0.2.0';
   const items = isSwitch
     ? [
-        ['macOS · Apple Silicon', `${base}/download/Codex-Switch_aarch64.dmg`],
-        ['macOS · Intel', `${base}/download/Codex-Switch_x64.dmg`],
-        ['Windows · x64', `${base}/download/Codex-Switch_x64-setup.exe`],
+        ['macOS · Apple Silicon', `${base}/download/${releaseTag}/Codex-Switch_aarch64.dmg`],
+        ['macOS · Intel', `${base}/download/${releaseTag}/Codex-Switch_x64.dmg`],
+        ['Windows · x64', `${base}/download/${releaseTag}/Codex-Switch_x64-setup.exe`],
       ]
     : [
         ['macOS · Apple Silicon', 'https://persistent.oaistatic.com/codex-app-prod/Codex.dmg'],
@@ -77,7 +78,7 @@ export default function DownloadDropdown({ product, lang }: Props) {
           ))}
           <DropdownMenu.Separator />
           <DropdownMenu.Item asChild>
-            <a href={isSwitch ? base : 'https://learn.chatgpt.com/docs/app'}>
+            <a href={isSwitch ? `${base}/tag/${releaseTag}` : 'https://learn.chatgpt.com/docs/app'}>
               <ArrowUpRight size={16} aria-hidden="true" />
               {isSwitch
                 ? en

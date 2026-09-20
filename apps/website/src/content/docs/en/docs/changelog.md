@@ -5,6 +5,15 @@ description: Follow Codex Switch updates to language switching, model management
 
 Published versions and assets are available on [GitHub Releases](https://github.com/goo-yyh/codex-switch/releases).
 
+## v0.2.0 · September 20, 2026
+
+[Release notes](https://github.com/goo-yyh/codex-switch/releases/tag/v0.2.0) · [Download and install](/en/docs/install/)
+
+- **Service controls:** enabling the service keeps the bottom switch and Open Codex button available while an overlay locks the rest of the interface. Restarting still requires confirmation; shutdown errors appear in the control bar for retry.
+- **Model registry v2:** bundles 21 standard candidates, adding Qwen `qwen3.8-omni-flash` and GLM `glm-5.3-flashx`, with two DeepSeek candidates. Existing configurations, parameters and selected models are preserved.
+- **Registry sync:** checks the website catalog on startup and merges new models only when its version is higher. Failures retain the local catalog.
+- **Installers:** macOS Apple Silicon, macOS Intel and Windows x64 packages with SHA-256 checksums. Installers remain unsigned.
+
 ## v0.1.0 · September 18, 2026
 
 [Release notes](https://github.com/goo-yyh/codex-switch/releases/tag/v0.1.0) · [Download and install](/en/docs/install/)
