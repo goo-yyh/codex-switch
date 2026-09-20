@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import react from '@astrojs/react';
 import { readFileSync } from 'node:fs';
 const product = JSON.parse(
   readFileSync(new URL('../../packages/product-info/product.json', import.meta.url), 'utf8'),
@@ -18,6 +19,7 @@ export default defineConfig({
     '/en/docs/launch/': { destination: '/en/docs/switch/', status: 308 },
   },
   integrations: [
+    react(),
     starlight({
       title: 'Codex Switch',
       defaultLocale: 'root',

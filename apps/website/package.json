@@ -10,12 +10,19 @@
     "preview": "astro preview"
   },
   "dependencies": {
+    "@astrojs/react": "^4.4.2",
     "@astrojs/starlight": "0.34.8",
+    "@radix-ui/themes": "^3.3.0",
     "@vercel/analytics": "^2.0.1",
-    "astro": "^5.13.0"
+    "astro": "^5.13.0",
+    "lucide-react": "^0.468.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "typescript": "^5.7.0"
   }
 }
