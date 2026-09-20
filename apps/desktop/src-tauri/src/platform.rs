@@ -1,6 +1,16 @@
 use serde::Serialize;
 use std::process::Command;
 
+#[cfg(target_os = "windows")]
+fn background_command(program: &str) -> Command {
+    use std::os::windows::process::CommandExt;
+    // Redirecting stdout alone does not stop Windows from creating a console.
+    const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+    let mut command = Command::new(program);
+    command.creation_flags(CREATE_NO_WINDOW);
+    command
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AppInfo {
@@ -25,7 +35,7 @@ pub fn app_info() -> AppInfo {
     #[cfg(target_os = "windows")]
     {
         let installed = windows_path().is_some();
-        let running = Command::new("tasklist")
+        let running = background_command("tasklist.exe")
             .args(["/FI", "IMAGENAME eq Codex.exe", "/NH"])
             .output()
             .map(|o| String::from_utf8_lossy(&o.stdout).contains("Codex.exe"))
@@ -81,7 +91,7 @@ pub fn open_url(url: &str) -> Result<(), String> {
     #[cfg(target_os = "macos")]
     let result = Command::new("/usr/bin/open").arg(url).spawn();
     #[cfg(target_os = "windows")]
-    let result = Command::new("rundll32.exe")
+    let result = background_command("rundll32.exe")
         .arg("url.dll,FileProtocolHandler")
         .arg(url)
         .spawn();
@@ -139,7 +149,7 @@ pub async fn close_codex() -> Result<(), String> {
     }
     #[cfg(target_os = "windows")]
     let mut command = {
-        let mut c = tokio::process::Command::new("powershell.exe");
+        let mut c = tokio::process::Command::from(background_command("powershell.exe"));
         c.args(["-NoProfile","-NonInteractive","-Command","Get-Process -Name Codex -ErrorAction SilentlyContinue | ForEach-Object { [void]$_.CloseMainWindow() }"]);
         c
     };
@@ -163,6 +173,41 @@ pub async fn close_codex() -> Result<(), String> {
             tokio::time::sleep(std::time::Duration::from_millis(500)).await;
         }
         Err("Codex 仍在运行，可能有未完成任务；请手动正常退出后重试。".into())
+    }
+}
+
+#[cfg(all(test, target_os = "windows"))]
+mod tests {
+    use super::*;
+
+    fn console_probe() -> Command {
+        let mut command = background_command("powershell.exe");
+        command.args([
+            "-NoProfile",
+            "-NonInteractive",
+            "-Command",
+            r#"Add-Type -Namespace ConsoleProbe -Name Native -MemberDefinition '[System.Runtime.InteropServices.DllImport("kernel32.dll")] public static extern System.IntPtr GetConsoleWindow();'; [ConsoleProbe.Native]::GetConsoleWindow().ToInt64()"#,
+        ]);
+        command
+    }
+
+    #[tokio::test]
+    async fn background_commands_have_no_console_and_still_capture_output() {
+        // Check the child's actual console handle, including the Tokio conversion
+        // used by close_codex, instead of only inspecting command configuration.
+        let sync_output = console_probe().output().unwrap();
+        let async_output = tokio::process::Command::from(console_probe())
+            .output()
+            .await
+            .unwrap();
+        for output in [sync_output, async_output] {
+            assert!(
+                output.status.success(),
+                "{}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            assert_eq!(String::from_utf8_lossy(&output.stdout).trim(), "0");
+        }
     }
 }
 

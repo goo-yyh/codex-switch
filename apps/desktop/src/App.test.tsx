@@ -77,6 +77,31 @@ async function addKimi() {
   fireEvent.click(screen.getByRole('button', { name: 'Kimi' }));
 }
 describe('configuration lifecycle', () => {
+  it('loads once and ignores window focus while still refreshing app state changes', async () => {
+    const state = setup();
+    let notify = () => {};
+    vi.mocked(subscribeToAppChanges).mockImplementationOnce(async (cb) => {
+      notify = cb;
+      return () => {};
+    });
+    render(<App />);
+    await screen.findByRole('heading', { name: '我的配置' });
+    const snapshots = () =>
+      vi.mocked(call).mock.calls.filter(([command]) => command === 'snapshot');
+    expect(snapshots()).toHaveLength(1);
+    await act(async () => {
+      for (let i = 0; i < 5; i++) {
+        fireEvent.blur(window);
+        fireEvent.focus(window);
+      }
+    });
+    expect(snapshots()).toHaveLength(1);
+    state.selectedProfiles = ['one'];
+    act(() => notify());
+    await waitFor(() => expect(screen.getByLabelText('选择 Kimi')).toBeChecked());
+    expect(snapshots()).toHaveLength(2);
+  });
+
   it('refreshes remote candidates without replacing an unsaved form and saves defaults only on selection', async () => {
     const state = setup([]);
     state.presets = structuredClone(state.presets);

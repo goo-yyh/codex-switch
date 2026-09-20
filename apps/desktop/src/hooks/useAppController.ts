@@ -19,27 +19,27 @@ export function useAppController() {
     }
   }
   useEffect(() => {
-    refresh().catch((e) => setError(String(e)));
-    const onFocus = () => {
-      if (!busyRef.current) refresh().catch((e) => setError(String(e)));
-    };
-    window.addEventListener('focus', onFocus);
     let disposed = false;
+    const onChange = () => {
+      if (!disposed && !busyRef.current) refresh().catch((e) => setError(String(e)));
+    };
     let unsubscribe: (() => void) | undefined;
-    subscribeToAppChanges(onFocus)
+    subscribeToAppChanges(onChange)
       .then((stop) => {
         if (disposed) stop();
         else {
           unsubscribe = stop;
-          // Catch a startup registry update that finished before listeners were ready.
-          onFocus();
         }
       })
-      .catch((e) => setError(String(e)));
+      .catch((e) => {
+        if (!disposed) setError(String(e));
+      })
+      // Subscribe first, then take one initial snapshot so startup updates aren't missed.
+      // Window focus is not an application state change and must not spawn process checks.
+      .finally(onChange);
     return () => {
       disposed = true;
       unsubscribe?.();
-      window.removeEventListener('focus', onFocus);
     };
   }, []);
   async function run(action: () => Promise<void>) {
